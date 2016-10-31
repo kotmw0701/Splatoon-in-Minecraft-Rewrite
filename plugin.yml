@@ -1,0 +1,19 @@
+main: jp.kotmw.splatoon.Main
+name: Splatoon_in_Minecraft
+auther: kotmw0701
+version: 0.9.15
+load: POSTWORLD
+
+commands:
+  splatsetting:
+    description: splatoon setting command
+  splatconsole:
+    description: splatoon console command
+  splatoon:
+    description: splatoon gamecommand
+    aliases: [splat]
+
+permissions:
+  splat.setting:
+    description: splatoon setting commands
+    default: op
