@@ -463,13 +463,11 @@ public class ParticleAPI extends NMSBase{
 	}
 
 	private static String version;
-	private static String NMSPackageName;
 	private static boolean is1_7 = false;
 	private static boolean is1_8 = false;
 	//private static boolean is1_9 = false;
 	static {
 		version = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
-		NMSPackageName = "net.minecraft.server."+version;
 		is1_7 = version.startsWith("v1_7_R");
 		is1_8 = version.startsWith("v1_8_R");
 		//is1_9 = version.startsWith("v1_9_R");
