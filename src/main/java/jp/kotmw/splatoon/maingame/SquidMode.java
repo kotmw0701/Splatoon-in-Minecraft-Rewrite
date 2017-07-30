@@ -1,9 +1,5 @@
 package jp.kotmw.splatoon.maingame;
 
-import jp.kotmw.splatoon.SplatColor;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.PlayerData;
-
 import org.bukkit.Sound;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -15,6 +11,10 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.manager.SplatColorManager;
 
 public class SquidMode implements Listener {
 
@@ -49,13 +49,13 @@ public class SquidMode implements Listener {
 		} else {
 			player.addPotionEffect(invisible);
 			player.getInventory().setHeldItemSlot(3);
-			if(SplatColor.isBelowBlockTeamColor(player)) {
+			if(SplatColorManager.isBelowBlockTeamColor(player)) {
 				player.addPotionEffect(speed);
 			} else {
 				spawnSquid(player);
 			}
 			data.setSquidMode(true);
-			if(SplatColor.isTargetBlockTeamColor(player)) {
+			if(SplatColorManager.isTargetBlockTeamColor(player)) {
 				data.setClimb(true);
 				player.setAllowFlight(true);
 				player.setFlying(true);
@@ -74,19 +74,19 @@ public class SquidMode implements Listener {
 		LivingEntity squid = data.getPlayerSquid();
 		if(squid != null)
 			squid.teleport(player.getLocation());
-		if(SplatColor.isTargetBlockTeamColor(player)) {
+		if(SplatColorManager.isTargetBlockTeamColor(player)) {
 			data.setClimb(true);
 			player.setAllowFlight(true);
 			player.setFlying(true);
-		} else if(!SplatColor.isTargetBlockTeamColor(player)) {
+		} else if(!SplatColorManager.isTargetBlockTeamColor(player)) {
 			data.setClimb(false);
 			player.setAllowFlight(false);
 			player.setFlying(false);
 		}
-		if(!SplatColor.isBelowBlockTeamColor(player) && !data.isClimb()) {
+		if(!SplatColorManager.isBelowBlockTeamColor(player) && !data.isClimb()) {
 			spawnSquid(player);
 			player.removePotionEffect(PotionEffectType.SPEED);
-		} else if(SplatColor.isBelowBlockTeamColor(player) || data.isClimb()) {
+		} else if(SplatColorManager.isBelowBlockTeamColor(player) || data.isClimb()) {
 			player.addPotionEffect(speed);
 			if(squid != null) {
 				squid.remove();

@@ -1,15 +1,15 @@
 package jp.kotmw.splatoon.event;
 
-import jp.kotmw.splatoon.gamedatas.ArenaData;
-import jp.kotmw.splatoon.gamedatas.PlayerData;
-
 import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import jp.kotmw.splatoon.gamedatas.ArenaData;
+import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.util.SplatColor;
 
 public class BlockPaintEvent extends Event{
 
@@ -44,8 +44,8 @@ public class BlockPaintEvent extends Event{
 		return arena;
 	}
 
-	public DyeColor getColor() {
-		return arena.getDyeColor(player.getTeamid());
+	public SplatColor getColor() {
+		return arena.getSplatColor(player.getTeamid());
 	}
 
 	@Override

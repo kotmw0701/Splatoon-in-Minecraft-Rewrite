@@ -1,11 +1,11 @@
 package jp.kotmw.splatoon.util;
 
+import org.bukkit.Bukkit;
+
 import jp.kotmw.splatoon.gamedatas.ArenaData;
 import jp.kotmw.splatoon.gamedatas.DataStore;
 import jp.kotmw.splatoon.gamedatas.PlayerData;
 import jp.kotmw.splatoon.maingame.MainGame;
-
-import org.bukkit.Bukkit;
 
 public class MessageUtil extends Title {
 

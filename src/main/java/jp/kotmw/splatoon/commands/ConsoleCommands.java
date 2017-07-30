@@ -1,10 +1,5 @@
 package jp.kotmw.splatoon.commands;
 
-import jp.kotmw.splatoon.filedatas.OtherFiles;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.maingame.MainGame;
-import jp.kotmw.splatoon.sql.DataBaseTest;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -14,6 +9,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
+
+import jp.kotmw.splatoon.filedatas.OtherFiles;
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.maingame.MainGame;
 
 public class ConsoleCommands implements CommandExecutor {
 
@@ -29,8 +28,6 @@ public class ConsoleCommands implements CommandExecutor {
 			if("configreload".equalsIgnoreCase(args[0])) {
 				OtherFiles.ConfigReload();
 				Bukkit.getConsoleSender().sendMessage(MainGame.Prefix+"Config.ymlを再読み込みしました");
-			} else if("databasetest".equalsIgnoreCase(args[0])) {
-				new DataBaseTest();
 			}
 		} else if(args.length == 3) {
 			if("join".equalsIgnoreCase(args[0])) {

@@ -33,6 +33,12 @@ public class Location {
 	public double getY() {return y;}
 
 	public double getZ() {return z;}
+	
+	public int getBlockX() {return (int) x;}
+
+	public int getBlockY() {return (int) y;}
+
+	public int getBlockZ() {return (int) z;}
 
 	public float getYaw() {return yaw;}
 

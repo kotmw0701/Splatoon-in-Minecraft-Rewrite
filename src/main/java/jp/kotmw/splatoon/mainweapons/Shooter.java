@@ -2,14 +2,6 @@ package jp.kotmw.splatoon.mainweapons;
 
 import java.util.Random;
 
-import jp.kotmw.splatoon.Main;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.DataStore.WeaponType;
-import jp.kotmw.splatoon.gamedatas.PlayerData;
-import jp.kotmw.splatoon.gamedatas.WeaponData;
-import jp.kotmw.splatoon.maingame.MainGame;
-import jp.kotmw.splatoon.mainweapons.threads.ShooterRunnable;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.EntityType;
@@ -24,6 +16,15 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+import jp.kotmw.splatoon.Main;
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.WeaponType;
+import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.gamedatas.WeaponData;
+import jp.kotmw.splatoon.maingame.MainGame;
+import jp.kotmw.splatoon.mainweapons.threads.ShooterRunnable;
+import jp.kotmw.splatoon.manager.Paint;
 
 public class Shooter implements Listener {
 
@@ -122,10 +123,12 @@ public class Shooter implements Listener {
 		double x = Math.toRadians((random.nextInt(angle)/100)-((weapon.getAngle()-1)/2));
 		double z = Math.toRadians((random.nextInt(angle)/100)-((weapon.getAngle()-1)/2));
 		Vector direction = player.getLocation().getDirection().clone();
-		Snowball ball = player.launchProjectile(Snowball.class);
-		Vector vec = new Vector(x,0,z), vec2 = new Vector(direction.getX()*0.75, direction.getY()*0.75, direction.getZ()*0.75);
-		vec2.add(vec);
-		ball.setVelocity(vec2);
+		MainGame.sync(() -> {
+			Snowball snowball = player.launchProjectile(Snowball.class);
+			Vector vec = new Vector(x,0,z), vec2 = new Vector(direction.getX()*0.75, direction.getY()*0.75, direction.getZ()*0.75);
+			vec2.add(vec);
+			snowball.setVelocity(vec2);
+		});
 	}
 
 	/*

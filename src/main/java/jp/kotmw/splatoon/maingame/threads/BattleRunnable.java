@@ -1,24 +1,24 @@
 package jp.kotmw.splatoon.maingame.threads;
 
-import jp.kotmw.splatoon.Main;
-import jp.kotmw.splatoon.SplatColor;
-import jp.kotmw.splatoon.gamedatas.ArenaData;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.DataStore.ArenaStatusEnum;
-import jp.kotmw.splatoon.gamedatas.DataStore.BattleType;
-import jp.kotmw.splatoon.gamedatas.PlayerData;
-import jp.kotmw.splatoon.maingame.MainGame;
-import jp.kotmw.splatoon.maingame.SplatScoreBoard;
-import jp.kotmw.splatoon.maingame.SplatZones;
-import jp.kotmw.splatoon.mainweapons.Paint;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import jp.kotmw.splatoon.Main;
+import jp.kotmw.splatoon.gamedatas.ArenaData;
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.BattleType;
+import jp.kotmw.splatoon.gamedatas.DataStore.GameStatusEnum;
+import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.maingame.MainGame;
+import jp.kotmw.splatoon.maingame.SplatZones;
+import jp.kotmw.splatoon.manager.Paint;
+import jp.kotmw.splatoon.manager.SplatScoreBoard;
 
 public class BattleRunnable extends BukkitRunnable {
 
@@ -36,15 +36,13 @@ public class BattleRunnable extends BukkitRunnable {
 		this.main = "ナワバリバトル";
 		this.sub = "たくさんナワバリを確保しろ！";
 		switch(type) {
-		case Turf_War:
-			this.main = "ナワバリバトル";
-			this.sub = "たくさんナワバリを確保しろ！";
-			break;
 		case Splat_Zones:
 			this.main = "ガチエリア";
 			this.sub = "ガチエリアを確保して守りぬけ！";
 			break;
 		case Rain_Maker:
+			break;
+		default:
 			break;
 		}
 	}
@@ -58,10 +56,10 @@ public class BattleRunnable extends BukkitRunnable {
 	public void run() {
 		if(tick > 0) {
 			if(tick%20 == 0) {
-				if(tick > (second+5)*20) {
+				if(tick > (second+5)*20) {//転送後のTitle表示
 					for(PlayerData data : DataStore.getArenaPlayersList(this.data.getName()))
 						MainGame.sendTitle(data, 0, 2, 0, main, sub);
-				} else if(tick <= (second+5)*20&&tick > second*20) {
+				} else if(tick <= (second+5)*20&&tick > second*20) {//カウントダウン
 					int count = tick/20-second;
 					for(PlayerData data : DataStore.getArenaPlayersList(this.data.getName())) {
 						MainGame.sendTitle(data,
@@ -69,10 +67,10 @@ public class BattleRunnable extends BukkitRunnable {
 								2,
 								0,
 								ChatColor.WHITE+"["+count+"]   >>> Ready? <<<   ["+count+"]",
-								SplatColor.conversionChatColor(this.data.getDyeColor(data.getTeamid()))+"[味方カラー]     " +
-								SplatColor.conversionChatColor(this.data.getDyeColor(data.getOpponentTeamid()))+"[相手カラー]");
+								this.data.getSplatColor(data.getTeamid()).getChatColor()+"[味方カラー]     " +
+								this.data.getSplatColor(data.getOpponentTeamid()).getChatColor()+"[相手カラー]");
 					}
-				} else if(tick == second*20) {
+				} else if(tick == second*20) {//戦闘開始
 					for(PlayerData data : DataStore.getArenaPlayersList(this.data.getName())) {
 						data.setMove(true);
 						data.setAllCansel(false);
@@ -83,8 +81,8 @@ public class BattleRunnable extends BukkitRunnable {
 							data.setSquidTask(task);
 						}
 					}
-					if(type.equals(BattleType.Turf_War))
-						data.setTotalpaintblock(data.getBattleClass().getTotalArea());
+					/*if(type.equals(BattleType.Turf_War))
+						data.setTotalpaintblock(data.getBattleClass().getTotalArea());*/
 				}
 				if(tick <= second*20) {
 					SplatScoreBoard.changeTime(data, tick);
@@ -119,7 +117,7 @@ public class BattleRunnable extends BukkitRunnable {
 			for(PlayerData data : DataStore.getArenaPlayersList(this.data.getName()))
 				MainGame.sendTitle(data, 1, 2, 1, ChatColor.GREEN.toString()+"～現在集計中～", ChatColor.YELLOW+"しばらくお待ち下さい|･ω･)ﾉ");
 			ResetPlayerData();
-			data.setGameStatus(ArenaStatusEnum.RESULT);
+			data.setGameStatus(GameStatusEnum.RESULT);
 			if(type == BattleType.Turf_War)
 				data.getBattleClass().resultBattle();
 			else if(type == BattleType.Splat_Zones) {
@@ -154,7 +152,7 @@ public class BattleRunnable extends BukkitRunnable {
 			player.removePotionEffect(PotionEffectType.SPEED);
 			player.removePotionEffect(PotionEffectType.INVISIBILITY);
 			player.setGameMode(GameMode.SPECTATOR);
-			player.setHealth(player.getMaxHealth());
+			player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 			player.setFoodLevel(20);
 		}
 	}

@@ -3,14 +3,6 @@ package jp.kotmw.splatoon.maingame;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.kotmw.splatoon.SplatColor;
-import jp.kotmw.splatoon.event.ZoneChangeEvent;
-import jp.kotmw.splatoon.gamedatas.ArenaData;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.PlayerData;
-import jp.kotmw.splatoon.mainweapons.Paint;
-import jp.kotmw.splatoon.manager.TeamCountManager;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -21,6 +13,15 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import jp.kotmw.splatoon.event.ZoneChangeEvent;
+import jp.kotmw.splatoon.gamedatas.ArenaData;
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.manager.Paint;
+import jp.kotmw.splatoon.manager.SplatColorManager;
+import jp.kotmw.splatoon.manager.SplatScoreBoard;
+import jp.kotmw.splatoon.manager.TeamCountManager;
 
 public class SplatZones extends Turf_War {
 
@@ -73,10 +74,10 @@ public class SplatZones extends Turf_War {
 				Block aboveBlock = Bukkit.getWorld(data.getWorld()).getBlockAt(x, y1+1, z);
 				if(block.getType() != Material.AIR
 						&& aboveBlock.getType() == Material.AIR) {
-					byte colorbyte = SplatColor.getColorByte(block);
-					if(SplatColor.conversionColorByte(data.getDyeColor(1)) == colorbyte) {
+					int colorbyte = SplatColorManager.getColorID(block);
+					if(data.getSplatColor(1).getColorID() == colorbyte) {
 						team1++;
-					} else if(SplatColor.conversionColorByte(data.getDyeColor(2)) == colorbyte) {
+					} else if(data.getSplatColor(2).getColorID() == colorbyte) {
 						team2++;
 					}
 				}
@@ -91,8 +92,8 @@ public class SplatZones extends Turf_War {
 				//カウントストップ
 				for(PlayerData player : DataStore.getArenaPlayersList(data.getName())) {
 					String text = player.getTeamid() == 1 ?
-							SplatColor.conversionChatColor(data.getDyeColor(2))+"カウントストップされた!":
-							SplatColor.conversionChatColor(data.getDyeColor(2))+"カウントストップした！";
+							data.getSplatColor(2).getChatColor()+"カウントストップされた!":
+							data.getSplatColor(2).getChatColor()+"カウントストップした！";
 					MainGame.sendTitle(player, 0, 5, 0, " ", text);
 				}
 				team1_manage.sethavearea(false);
@@ -106,8 +107,8 @@ public class SplatZones extends Turf_War {
 				//カウントストップ
 				for(PlayerData player : DataStore.getArenaPlayersList(data.getName())) {
 					String text = player.getTeamid() == 1 ?
-							SplatColor.conversionChatColor(data.getDyeColor(1))+"カウントストップした!":
-							SplatColor.conversionChatColor(data.getDyeColor(1))+"カウントストップされた！";
+							data.getSplatColor(1).getChatColor()+"カウントストップした!":
+							data.getSplatColor(1).getChatColor()+"カウントストップされた！";
 					MainGame.sendTitle(player, 0, 5, 0, " ", text);
 				}
 				team2_manage.sethavearea(false);
@@ -137,8 +138,8 @@ public class SplatZones extends Turf_War {
 			EnsureArea(ensureteam);
 			for(PlayerData player : DataStore.getArenaPlayersList(data.getName())) {
 				String text = player.getTeamid() == ensureteam ?
-						SplatColor.conversionChatColor(data.getDyeColor(ensureteam))+"ガチエリア確保した!":
-						SplatColor.conversionChatColor(data.getDyeColor(ensureteam))+"ガチエリア確保された!";
+						data.getSplatColor(ensureteam).getChatColor()+"ガチエリア確保した!":
+						data.getSplatColor(ensureteam).getChatColor()+"ガチエリア確保された!";
 				MainGame.sendTitle(player, 0, 5, 0, " ", text);
 			}
 		}
@@ -154,10 +155,9 @@ public class SplatZones extends Turf_War {
 			for(int z = z2; z <= z1; z++) {
 				Block block = Bukkit.getWorld(data.getWorld()).getBlockAt(x, (int)data.getAreaPosition1().getY(), z);
 				Paint.addRollBack(data, block);
-				SplatColor.ColorChange(block, data.getDyeColor(ensureteam));
+				Paint.ColorChange(block, data.getSplatColor(ensureteam));
 			}
-		for(ArmorStand stand : data.getAreastands())
-			stand.setHelmet(new ItemStack(Material.STAINED_GLASS, 1, SplatColor.conversionColorByte(data.getDyeColor(ensureteam))));
+		data.getAreastands().forEach(stand -> stand.setHelmet(new ItemStack(Material.STAINED_GLASS, 1, (byte)data.getSplatColor(ensureteam).getColorID())));
 	}
 
 	public static void clearAreaStand(ArenaData data) {

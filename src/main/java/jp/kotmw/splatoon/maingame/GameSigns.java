@@ -1,14 +1,5 @@
 package jp.kotmw.splatoon.maingame;
 
-import jp.kotmw.splatoon.filedatas.OtherFiles;
-import jp.kotmw.splatoon.filedatas.PlayerFiles;
-import jp.kotmw.splatoon.gamedatas.ArenaData;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.DataStore.SignType;
-import jp.kotmw.splatoon.gamedatas.SignData;
-import jp.kotmw.splatoon.gamedatas.WaitRoomData;
-import jp.kotmw.splatoon.gamedatas.WeaponData;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -22,6 +13,15 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import jp.kotmw.splatoon.filedatas.OtherFiles;
+import jp.kotmw.splatoon.filedatas.PlayerFiles;
+import jp.kotmw.splatoon.gamedatas.ArenaData;
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.SignType;
+import jp.kotmw.splatoon.gamedatas.SignData;
+import jp.kotmw.splatoon.gamedatas.WaitRoomData;
+import jp.kotmw.splatoon.gamedatas.WeaponData;
 
 public class GameSigns implements Listener {
 
@@ -49,6 +49,8 @@ public class GameSigns implements Listener {
 			if(DataStore.hasRoomData(sign.getLine(1))) {
 				WaitRoomData data = DataStore.getRoomData(sign.getLine(1));
 				MainGame.join(player, data);
+			} else {
+				player.sendMessage(MainGame.Prefix+ChatColor.RED+"その待機部屋は消去されています");
 			}
 		} else if(sign.getLine(0).equalsIgnoreCase(statussign)) {
 
@@ -158,6 +160,19 @@ public class GameSigns implements Listener {
 				Location l = new Location(Bukkit.getWorld(data.getWorld()), data.getX(), data.getY(), data.getZ());
 				Sign sign = (Sign)l.getBlock().getState();
 				sign.setLine(2, DataStore.getArenaData(arena).getGameStatus().getStats());
+				sign.update();
+			}
+		}
+	}
+	
+	public static void disableJoinSign(String room) {
+		for(SignData data : DataStore.getSignDataList()) {
+			if(data.getType() == SignType.JOIN
+					&& data.getName().equalsIgnoreCase(room)) {
+				Location l = new Location(Bukkit.getWorld(data.getWorld()), data.getX(), data.getY(), data.getZ());
+				Sign sign = (Sign)l.getBlock().getState();
+				sign.setLine(2, ChatColor.DARK_RED.toString()+ChatColor.BOLD+"DISABLED");
+				sign.setLine(3, "");
 				sign.update();
 			}
 		}

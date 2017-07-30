@@ -4,15 +4,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.kotmw.splatoon.gamedatas.ConfigData;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.DataStore.SignType;
-import jp.kotmw.splatoon.gamedatas.SignData;
-
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import jp.kotmw.splatoon.gamedatas.ConfigData;
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.SignType;
+import jp.kotmw.splatoon.gamedatas.SignData;
 
 
 public class OtherFiles extends PluginFiles {
@@ -67,7 +67,7 @@ public class OtherFiles extends PluginFiles {
 		file.set("Rank.Rank18", 25000);
 		file.set("Rank.Rank19", 27400);
 		file.set("Rank.Rank20", 30000);
-		file.set("Rank.Rank21", 24);
+		for(int i = 1; i <= 30; i++) file.set("Rank.Rank"+(20+i), 24*i);
 		SettingFiles(file, new File(filepath+"RankFile.yml"));
 	}
 

@@ -3,17 +3,18 @@ package jp.kotmw.splatoon.filedatas;
 import java.io.File;
 import java.util.List;
 
-import jp.kotmw.splatoon.SplatColor;
-import jp.kotmw.splatoon.gamedatas.ArenaData;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.DataStore.ArenaStatusEnum;
-import jp.kotmw.splatoon.maingame.SplatScoreBoard;
-import jp.kotmw.splatoon.maingame.Turf_War;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import jp.kotmw.splatoon.gamedatas.ArenaData;
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.GameStatusEnum;
+import jp.kotmw.splatoon.maingame.Turf_War;
+import jp.kotmw.splatoon.manager.SplatColorManager;
+import jp.kotmw.splatoon.manager.SplatScoreBoard;
 
 public class StageFiles extends PluginFiles {
 
@@ -112,10 +113,26 @@ public class StageFiles extends PluginFiles {
 		SettingFiles(file, DirFile(filedir, arena));
 		return true;
 	}
-
+	
 	public static ArenaData setArenaData(String arena) {
+		return setArenaData(arena, false);
+	}
+
+	public static ArenaData setArenaData(String arena, boolean update) {
 		FileConfiguration file = YamlConfiguration.loadConfiguration(DirFile(filedir, arena));
 		ArenaData data = new ArenaData(arena, file);
+		if(update) {
+			int paintblockscount = Turf_War.getTotalArea(Bukkit.getWorld(data.getWorld()), 
+					data.getStagePosition1().getBlockX(), 
+					data.getStagePosition2().getBlockX(), 
+					data.getStagePosition1().getBlockY(), 
+					data.getStagePosition2().getBlockY(), 
+					data.getStagePosition1().getBlockZ(), 
+					data.getStagePosition2().getBlockZ());
+			file.set("Stage.TotalPaintBlock", paintblockscount);
+			SettingFiles(file, DirFile(filedir, arena));
+			data.setTotalpaintblock(paintblockscount);
+		}
 		DataStore.addArenaData(arena, data);
 		return data;
 	}
@@ -168,11 +185,11 @@ public class StageFiles extends PluginFiles {
 			FileConfiguration file = YamlConfiguration.loadConfiguration(DirFile(filedir, arena));
 			file = replacePosition(arena, file);
 			ArenaData data = new ArenaData(arena, file);
-			data.setGameStatus(ArenaStatusEnum.ENABLE);
+			data.setGameStatus(GameStatusEnum.ENABLE);
 			if(!data.isStatus())
 				continue;
-			SplatColor.SetColor(data);
-			SplatScoreBoard.updateScoreboard(data);
+			SplatColorManager.SetColor(data);
+			SplatScoreBoard.createScoreboard(data);
 			DataStore.addArenaData(arena, data);
 		}
 	}

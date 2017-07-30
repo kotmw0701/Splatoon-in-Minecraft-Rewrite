@@ -4,21 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import jp.kotmw.splatoon.Main;
-import jp.kotmw.splatoon.event.BattleStartEvent;
-import jp.kotmw.splatoon.event.PlayerGameJoinEvent;
-import jp.kotmw.splatoon.event.PlayerGameLeaveEvent;
-import jp.kotmw.splatoon.filedatas.PlayerFiles;
-import jp.kotmw.splatoon.gamedatas.ArenaData;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.DataStore.ArenaStatusEnum;
-import jp.kotmw.splatoon.gamedatas.DataStore.BattleType;
-import jp.kotmw.splatoon.gamedatas.PlayerData;
-import jp.kotmw.splatoon.gamedatas.WaitRoomData;
-import jp.kotmw.splatoon.maingame.threads.AnimationRunnable;
-import jp.kotmw.splatoon.maingame.threads.TransferRunnable;
-import jp.kotmw.splatoon.util.MessageUtil;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -28,6 +13,23 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import jp.kotmw.splatoon.Main;
+import jp.kotmw.splatoon.event.BattleStartEvent;
+import jp.kotmw.splatoon.event.PlayerGameJoinEvent;
+import jp.kotmw.splatoon.event.PlayerGameLeaveEvent;
+import jp.kotmw.splatoon.filedatas.PlayerFiles;
+import jp.kotmw.splatoon.gamedatas.ArenaData;
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.BattleType;
+import jp.kotmw.splatoon.gamedatas.DataStore.GameStatusEnum;
+import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.gamedatas.SubWeaponData;
+import jp.kotmw.splatoon.gamedatas.WaitRoomData;
+import jp.kotmw.splatoon.maingame.threads.AnimationRunnable;
+import jp.kotmw.splatoon.maingame.threads.TransferRunnable;
+import jp.kotmw.splatoon.manager.SplatScoreBoard;
+import jp.kotmw.splatoon.util.MessageUtil;
 
 public class MainGame extends MessageUtil{
 
@@ -124,7 +126,7 @@ public class MainGame extends MessageUtil{
 		roomdata.setTask(null);
 		for(PlayerData data : DataStore.getRoomPlayersList(roomdata.getName()))
 			sendActionBar(data, " ");
-		arenadata.setGameStatus(ArenaStatusEnum.INGAME);
+		arenadata.setGameStatus(GameStatusEnum.INGAME);
 		BattleStartEvent event = new BattleStartEvent(roomdata, arenadata);
 		Bukkit.getPluginManager().callEvent(event);
 		new TransferRunnable(arenadata, roomdata.getName(), DataStore.getConfig().getTransfarCount(), roomdata.getBattleType()).runTaskTimer(Main.main, 0, 20);
@@ -139,7 +141,7 @@ public class MainGame extends MessageUtil{
 			sendActionBar(data, " ");
 			sendMessage(data, ChatColor.GOLD+"大変長らくお待たせいたしました、ただいまより転送いたします");
 		}
-		arenadata.setGameStatus(ArenaStatusEnum.INGAME);
+		arenadata.setGameStatus(GameStatusEnum.INGAME);
 		BattleStartEvent event = new BattleStartEvent(roomdata, arenadata);
 		Bukkit.getPluginManager().callEvent(event);
 		GameSigns.UpdateJoinSign(roomdata.getName());
@@ -150,23 +152,9 @@ public class MainGame extends MessageUtil{
 		Player player = Bukkit.getPlayer(data.getName());
 		player.getInventory().clear();
 		if(data.getWeapon() == null)
-			data.setWeapon(DataStore.getWeaponList().get(0).getName());
+			data.setWeapon(DataStore.getStatusData(data.getName()).getWeapons().get(0));
 		player.getInventory().setItem(0, GameItems.getWeaponItem(DataStore.getWeapondata(data.getWeapon())));
 		player.getInventory().setItem(1, GameItems.getSubWeaponItem(DataStore.getWeapondata(data.getWeapon())));
-	}
-
-	public static void setRandomTeam(List<PlayerData> datas) {
-		Collections.shuffle(datas);
-		boolean team1 = true;
-		for(PlayerData data : datas) {
-			if(team1) {
-				data.setTeamid(1);
-				team1 = false;
-			} else {
-				data.setTeamid(2);
-				team1 = true;
-			}
-		}
 	}
 
 	/**
@@ -193,7 +181,7 @@ public class MainGame extends MessageUtil{
 								&&(arenadata.getAreaPosition1().getZ() == arenadata.getAreaPosition2().getZ()))
 						continue;
 			}
-			if(arenadata.getGameStatus() == ArenaStatusEnum.ENABLE)
+			if(arenadata.getGameStatus() == GameStatusEnum.ENABLE)
 				return arenadata;
 		}
 		return null;
@@ -201,6 +189,7 @@ public class MainGame extends MessageUtil{
 
 	public static void end(ArenaData data, List<PlayerData> datas) {
 		data.clearStatus();
+		SplatScoreBoard.resetScoreboard(data);
 		for(PlayerData datalist : datas) {
 			Player player = Bukkit.getPlayer(datalist.getName());
 			player.getInventory().clear();
@@ -247,7 +236,7 @@ public class MainGame extends MessageUtil{
 		}
 	}
 
-	public static void SphereDamager(PlayerData player, Location center, int maxdamage, double maxradius) {
+	/*public static void SphereDamager(PlayerData player, Location center, SubWeaponData subWeaponData, double radius) {
 		for(PlayerData data : DataStore.getArenaPlayersList(player.getArena())) {
 			if(data.getName() == player.getName())
 				continue;
@@ -255,11 +244,35 @@ public class MainGame extends MessageUtil{
 				continue;
 			Player target = Bukkit.getPlayer(data.getName());
 			double distance = center.distance(target.getLocation());
-			if(maxradius > distance) {
-				target.damage(maxdamage);
+			if(radius > distance) target.damage(subWeaponData.getMaxDamage());
+		}
+	}*/
+	
+	public static void SphereDamager(PlayerData player, Location center, SubWeaponData subWeaponData, double radius, boolean crit) {
+		for(PlayerData data : DataStore.getArenaPlayersList(player.getArena())) {
+			if(data.getName() == player.getName())
+				continue;
+			if(player.getTeamid() == data.getTeamid())
+				continue;
+			Player target = Bukkit.getPlayer(data.getName());
+			double distance = center.distance(target.getLocation());
+			if(radius > distance) {
+				if(crit && 0.5 > distance) {
+					target.damage(subWeaponData.getCriticalDamage());
+					continue;
+				}
+				//距離減衰式を入れる
+				 target.damage(subWeaponData.getMaxDamage());
 			}
 		}
 	}
+	
+
+	/*DataStore.getArenaPlayersList(player.getArena()).stream()
+	.filter(data -> data.getName() != player.getName())
+	.filter(data -> player.getTeamid() == data.getTeamid())
+	.filter(data -> (0.5 > center.distance(Bukkit.getPlayer(data.getName()).getLocation())))
+	.forEach(data -> Bukkit.getPlayer(data.getName()).damage(critical));*/
 
 	public static int getTime(BattleType type) {
 		switch(type) {
@@ -271,5 +284,9 @@ public class MainGame extends MessageUtil{
 			break;
 		}
 		return 180;
+	}
+	
+	public static void sync(Runnable runnable) {
+		Bukkit.getScheduler().runTask(Main.main, runnable);
 	}
 }

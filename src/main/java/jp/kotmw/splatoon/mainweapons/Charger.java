@@ -8,6 +8,7 @@ import jp.kotmw.splatoon.gamedatas.PlayerData;
 import jp.kotmw.splatoon.gamedatas.WeaponData;
 import jp.kotmw.splatoon.maingame.MainGame;
 import jp.kotmw.splatoon.mainweapons.threads.ChargerRunnable;
+import jp.kotmw.splatoon.manager.Paint;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

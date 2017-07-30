@@ -201,7 +201,7 @@ public class DataStore {
 		}
 	}
 
-	public enum ArenaStatusEnum {
+	public enum GameStatusEnum {
 		ENABLE(ChatColor.GREEN + "ENABLED"),
 		DISABLE(ChatColor.DARK_RED + "DISABLED"),
 		INGAME(ChatColor.RED + "INGAME"),
@@ -209,7 +209,7 @@ public class DataStore {
 
 		private final String stats;
 
-		private ArenaStatusEnum(final String stats) {
+		private GameStatusEnum(final String stats) {
 			this.stats = stats;
 		}
 

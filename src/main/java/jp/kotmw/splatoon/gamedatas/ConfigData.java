@@ -18,8 +18,8 @@ public class ConfigData {
 	public ConfigData(FileConfiguration file) {
 		this.configversion = file.getString("ConfigVersion");
 		this.TransfarCount = file.getInt("TransfarCount");
-		this.TurfWar = file.getInt("Time.TurfWar");
-		this.SplatZones = file.getInt("Time.SplatZones");
+		this.TurfWar = file.getInt("Time.Turf_War");
+		this.SplatZones = file.getInt("Time.Splat_Zones");
 		this.finishteleportlobby = file.getBoolean("FinishTeleportLobby");
 		this.usesql = file.getBoolean("UseDatabase");
 		this.canpaintcolors = file.getStringList("CanPaintColors");

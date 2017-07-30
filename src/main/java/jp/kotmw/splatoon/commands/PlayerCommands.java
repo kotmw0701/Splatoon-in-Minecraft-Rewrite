@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import jp.kotmw.splatoon.Main;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.maingame.MainGame;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import jp.kotmw.splatoon.Main;
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.maingame.MainGame;
 
 public class PlayerCommands implements CommandExecutor {
 
@@ -27,6 +27,17 @@ public class PlayerCommands implements CommandExecutor {
 		} else if(args.length == 1) {
 			if("leave".equalsIgnoreCase(args[0]))
 				MainGame.leave(player);
+			else if("roomlist".equalsIgnoreCase(args[0])) {
+				player.sendMessage(ChatColor.GREEN+"待機部屋一覧");
+				for(String room : DataStore.getRoomList()) {
+					player.sendMessage("- "+room);
+				}
+			} else if("arenalist".equalsIgnoreCase(args[0])) {
+				player.sendMessage(ChatColor.GREEN+"ステージ一覧");
+				for(String room : DataStore.getArenaList()) {
+					player.sendMessage("- "+room+" "+DataStore.getArenaData(room).getGameStatus().getStats());
+				}
+			}
 		} else if(args.length == 2) {
 			if("join".equalsIgnoreCase(args[0])) {
 				if(!DataStore.hasRoomData(args[1])) {

@@ -3,13 +3,13 @@ package jp.kotmw.splatoon.filedatas;
 import java.io.File;
 import java.util.List;
 
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.DataStore.BattleType;
-import jp.kotmw.splatoon.gamedatas.WaitRoomData;
-
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.BattleType;
+import jp.kotmw.splatoon.gamedatas.WaitRoomData;
 
 public class WaitRoomFiles extends PluginFiles {
 
@@ -48,5 +48,19 @@ public class WaitRoomFiles extends PluginFiles {
 			WaitRoomData data = new WaitRoomData(room, file);
 			DataStore.addRoomData(room, data);
 		}
+	}
+	
+	public static boolean removeRoomFile(String room) {
+		return DirFile(filedir, room).delete();
+	}
+	
+	public static void editSelectList(WaitRoomData room, String arena, boolean add) {
+		FileConfiguration file = YamlConfiguration.loadConfiguration(DirFile(filedir, room.getName()));
+		List<String> arenas = room.getSelectList();
+		if(add) arenas.add(arena);
+		else arenas.remove(arena);
+		room.setSelectList(arenas);
+		file.set("Room.SelectList", arenas);
+		SettingFiles(file, DirFile(filedir, room.getName()));
 	}
 }

@@ -1,12 +1,12 @@
 package jp.kotmw.splatoon.maingame.threads;
 
+import org.bukkit.ChatColor;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import jp.kotmw.splatoon.gamedatas.DataStore;
 import jp.kotmw.splatoon.gamedatas.PlayerData;
 import jp.kotmw.splatoon.gamedatas.WaitRoomData;
 import jp.kotmw.splatoon.maingame.MainGame;
-
-import org.bukkit.ChatColor;
-import org.bukkit.scheduler.BukkitRunnable;
 
 public class AnimationRunnable extends BukkitRunnable {
 

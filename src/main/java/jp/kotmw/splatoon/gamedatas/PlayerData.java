@@ -23,6 +23,7 @@ public class PlayerData {
 	private List<ItemStack> items; //プレイヤー参加前のインベントリデータ
 	private float paintscore; //塗ったスコア
 	private BukkitRunnable task; //プレイヤーの武器のRunnable
+	private Thread thread;
 	private BukkitRunnable squidtask;
 	private int runnableTick; //武器のRunnableのtick
 	private boolean paint = false; //ローラー使用の時の塗れる時間かどうか
@@ -63,6 +64,8 @@ public class PlayerData {
 	public float getScore() {return paintscore;}
 
 	public BukkitRunnable getTask() {return task;}
+	
+	public Thread getThread() {return thread;}/////////
 
 	public BukkitRunnable getSquidTask() {return squidtask;}
 
@@ -113,6 +116,8 @@ public class PlayerData {
 	public void setScore(float paintscore) {this.paintscore = paintscore;}
 
 	public void setTask(BukkitRunnable task) {this.task = task;}
+	
+	public void setThread(Thread thread) {this.thread = thread;}//////////////
 
 	public void setSquidTask(BukkitRunnable squidtask) {this.squidtask = squidtask;}
 

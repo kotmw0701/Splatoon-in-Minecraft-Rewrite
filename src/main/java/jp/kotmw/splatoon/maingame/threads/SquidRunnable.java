@@ -1,12 +1,12 @@
 package jp.kotmw.splatoon.maingame.threads;
 
-import jp.kotmw.splatoon.SplatColor;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.PlayerData;
-
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.manager.SplatColorManager;
 
 public class SquidRunnable extends BukkitRunnable {
 
@@ -31,11 +31,11 @@ public class SquidRunnable extends BukkitRunnable {
 		}
 		if(!data.isSquidMode())
 			return;
-		if(!SplatColor.isBelowBlockTeamColor(Bukkit.getPlayer(name)))
+		if(!SplatColorManager.isBelowBlockTeamColor(Bukkit.getPlayer(name)))
 			return;
 		Player player = Bukkit.getPlayer(name);
 		float ink = player.getExp();
-		if(ink <= 1.0) {
+		if(ink <= 0.984) {
 			player.setExp(ink+0.016f);
 		}
 	}

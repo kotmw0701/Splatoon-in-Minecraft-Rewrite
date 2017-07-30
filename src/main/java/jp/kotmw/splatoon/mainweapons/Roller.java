@@ -9,6 +9,7 @@ import jp.kotmw.splatoon.gamedatas.PlayerData;
 import jp.kotmw.splatoon.gamedatas.WeaponData;
 import jp.kotmw.splatoon.maingame.MainGame;
 import jp.kotmw.splatoon.mainweapons.threads.RollerRunnable;
+import jp.kotmw.splatoon.manager.Paint;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;

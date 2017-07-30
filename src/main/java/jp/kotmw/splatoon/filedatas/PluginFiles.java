@@ -6,14 +6,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import jp.kotmw.splatoon.Main;
-
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import jp.kotmw.splatoon.Main;
+
 public class PluginFiles {
 
-	public static String filepath = Main.main.filepath;
+	protected static String filepath = Main.main.filepath;
 
 	/**
 	 * ファイルの保存
@@ -22,7 +22,7 @@ public class PluginFiles {
 	 * @param file ファイル指定
 	 * @param save 上書きをするかリセットするか
 	 */
-	public static void SettingFiles(FileConfiguration fileconfiguration, File file) {
+	protected static void SettingFiles(FileConfiguration fileconfiguration, File file) {
 		try {
 			fileconfiguration.save(file);
 		} catch (IOException e) {
@@ -38,7 +38,7 @@ public class PluginFiles {
 	 * @param name ファイル名
 	 *
 	 */
-	public static File DirFile(String dirname, String name) {
+	protected static File DirFile(String dirname, String name) {
 		return new File(filepath + dirname + File.separator + name +".yml");
 	}
 
@@ -64,7 +64,7 @@ public class PluginFiles {
 	 * @param dir ファイルディレクトリ
 	 *
 	 */
-	public static List<String> getFileList(File dir) {
+	protected static List<String> getFileList(File dir) {
 		List<String> names = new ArrayList<>();
 		for(File file : Arrays.asList(dir.listFiles())) {
 			if(file.isDirectory())
@@ -74,7 +74,7 @@ public class PluginFiles {
 		return names;
 	}
 
-	public static void setData(File file, String path, Object param) {
+	protected static void setData(File file, String path, Object param) {
 		FileConfiguration fileconfig = YamlConfiguration.loadConfiguration(file);
 		fileconfig.set(path, param);
 		SettingFiles(fileconfig, file);

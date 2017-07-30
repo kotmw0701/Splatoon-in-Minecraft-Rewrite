@@ -1,14 +1,5 @@
 package jp.kotmw.splatoon.subweapon;
 
-import jp.kotmw.splatoon.Main;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.DataStore.BombType;
-import jp.kotmw.splatoon.gamedatas.PlayerData;
-import jp.kotmw.splatoon.gamedatas.SubWeaponData;
-import jp.kotmw.splatoon.maingame.MainGame;
-import jp.kotmw.splatoon.mainweapons.Paint;
-import jp.kotmw.splatoon.subweapon.threads.SplashBombRunnable;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -26,6 +17,15 @@ import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
+
+import jp.kotmw.splatoon.Main;
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.BombType;
+import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.gamedatas.SubWeaponData;
+import jp.kotmw.splatoon.maingame.MainGame;
+import jp.kotmw.splatoon.manager.Paint;
+import jp.kotmw.splatoon.subweapon.threads.SplashBombRunnable;
 
 public class Bomb implements Listener {
 
@@ -105,7 +105,7 @@ public class Bomb implements Listener {
 		SubWeaponData subweapon = DataStore.getSubWeaponData(DataStore.getWeapondata(data.getWeapon()).getSubWeapon());
 		if(subweapon.getType() == BombType.QuickBomb) {
 			Paint.SpherePaint(e.getEntity().getLocation(), 4, data);
-			MainGame.SphereDamager(data, e.getEntity().getLocation(), subweapon.getDamage(), 4);
+			MainGame.SphereDamager(data, e.getEntity().getLocation(), subweapon, 4, true);
 			return;
 		} else if(subweapon.getType() == BombType.SuckerBomb) {
 			ArmorStand stand = (ArmorStand) player.getWorld().spawnEntity(e.getEntity().getLocation().add(0,-1,0), EntityType.ARMOR_STAND);
@@ -113,7 +113,7 @@ public class Bomb implements Listener {
 			tntprimed.setFuseTicks(2*20);
 			tntprimed.setYield(0);
 			stand.setCustomName(player.getName());
-			stand.setPassenger(tntprimed);
+			stand.addPassenger(tntprimed);
 			stand.setGravity(false);
 			stand.setVisible(false);
 			stand.setSmall(true);
@@ -136,7 +136,7 @@ public class Bomb implements Listener {
 		PlayerData data = DataStore.getPlayerData(name);
 		SubWeaponData subweapon = DataStore.getSubWeaponData(DataStore.getWeapondata(data.getWeapon()).getSubWeapon());
 		Paint.SpherePaint(e.getEntity().getLocation(), 4, data);
-		MainGame.SphereDamager(data, e.getEntity().getLocation(), subweapon.getDamage(), 4);
+		MainGame.SphereDamager(data, e.getEntity().getLocation(), subweapon, 4, false);
 	}
 
 	private static Material getLaunchItem(Projectile projectile) {

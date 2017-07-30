@@ -1,5 +1,14 @@
 package jp.kotmw.splatoon.maingame.threads;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import jp.kotmw.splatoon.Main;
 import jp.kotmw.splatoon.gamedatas.ArenaData;
 import jp.kotmw.splatoon.gamedatas.DataStore;
@@ -7,15 +16,9 @@ import jp.kotmw.splatoon.gamedatas.DataStore.BattleType;
 import jp.kotmw.splatoon.gamedatas.PlayerData;
 import jp.kotmw.splatoon.maingame.GameSigns;
 import jp.kotmw.splatoon.maingame.MainGame;
-import jp.kotmw.splatoon.maingame.SplatScoreBoard;
 import jp.kotmw.splatoon.maingame.SplatZones;
 import jp.kotmw.splatoon.maingame.Turf_War;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
+import jp.kotmw.splatoon.manager.SplatScoreBoard;
 
 public class TransferRunnable extends BukkitRunnable {
 
@@ -42,11 +45,14 @@ public class TransferRunnable extends BukkitRunnable {
 						ChatColor.GREEN+"ステージに転送します",
 						ChatColor.BLUE.toString()+"---[  "+ChatColor.DARK_AQUA.toString()+ChatColor.BOLD+second+ChatColor.BLUE.toString()+"  ]---");
 		} else {
-			MainGame.setRandomTeam(DataStore.getRoomPlayersList(beforeroom));
-			int team1 = 1, team2 = 1;
-			for(PlayerData data : DataStore.getRoomPlayersList(beforeroom)) {
+			List<PlayerData> datalist = DataStore.getRoomPlayersList(beforeroom);
+			Collections.shuffle(datalist);
+			int team = 1, team1 = 1, team2 = 1;
+			for(PlayerData data : datalist) {
+				if(team == this.data.getTeamsCount()) team = 1;
 				data.setMove(false);
 				data.setArena(this.data.getName());
+				data.setTeamid(team);
 				MainGame.setInv(data);
 				Player player = Bukkit.getPlayer(data.getName());
 				player.setGameMode(GameMode.ADVENTURE);
@@ -54,13 +60,14 @@ public class TransferRunnable extends BukkitRunnable {
 				SplatScoreBoard.DefaultScoreBoard(this.data, type);
 				SplatScoreBoard.setTeam(data);
 				SplatScoreBoard.showBoard(data);
-				if(data.getTeamid() == 1) {
+				if(team == 1) {
 					MainGame.Teleport(data, this.data.getTeam1(team1).convertLocation());
 					team1++;
-				} else if(data.getTeamid() == 2) {
+				} else if(team == 2) {
 					MainGame.Teleport(data, this.data.getTeam2(team2).convertLocation());
 					team2++;
 				}
+				team++;
 			}
 			switch(type) {
 			case Turf_War:

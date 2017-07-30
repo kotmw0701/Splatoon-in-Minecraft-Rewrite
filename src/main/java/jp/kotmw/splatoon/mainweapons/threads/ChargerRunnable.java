@@ -1,16 +1,15 @@
 package jp.kotmw.splatoon.mainweapons.threads;
 
-import jp.kotmw.splatoon.SplatColor;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.PlayerData;
-import jp.kotmw.splatoon.maingame.MainGame;
-import jp.kotmw.splatoon.mainweapons.Charger;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.maingame.MainGame;
+import jp.kotmw.splatoon.mainweapons.Charger;
 
 public class ChargerRunnable extends BukkitRunnable {
 
@@ -55,7 +54,7 @@ public class ChargerRunnable extends BukkitRunnable {
 	}
 
 	private void sendCharge(PlayerData data, int charge) {
-		ChatColor inkcolor = SplatColor.conversionChatColor(DataStore.getArenaData(data.getArena()).getDyeColor(data.getTeamid()));
+		ChatColor inkcolor = DataStore.getArenaData(data.getArena()).getSplatColor(data.getTeamid()).getChatColor();
 		String coloredmeter = inkcolor+meter.substring(0, charge)+ChatColor.GRAY+meter.substring(charge)+"  ";
 		MainGame.sendTitle(data, 0, 10, 0, " ", coloredmeter);
 	}

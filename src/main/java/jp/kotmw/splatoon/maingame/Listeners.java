@@ -1,19 +1,10 @@
 package jp.kotmw.splatoon.maingame;
 
-import jp.kotmw.splatoon.Main;
-import jp.kotmw.splatoon.event.ArenaStatusChangeEvent;
-import jp.kotmw.splatoon.event.PlayerGameJoinEvent;
-import jp.kotmw.splatoon.event.PlayerGameLeaveEvent;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.DataStore.ArenaStatusEnum;
-import jp.kotmw.splatoon.gamedatas.PlayerData;
-import jp.kotmw.splatoon.gamedatas.WaitRoomData;
-import jp.kotmw.splatoon.maingame.threads.RespawnRunnable;
-
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -33,18 +24,58 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.potion.PotionEffectType;
 
+import jp.kotmw.splatoon.Main;
+import jp.kotmw.splatoon.event.ArenaStatusChangeEvent;
+import jp.kotmw.splatoon.event.PlayerGameJoinEvent;
+import jp.kotmw.splatoon.event.PlayerGameLeaveEvent;
+import jp.kotmw.splatoon.gamedatas.ArenaData;
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.GameStatusEnum;
+import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.gamedatas.WaitRoomData;
+import jp.kotmw.splatoon.maingame.threads.RespawnRunnable;
+
 public class Listeners implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onPlace(BlockPlaceEvent e) {
-		if(DataStore.hasPlayerData(e.getPlayer().getName()))
+		if(DataStore.hasPlayerData(e.getPlayer().getName())) {
 			e.setCancelled(true);
+			return;
+		}
+		for(String arena : DataStore.getArenaList()) {
+			ArenaData data  = DataStore.getArenaData(arena);
+			if(!data.isStatus())
+				return;
+			if(((data.getStagePosition1().getBlockX() >= e.getBlock().getX()) && (e.getBlock().getX() >= data.getStagePosition2().getBlockX()))
+					&& ((data.getStagePosition1().getBlockY() >= e.getBlock().getY()) && (e.getBlock().getY() >= data.getStagePosition2().getBlockY()))
+					&& ((data.getStagePosition1().getBlockZ() >= e.getBlock().getZ()) && (e.getBlock().getZ() >= data.getStagePosition2().getBlockZ()))) {
+				e.setCancelled(true);
+				e.getPlayer().sendMessage(MainGame.Prefix+ChatColor.RED+"範囲内編集をするには、Editmodeを有効にしてください");
+				return;
+			}
+		}
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onBreak(BlockBreakEvent e) {
-		if(DataStore.hasPlayerData(e.getPlayer().getName()))
+		if(DataStore.hasPlayerData(e.getPlayer().getName())) {
 			e.setCancelled(true);
+			return;
+		}
+		for(String arena : DataStore.getArenaList()) {
+			ArenaData data  = DataStore.getArenaData(arena);
+			if(!data.isStatus())
+				return;
+			if(((data.getStagePosition1().getBlockX() >= e.getBlock().getX()) && (e.getBlock().getX() >= data.getStagePosition2().getBlockX()))
+					&& ((data.getStagePosition1().getBlockY() >= e.getBlock().getY()) && (e.getBlock().getY() >= data.getStagePosition2().getBlockY()))
+					&& ((data.getStagePosition1().getBlockZ() >= e.getBlock().getZ()) && (e.getBlock().getZ() >= data.getStagePosition2().getBlockZ()))) {
+				e.setCancelled(true);
+				e.getPlayer().sendMessage(MainGame.Prefix+ChatColor.RED+"範囲内編集をするには、Editmodeを有効にしてください");
+				return;
+			}
+		}
+		
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
@@ -127,7 +158,7 @@ public class Listeners implements Listener {
 		e.setDeathMessage("");
 		e.setKeepInventory(true);
 		player.getInventory().setHeldItemSlot(8);
-		player.setHealth(player.getMaxHealth());
+		player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getValue());
 		player.setRemainingAir(player.getMaximumAir());
 		player.setFoodLevel(20);
 		player.setGameMode(GameMode.SPECTATOR);
@@ -172,7 +203,7 @@ public class Listeners implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onChangeStatus(ArenaStatusChangeEvent e) {
-		if(e.getStatus() != ArenaStatusEnum.ENABLE)
+		if(e.getStatus() != GameStatusEnum.ENABLE)
 			return;
 		WaitRoomData roomdata = DataStore.getRoomData(DataStore.getMaxPriorityData());
 		MainGame.start(roomdata, e.getArena());

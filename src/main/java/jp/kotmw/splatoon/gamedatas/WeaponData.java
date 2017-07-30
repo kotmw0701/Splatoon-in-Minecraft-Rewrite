@@ -1,10 +1,10 @@
 package jp.kotmw.splatoon.gamedatas;
 
-import jp.kotmw.splatoon.gamedatas.DataStore.WeaponType;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+
+import jp.kotmw.splatoon.gamedatas.DataStore.WeaponType;
 
 public class WeaponData {
 	private String name;

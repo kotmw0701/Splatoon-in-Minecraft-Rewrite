@@ -1,18 +1,18 @@
 package jp.kotmw.splatoon.event;
 
-import jp.kotmw.splatoon.gamedatas.ArenaData;
-import jp.kotmw.splatoon.gamedatas.DataStore.ArenaStatusEnum;
-
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
+import jp.kotmw.splatoon.gamedatas.ArenaData;
+import jp.kotmw.splatoon.gamedatas.DataStore.GameStatusEnum;
 
 public class ArenaStatusChangeEvent extends Event{
 
 	private static final HandlerList handlers = new HandlerList();
 	private ArenaData data;
-	private ArenaStatusEnum status;
+	private GameStatusEnum status;
 
-	public ArenaStatusChangeEvent(ArenaData data, ArenaStatusEnum status) {
+	public ArenaStatusChangeEvent(ArenaData data, GameStatusEnum status) {
 		this.data = data;
 		this.status = status;
 	}
@@ -21,7 +21,7 @@ public class ArenaStatusChangeEvent extends Event{
 		return data;
 	}
 
-	public ArenaStatusEnum getStatus() {
+	public GameStatusEnum getStatus() {
 		return status;
 	}
 

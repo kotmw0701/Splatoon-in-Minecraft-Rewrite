@@ -3,22 +3,6 @@ package jp.kotmw.splatoon.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.kotmw.splatoon.SplatColor;
-import jp.kotmw.splatoon.filedatas.OtherFiles;
-import jp.kotmw.splatoon.filedatas.PlayerFiles;
-import jp.kotmw.splatoon.filedatas.StageFiles;
-import jp.kotmw.splatoon.filedatas.WaitRoomFiles;
-import jp.kotmw.splatoon.filedatas.WeaponFiles;
-import jp.kotmw.splatoon.gamedatas.ArenaData;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.DataStore.ArenaStatusEnum;
-import jp.kotmw.splatoon.gamedatas.DataStore.BattleType;
-import jp.kotmw.splatoon.gamedatas.PlayerData;
-import jp.kotmw.splatoon.gamedatas.WaitRoomData;
-import jp.kotmw.splatoon.maingame.MainGame;
-import jp.kotmw.splatoon.maingame.SplatScoreBoard;
-import jp.kotmw.splatoon.mainweapons.Paint;
-
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -31,6 +15,23 @@ import org.bukkit.entity.Player;
 import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 
+import jp.kotmw.splatoon.filedatas.OtherFiles;
+import jp.kotmw.splatoon.filedatas.PlayerFiles;
+import jp.kotmw.splatoon.filedatas.StageFiles;
+import jp.kotmw.splatoon.filedatas.WaitRoomFiles;
+import jp.kotmw.splatoon.filedatas.WeaponFiles;
+import jp.kotmw.splatoon.gamedatas.ArenaData;
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.BattleType;
+import jp.kotmw.splatoon.gamedatas.DataStore.GameStatusEnum;
+import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.gamedatas.WaitRoomData;
+import jp.kotmw.splatoon.maingame.GameSigns;
+import jp.kotmw.splatoon.maingame.MainGame;
+import jp.kotmw.splatoon.manager.Paint;
+import jp.kotmw.splatoon.manager.SplatColorManager;
+import jp.kotmw.splatoon.manager.SplatScoreBoard;
+
 public class SettingCommands implements CommandExecutor{
 
 	List<ArmorStand> stands = new ArrayList<ArmorStand>();
@@ -40,29 +41,38 @@ public class SettingCommands implements CommandExecutor{
 		if(!(sender instanceof Player))
 			return false;
 		Player player = (Player)sender;
-		if(args.length < 1) {
+		if(args.length == 0) {
 			player.sendMessage(MainGame.Prefix);
 			player.sendMessage("-----Setting Command List-----");
 			player.sendMessage("/splatsetting setlobby");
 			player.sendMessage("/splatsetting <room> setroom");
+			player.sendMessage("/splatsetting <room> removeroom");
+			player.sendMessage("/splatsetting <room> addarena <arena>");
+			player.sendMessage("/splatsetting <room> removearena <arena>");
 			player.sendMessage("/splatsetting <arena> setarena");
 			player.sendMessage("/splatsetting <arena> setarea");
 			player.sendMessage("/splatsetting <arena> finish");
 			player.sendMessage("/splatsetting <arena> setspawn <1/2> <1/2/3/4>");
 			player.sendMessage("/splatsetting <arena> editmode");
 			player.sendMessage("------------------------------");
+			return true;
 		} else if(args.length == 1) {
 			if("setlobby".equalsIgnoreCase(args[0])) {
 				OtherFiles.createLobby(player.getLocation());
 				player.sendMessage(MainGame.Prefix+ChatColor.GREEN + "ロビーを設定しました");
+				return true;
 			} else if("configreload".equalsIgnoreCase(args[0])) {
 				OtherFiles.ConfigReload();
 				player.sendMessage(MainGame.Prefix+"Config.ymlを再読み込みしました");
+				return true;
 			} else if("start".equalsIgnoreCase(args[0])) {
 				if(DataStore.hasPlayerData(player.getName())) {
 					PlayerData playerdata = DataStore.getPlayerData(player.getName());
 					MainGame.start(DataStore.getRoomData(playerdata.getRoom()));
+					return true;
 				}
+				player.sendMessage(MainGame.Prefix+ChatColor.RED+"参加してからコマンド実行をしてくださいな");
+				return false;
 			}
 		} else if(args.length == 2) {
 			if("rollback".equalsIgnoreCase(args[0])) {
@@ -70,13 +80,18 @@ public class SettingCommands implements CommandExecutor{
 					return false;
 				ArenaData data = DataStore.getArenaData(args[1]);
 				Paint.RollBack(data);
+				return true;
 			}
 			String name = args[0];
 			if("setarena".equalsIgnoreCase(args[1])) {
 				if(StageFiles.AlreadyCreate(name)) {
-					player.sendMessage(MainGame.Prefix+ChatColor.RED + "そのステージは既に存在します");
-					player.sendMessage(MainGame.Prefix+ChatColor.GREEN + "ステージ範囲の再設定をしたい場合は "
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"そのステージは既に存在します");
+					player.sendMessage(MainGame.Prefix+ChatColor.GREEN+"ステージ範囲の再設定をしたい場合は "
 					+ChatColor.YELLOW+"/splatsetting "+name+" editmode"+ChatColor.GREEN+"のコマンドを使用してステージを無効化してからsetarenaのコマンドを再実行してください");
+					return false;
+				}
+				if(name.length() > 16) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"ステージ名は16文字以下にしてください");
 					return false;
 				}
 				WorldEditPlugin worldEdit = (WorldEditPlugin)Bukkit.getPluginManager().getPlugin("WorldEdit");
@@ -109,30 +124,46 @@ public class SettingCommands implements CommandExecutor{
 					return false;
 				StageFiles.setArea(name, selection.getMinimumPoint(), selection.getMaximumPoint());
 				player.sendMessage(MainGame.Prefix+ChatColor.GREEN+"エリア範囲を設定しました");
+				return true;
 			} else if("finish".equalsIgnoreCase(args[1])) {
-				if(DataStore.hasArenaData(name))
+				int total = 0;
+				boolean update = false;
+				if(DataStore.hasArenaData(name)) {
 					if(DataStore.getArenaData(name).isStatus()) {
 						player.sendMessage(MainGame.Prefix+ChatColor.RED+"既に有効化済みです");
 						return false;
 					}
-				ArenaData data = StageFiles.setArenaData(name);
+					total = DataStore.getArenaData(name).getTotalpaintblock();
+					update = true;
+				}
+				ArenaData data = StageFiles.setArenaData(name, DataStore.hasArenaData(name));
 				if(!StageFiles.isFinishSetup(data)) {
 					player.sendMessage(MainGame.Prefix+ChatColor.RED+"そのステージはセットアップが完了していません");
 					DataStore.removeArenaData(name);
 					return false;
 				}
+				if(update)
+					player.sendMessage(MainGame.Prefix+total+" -> "+data.getTotalpaintblock());
+				if(data.getTotalpaintblock() <= 0) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"着色可能ブロックを1つ以上設置してください");
+					return false;
+				}
 				data.setStatus(true);
-				data.setGameStatus(ArenaStatusEnum.ENABLE);
+				data.setGameStatus(GameStatusEnum.ENABLE);
 				StageFiles.setEnable(name);
-				SplatColor.SetColor(data);
-				SplatScoreBoard.updateScoreboard(data);
-				player.sendMessage(MainGame.Prefix+ChatColor.GREEN + "設定完了を確認し、使用可能になりました！");
+				SplatColorManager.SetColor(data);
+				SplatScoreBoard.createScoreboard(data);
+				player.sendMessage(MainGame.Prefix+ChatColor.GREEN+"設定完了を確認し、使用可能になりました！");
 				return true;
 			} else if("setroom".equalsIgnoreCase(args[1])) {
+				if(name.length() > 16) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"待機部屋名は16文字以下にしてください");
+					return false;
+				}
 				if(DataStore.hasRoomData(name)) {
-					player.sendMessage(MainGame.Prefix + ChatColor.GREEN + "既に作成されていた待機部屋の座標と置き換えました");
+					player.sendMessage(MainGame.Prefix+ChatColor.GREEN+"既に作成されていた待機部屋の座標と置き換えました");
 					WaitRoomData data = DataStore.getRoomData(name);
-					player.sendMessage(MainGame.Prefix + ChatColor.RED + "以前に設定されていたデータはこちらです");
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"以前に設定されていたデータはこちらです");
 					player.sendMessage("X: "+data.getX());
 					player.sendMessage("Y: "+data.getY());
 					player.sendMessage("Z: "+data.getZ());
@@ -140,20 +171,35 @@ public class SettingCommands implements CommandExecutor{
 					player.sendMessage("Pitch: "+data.getPitch());
 					player.sendMessage("BattleType: "+data.getBattleType().toString());
 				} else {
-					player.sendMessage(MainGame.Prefix + ChatColor.YELLOW + name + ChatColor.GREEN + " という待機部屋を作成しました");
+					player.sendMessage(MainGame.Prefix+ChatColor.YELLOW+name+ChatColor.GREEN+" という待機部屋を作成しました");
 				}
 				WaitRoomFiles.creareWaitRoom(name, player.getLocation(), BattleType.Turf_War);
+				return true;
+			} else if("removeroom".equalsIgnoreCase(args[1])){
+				if(!DataStore.hasRoomData(name)) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"その待機部屋は存在していません");
+					return false;
+				}
+				if(!WaitRoomFiles.removeRoomFile(name)) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"ファイルの消去に失敗しました");
+					return false;
+				}
+				DataStore.removeRoomData(name);
+				GameSigns.disableJoinSign(name);
 			} else if("editmode".equalsIgnoreCase(args[1])) {
 				if(!DataStore.hasArenaData(name)) {
 					player.sendMessage(MainGame.Prefix+ChatColor.RED+"セットアップが完了しているステージでのみ使用可能です");
+					return false;
 				}
 				ArenaData data = DataStore.getArenaData(name);
 				if(!data.isStatus()) {
 					player.sendMessage(MainGame.Prefix+ChatColor.RED+"再有効化の場合は /splatsetting "+name+" finishのコマンドを実行してください");
+					return false;
 				}
 				data.setStatus(false);
-				data.setGameStatus(ArenaStatusEnum.DISABLE);
+				data.setGameStatus(GameStatusEnum.DISABLE);
 				player.sendMessage(MainGame.Prefix+ChatColor.GREEN+"ステージを無効化し、編集モードに切り替わりました");
+				return true;
 			}
 		} else if(args.length == 3) {
 			String name = args[0];
@@ -174,9 +220,13 @@ public class SettingCommands implements CommandExecutor{
 				}
 				PlayerFiles.addWeapon(player.getUniqueId().toString().replaceAll("-", ""), weaponname);
 				player.sendMessage(MainGame.Prefix + ChatColor.YELLOW+target.getName()+ChatColor.WHITE+" に "+ChatColor.GREEN+weaponname+ChatColor.WHITE+" を追加しました");
-			}
-			if("setroom".equalsIgnoreCase(args[1])) {
+				return true;
+			} else if("setroom".equalsIgnoreCase(args[1])) {
 				BattleType type = getType(args[2]);
+				if(name.length() > 16) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"待機部屋名は16文字以下にしてください");
+					return false;
+				}
 				if(type == null) {
 					player.sendMessage(MainGame.Prefix+ChatColor.RED+"そのバトルタイプはありません");
 					return false;
@@ -195,6 +245,34 @@ public class SettingCommands implements CommandExecutor{
 					player.sendMessage(MainGame.Prefix + ChatColor.YELLOW + name + ChatColor.GREEN + " という待機部屋を作成しました");
 				}
 				WaitRoomFiles.creareWaitRoom(name, player.getLocation(), type);
+				return true;
+			} else if("addarena".equalsIgnoreCase(args[1])) {
+				String arena = args[2];
+				if(!DataStore.hasArenaData(arena)) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"そのステージは存在しません。一覧確認コマンドは"+ChatColor.GOLD+"/splat arenalist");
+					return false;
+				} else if(!DataStore.hasRoomData(name)) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"その待機部屋は存在しません。一覧確認コマンドは"+ChatColor.GOLD+"/splat roomlist");
+					return false;
+				} else if(DataStore.getRoomData(name).getSelectList().contains(arena)) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"そのステージは既に追加されています。");
+					return false;
+				}
+				WaitRoomFiles.editSelectList(DataStore.getRoomData(name), arena, true);
+				player.sendMessage(MainGame.Prefix+ChatColor.AQUA+name+ChatColor.GREEN+" という待機部屋に "+ChatColor.YELLOW+arena+" を選択ステージとして追加しました");
+				return true;
+			} else if("removearena".equalsIgnoreCase(args[1])) {
+				String arena = args[2];
+				if(!DataStore.hasRoomData(name)) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"その待機部屋は存在しません。一覧確認コマンドは"+ChatColor.GOLD+"/splat roomlist");
+					return false;
+				} else if(!DataStore.getRoomData(name).getSelectList().contains(arena)) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"そのステージは追加されていません。");
+					return false;
+				}
+				WaitRoomFiles.editSelectList(DataStore.getRoomData(name), arena, false);
+				player.sendMessage(MainGame.Prefix+ChatColor.AQUA+name+ChatColor.GREEN+" という待機部屋から "+ChatColor.YELLOW+arena+" を選択ステージから削除しました");
+				return true;
 			}
 		} else if(args.length == 4) {
 			String name = args[0];
@@ -215,11 +293,11 @@ public class SettingCommands implements CommandExecutor{
 					return false;
 				}
 				int team = Integer.valueOf(args[2]), pos = Integer.valueOf(args[3]);
-				if(team == 0 && team >= 3) {
+				if(team == 0 || team > 8) {
 					player.sendMessage(MainGame.Prefix+ ChatColor.RED + "1か2にしてください");
 					return false;
 				}
-				if(pos == 0 && pos >= 5) {
+				if(pos == 0 || pos > 4) {
 					player.sendMessage(MainGame.Prefix+ ChatColor.RED + "1～4の範囲にしてください");
 					return false;
 				}
@@ -227,21 +305,8 @@ public class SettingCommands implements CommandExecutor{
 				player.sendMessage(MainGame.Prefix + ChatColor.GREEN + "チーム"+team+"、"+pos+"人目のスポーン地点を設定");
 				return true;
 			}
-		} /*else if(args.length == 9) {
-			if("setdata".equalsIgnoreCase(args[0])) {
-				String uuid = player.getUniqueId().toString().replaceAll("-", "");
-				int win = Integer.valueOf(args[1]);
-				int lose = Integer.valueOf(args[2]);
-				int winstreak = Integer.valueOf(args[3]);
-				int maxwinstreak = Integer.valueOf(args[4]);
-				boolean finalwin = Boolean.valueOf(args[5]);
-				int rank = Integer.valueOf(args[6]);
-				int exp = Integer.valueOf(args[7]);
-				int totalexp = Integer.valueOf(args[8]);
-				DataBaseTest.setPlayerData( player.getName(), uuid, win, lose, winstreak, maxwinstreak, finalwin, rank, exp, totalexp);
-				player.sendMessage("データ設定");
-			}
-		}*/
+		}
+		player.sendMessage(MainGame.Prefix+ChatColor.RED+"そんなコマンド実装されていません(´・ω・｀)");
 		return false;
 	}
 

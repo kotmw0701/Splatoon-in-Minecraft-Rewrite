@@ -3,21 +3,21 @@ package jp.kotmw.splatoon.gamedatas;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.kotmw.splatoon.SplatColor;
-import jp.kotmw.splatoon.event.ArenaStatusChangeEvent;
-import jp.kotmw.splatoon.gamedatas.DataStore.ArenaStatusEnum;
-import jp.kotmw.splatoon.maingame.GameSigns;
-import jp.kotmw.splatoon.maingame.Turf_War;
-import jp.kotmw.splatoon.maingame.threads.BattleRunnable;
-import jp.kotmw.splatoon.manager.TeamCountManager;
-import jp.kotmw.splatoon.util.Location;
-
 import org.bukkit.Bukkit;
-import org.bukkit.DyeColor;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.scoreboard.Scoreboard;
+
+import jp.kotmw.splatoon.event.ArenaStatusChangeEvent;
+import jp.kotmw.splatoon.gamedatas.DataStore.GameStatusEnum;
+import jp.kotmw.splatoon.maingame.GameSigns;
+import jp.kotmw.splatoon.maingame.Turf_War;
+import jp.kotmw.splatoon.maingame.threads.BattleRunnable;
+import jp.kotmw.splatoon.manager.SplatColorManager;
+import jp.kotmw.splatoon.manager.TeamCountManager;
+import jp.kotmw.splatoon.util.Location;
+import jp.kotmw.splatoon.util.SplatColor;
 
 public class ArenaData {
 	private String arena;
@@ -28,10 +28,11 @@ public class ArenaData {
 	private Location areapos1, areapos2;
 	private List<Location> team1 = new ArrayList<>();
 	private List<Location> team2 = new ArrayList<>();
-	private DyeColor team1color;
-	private DyeColor team2color;
+	private int teamscount;
+	private SplatColor team1color;
+	private SplatColor team2color;
 	private BattleRunnable runtask;
-	private ArenaStatusEnum gameStatus;
+	private GameStatusEnum gameStatus;
 	private Scoreboard scoreboard;
 	private Turf_War battle;
 	private List<BlockState> rollbackblocks = new ArrayList<BlockState>();
@@ -44,34 +45,44 @@ public class ArenaData {
 		this.status = file.getBoolean("Stage.Status");
 		this.world = file.getString("Stage.World");
 		this.totalpaintblock = file.getInt("Stage.TotalPaintBlock");
+		String[] pos1 = file.getString("Stage.Pos1").split("/");
+		String[] pos2 = file.getString("Stage.Pos2").split("/");
 		this.stagepos1 = new Location(world,
-				Integer.valueOf(file.getString("Stage.Pos1").split("/")[0]),
-				Integer.valueOf(file.getString("Stage.Pos1").split("/")[1]),
-				Integer.valueOf(file.getString("Stage.Pos1").split("/")[2]));
+				Integer.valueOf(pos1[0]),
+				Integer.valueOf(pos1[1]),
+				Integer.valueOf(pos1[2]));
 		this.stagepos2 = new Location(world,
-				Integer.valueOf(file.getString("Stage.Pos2").split("/")[0]),
-				Integer.valueOf(file.getString("Stage.Pos2").split("/")[1]),
-				Integer.valueOf(file.getString("Stage.Pos2").split("/")[2]));
+				Integer.valueOf(pos2[0]),
+				Integer.valueOf(pos2[1]),
+				Integer.valueOf(pos2[2]));
 		if(file.contains("SplatZone.Pos1") && file.contains("SplatZone.Pos2")) {
+			pos1 = file.getString("SplatZone.Pos1").split("/");
+			pos2 = file.getString("SplatZone.Pos2").split("/");
 			this.areapos1 = new Location(world,
-					Integer.valueOf(file.getString("SplatZone.Pos1").split("/")[0]),
-					Integer.valueOf(file.getString("SplatZone.Pos1").split("/")[1]),
-					Integer.valueOf(file.getString("SplatZone.Pos1").split("/")[2]));
+					Integer.valueOf(pos1[0]),
+					Integer.valueOf(pos1[1]),
+					Integer.valueOf(pos1[2]));
 			this.areapos2 = new Location(world,
-					Integer.valueOf(file.getString("SplatZone.Pos2").split("/")[0]),
-					Integer.valueOf(file.getString("SplatZone.Pos2").split("/")[1]),
-					Integer.valueOf(file.getString("SplatZone.Pos2").split("/")[2]));
+					Integer.valueOf(pos2[0]),
+					Integer.valueOf(pos2[1]),
+					Integer.valueOf(pos2[2]));
 		} else if(!file.contains("SplatZone.Pos1") || !file.contains("SplatZone.Pos2")) {
 			this.areapos1 = new Location(null, 0, 0, 0);
 			this.areapos2 = new Location(null, 0, 0, 0);
 		}
-		for(int i = 1; i <= 2; i++) {
+		for(int i = 1; i <= 8; i++) {
+			if(!file.contains("SpawnPos.Team"+i)) {
+				teamscount = i-1;
+				break;
+			}
 			for(int ii = 1; ii <= 4; ii++) {
-				double x = Double.valueOf(file.getString("SpawnPos.Team"+i+".P"+ii+".Loc").split("/")[0]);
-				double y = Double.valueOf(file.getString("SpawnPos.Team"+i+".P"+ii+".Loc").split("/")[1]);
-				double z = Double.valueOf(file.getString("SpawnPos.Team"+i+".P"+ii+".Loc").split("/")[2]);
-				float yaw = Float.valueOf(file.getString("SpawnPos.Team"+i+".P"+ii+".HeadRotation").split("/")[0]);
-				float pitch = Float.valueOf(file.getString("SpawnPos.Team"+i+".P"+ii+".HeadRotation").split("/")[1]);
+				String[] teamloc = file.getString("SpawnPos.Team"+i+".P"+ii+".Loc").split("/");
+				String[] teamrotation = file.getString("SpawnPos.Team"+i+".P"+ii+".HeadRotation").split("/");
+				double x = Double.valueOf(teamloc[0]);
+				double y = Double.valueOf(teamloc[1]);
+				double z = Double.valueOf(teamloc[2]);
+				float yaw = Float.valueOf(teamrotation[0]);
+				float pitch = Float.valueOf(teamrotation[1]);
 				switch (i) {
 				case 1:
 					team1.add(new Location(world, x, y, z, yaw, pitch));
@@ -110,7 +121,10 @@ public class ArenaData {
 	 * @return 引数の番号の座標が帰ってくる
 	 */
 	public Location getTeam2(int num) {return team2.get(num-1);}
-	public DyeColor getDyeColor(int team) {
+	
+	public int getTeamsCount() {return teamscount;}
+	
+	public SplatColor getSplatColor(int team) {
 		switch(team) {
 		case 1:
 			return team1color;
@@ -119,12 +133,12 @@ public class ArenaData {
 		default:
 			break;
 		}
-		return DyeColor.WHITE;
+		return SplatColor.WHITE;
 	}
 
 	public BattleRunnable getTask() {return runtask;}
 
-	public ArenaStatusEnum getGameStatus() {return gameStatus;}
+	public GameStatusEnum getGameStatus() {return gameStatus;}
 
 	public Scoreboard getScoreboard() {return scoreboard;}
 
@@ -150,11 +164,11 @@ public class ArenaData {
 	public void setTeam1(Location loc, int num) {team1.set(num-1, loc);}
 	public void setTeam2(Location loc, int num) {team2.set(num-1, loc);}
 
-	public void setTeam1Color(DyeColor color) {
+	public void setTeam1Color(SplatColor color) {
 		this.team1color = color;
 	}
 
-	public void setTeam2Color(DyeColor color) {
+	public void setTeam2Color(SplatColor color) {
 		this.team2color = color;
 	}
 
@@ -162,7 +176,7 @@ public class ArenaData {
 		this.runtask = task;
 	}
 
-	public void setGameStatus(ArenaStatusEnum status) {
+	public void setGameStatus(GameStatusEnum status) {
 		ArenaStatusChangeEvent event = new ArenaStatusChangeEvent(this, status);
 		Bukkit.getPluginManager().callEvent(event);
 		this.gameStatus = status;
@@ -180,11 +194,24 @@ public class ArenaData {
 	public void setAreastands(List<ArmorStand> areastands) {this.areastands = areastands;}
 
 	public void clearStatus() {
-		SplatColor.SetColor(this);
+		SplatColorManager.SetColor(this);
 		this.team1_count = this.team2_count = new TeamCountManager();
 		this.runtask = null;
 		this.rollbackblocks.clear();
-		this.setGameStatus(ArenaStatusEnum.ENABLE);
+		this.setGameStatus(GameStatusEnum.ENABLE);
 		this.areastands.clear();
+	}
+	
+	@Override
+	public String toString() {
+		return "ArenaData [Name="+arena+
+				" Status="+status+
+				" World="+world+
+				" TotalNum="+totalpaintblock+
+				" Team1Color="+team1color+
+				" Team2Color="+team2color+
+				" GameStatus="+gameStatus+
+				" TotalAreaNum="+totalareablock+
+				"]";
 	}
 }

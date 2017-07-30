@@ -3,15 +3,15 @@ package jp.kotmw.splatoon.filedatas;
 import java.io.File;
 import java.util.List;
 
+import org.bukkit.Material;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
 import jp.kotmw.splatoon.gamedatas.DataStore;
 import jp.kotmw.splatoon.gamedatas.DataStore.BombType;
 import jp.kotmw.splatoon.gamedatas.DataStore.WeaponType;
 import jp.kotmw.splatoon.gamedatas.SubWeaponData;
 import jp.kotmw.splatoon.gamedatas.WeaponData;
-
-import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 public class WeaponFiles extends PluginFiles {
 
@@ -88,9 +88,9 @@ public class WeaponFiles extends PluginFiles {
 	}
 
 	public static void AllSubWeaponReload() {
-		SubWeaponData quickbomb = new SubWeaponData("QuickBomb", Material.SLIME_BALL, BombType.QuickBomb, 12, 40, 6);
-		SubWeaponData splashbomb = new SubWeaponData("SplashBomb", Material.TNT, BombType.SplashBomb, 36, 70, 20);
-		SubWeaponData suckerbomb = new SubWeaponData("SuckerBomb", Material.BREWING_STAND_ITEM, BombType.SuckerBomb, 36, 70, 20);
+		SubWeaponData quickbomb = new SubWeaponData("QuickBomb", Material.SLIME_BALL, BombType.QuickBomb, 12, 5, 60, 40, 6);//35, 25  (直撃60?めんｄ(ry))
+		SubWeaponData splashbomb = new SubWeaponData("SplashBomb", Material.TNT, BombType.SplashBomb, 36, 6, 0, 70, 20);//180, 30
+		SubWeaponData suckerbomb = new SubWeaponData("SuckerBomb", Material.BREWING_STAND_ITEM, BombType.SuckerBomb, 36, 6, 0, 70, 20);//180, 30
 		DataStore.addSubWeaponData(quickbomb.getName(), quickbomb);
 		DataStore.addSubWeaponData(splashbomb.getName(), splashbomb);
 		DataStore.addSubWeaponData(suckerbomb.getName(), suckerbomb);

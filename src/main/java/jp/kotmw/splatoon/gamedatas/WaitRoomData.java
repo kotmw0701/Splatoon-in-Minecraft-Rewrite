@@ -3,10 +3,10 @@ package jp.kotmw.splatoon.gamedatas;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.kotmw.splatoon.gamedatas.DataStore.BattleType;
-
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitRunnable;
+
+import jp.kotmw.splatoon.gamedatas.DataStore.BattleType;
 
 public class WaitRoomData {
 
@@ -63,7 +63,7 @@ public class WaitRoomData {
 
 	public void setPitch(double pitch) {this.pitch = pitch;}
 
-	public void setList(List<String> list) {this.list = list;}
+	public void setSelectList(List<String> list) {this.list = list;}
 
 	public void setBattleType(BattleType type) {this.type = type;}
 
