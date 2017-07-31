@@ -16,7 +16,6 @@ import com.sk89q.worldedit.bukkit.WorldEditPlugin;
 import com.sk89q.worldedit.bukkit.selections.Selection;
 
 import jp.kotmw.splatoon.filedatas.OtherFiles;
-import jp.kotmw.splatoon.filedatas.PlayerFiles;
 import jp.kotmw.splatoon.filedatas.StageFiles;
 import jp.kotmw.splatoon.filedatas.WaitRoomFiles;
 import jp.kotmw.splatoon.filedatas.WeaponFiles;
@@ -214,11 +213,11 @@ public class SettingCommands implements CommandExecutor{
 					player.sendMessage(MainGame.Prefix + ChatColor.RED+"そのブキは存在しません");
 					return false;
 				}
-				if(PlayerFiles.hasHaveWeapon(player.getUniqueId().toString().replaceAll("-", ""), weaponname)) {
+				if(DataStore.getStatusData(player.getName()).hasHaveWeapon(weaponname)) {
 					player.sendMessage(MainGame.Prefix + ChatColor.RED+"対象のプレイヤーはその武器を既に持っています");
 					return false;
 				}
-				PlayerFiles.addWeapon(player.getUniqueId().toString().replaceAll("-", ""), weaponname);
+				DataStore.getStatusData(player.getName()).addWeapon(weaponname);
 				player.sendMessage(MainGame.Prefix + ChatColor.YELLOW+target.getName()+ChatColor.WHITE+" に "+ChatColor.GREEN+weaponname+ChatColor.WHITE+" を追加しました");
 				return true;
 			} else if("setroom".equalsIgnoreCase(args[1])) {

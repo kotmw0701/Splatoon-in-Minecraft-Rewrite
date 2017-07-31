@@ -79,9 +79,7 @@ public class Paint {
 	public static void addRollBack(ArenaData data, Block block) {
 		for(BlockState state : data.getRollbackblocks()) {
 			Location l = block.getLocation();
-			if(state.getLocation().equals(l)) {
-				return;
-			}
+			if(state.getLocation().equals(l)) return;
 		}
 		data.addRollBackBlock(block.getState());
 	}

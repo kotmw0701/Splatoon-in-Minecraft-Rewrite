@@ -49,7 +49,7 @@ public class SquidMode implements Listener {
 		} else {
 			player.addPotionEffect(invisible);
 			player.getInventory().setHeldItemSlot(3);
-			if(SplatColorManager.isBelowBlockTeamColor(player)) {
+			if(SplatColorManager.isBelowBlockTeamColor(player, true)) {
 				player.addPotionEffect(speed);
 			} else {
 				spawnSquid(player);
@@ -83,10 +83,10 @@ public class SquidMode implements Listener {
 			player.setAllowFlight(false);
 			player.setFlying(false);
 		}
-		if(!SplatColorManager.isBelowBlockTeamColor(player) && !data.isClimb()) {
+		if(!SplatColorManager.isBelowBlockTeamColor(player, true) && !data.isClimb()) {
 			spawnSquid(player);
 			player.removePotionEffect(PotionEffectType.SPEED);
-		} else if(SplatColorManager.isBelowBlockTeamColor(player) || data.isClimb()) {
+		} else if(SplatColorManager.isBelowBlockTeamColor(player, true) || data.isClimb()) {
 			player.addPotionEffect(speed);
 			if(squid != null) {
 				squid.remove();

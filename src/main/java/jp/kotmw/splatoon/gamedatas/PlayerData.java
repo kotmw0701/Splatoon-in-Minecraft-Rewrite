@@ -25,6 +25,7 @@ public class PlayerData {
 	private BukkitRunnable task; //プレイヤーの武器のRunnable
 	private Thread thread;
 	private BukkitRunnable squidtask;
+	private BukkitRunnable healthtask;
 	private int runnableTick; //武器のRunnableのtick
 	private boolean paint = false; //ローラー使用の時の塗れる時間かどうか
 	private boolean invincible = false; //無敵状態かどうか
@@ -68,6 +69,8 @@ public class PlayerData {
 	public Thread getThread() {return thread;}/////////
 
 	public BukkitRunnable getSquidTask() {return squidtask;}
+	
+	public BukkitRunnable getHealthTask() {return healthtask;}
 
 	public int getTick() {return runnableTick;}
 
@@ -120,6 +123,8 @@ public class PlayerData {
 	public void setThread(Thread thread) {this.thread = thread;}//////////////
 
 	public void setSquidTask(BukkitRunnable squidtask) {this.squidtask = squidtask;}
+	
+	public void setHealthTask(BukkitRunnable healthtask) {this.healthtask = healthtask;}
 
 	public void setTick(int runnableTick) {this.runnableTick = runnableTick;}
 

@@ -29,14 +29,10 @@ public class PlayerCommands implements CommandExecutor {
 				MainGame.leave(player);
 			else if("roomlist".equalsIgnoreCase(args[0])) {
 				player.sendMessage(ChatColor.GREEN+"待機部屋一覧");
-				for(String room : DataStore.getRoomList()) {
-					player.sendMessage("- "+room);
-				}
+				for(String room : DataStore.getRoomList()) player.sendMessage("- "+room+" "+DataStore.getRoomPlayersList(room).size()+" / 8");
 			} else if("arenalist".equalsIgnoreCase(args[0])) {
 				player.sendMessage(ChatColor.GREEN+"ステージ一覧");
-				for(String room : DataStore.getArenaList()) {
-					player.sendMessage("- "+room+" "+DataStore.getArenaData(room).getGameStatus().getStats());
-				}
+				for(String room : DataStore.getArenaList()) player.sendMessage("- "+room+" "+DataStore.getArenaData(room).getGameStatus().getStats());
 			}
 		} else if(args.length == 2) {
 			if("join".equalsIgnoreCase(args[0])) {

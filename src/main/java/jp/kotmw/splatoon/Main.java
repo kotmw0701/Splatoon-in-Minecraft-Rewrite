@@ -2,7 +2,6 @@ package jp.kotmw.splatoon;
 
 import java.io.File;
 
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,7 +24,7 @@ import jp.kotmw.splatoon.mainweapons.Shooter;
 import jp.kotmw.splatoon.manager.Paint;
 import jp.kotmw.splatoon.subweapon.Bomb;
 
-public class Main extends JavaPlugin implements Listener{
+public class Main extends JavaPlugin{
 
 	public static Main main;
 	public String filepath = getDataFolder() + File.separator;
@@ -48,7 +47,6 @@ public class Main extends JavaPlugin implements Listener{
 		pm.registerEvents(new Charger(), this);
 		pm.registerEvents(new Bomb(), this);
 		//pm.registerEvents(new Barrier(), this);
-		pm.registerEvents(this, this);
 		OtherFiles.AllTemplateFileGenerator();
 		StageFiles.AllStageReload();
 		WaitRoomFiles.AllRoomReload();

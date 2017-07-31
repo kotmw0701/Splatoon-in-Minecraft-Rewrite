@@ -80,6 +80,11 @@ public class BattleRunnable extends BukkitRunnable {
 							task.runTaskTimer(Main.main, 0, 1);
 							data.setSquidTask(task);
 						}
+						if(data.getHealthTask() == null) {
+							BukkitRunnable task = new DamageHealthRunnable(data.getName());
+							task.runTaskTimer(Main.main, 0, 20);
+							data.setHealthTask(task);
+						}
 					}
 					/*if(type.equals(BattleType.Turf_War))
 						data.setTotalpaintblock(data.getBattleClass().getTotalArea());*/
@@ -144,6 +149,9 @@ public class BattleRunnable extends BukkitRunnable {
 				pdata.getTask().cancel();
 			if(pdata.getSquidTask() != null)
 				pdata.getSquidTask().cancel();
+			if(pdata.getHealthTask() != null) {
+				pdata.getHealthTask().cancel();
+			}
 			pdata.setTask(null);
 			pdata.setSquidTask(null);
 			SplatScoreBoard.hideBoard(pdata);

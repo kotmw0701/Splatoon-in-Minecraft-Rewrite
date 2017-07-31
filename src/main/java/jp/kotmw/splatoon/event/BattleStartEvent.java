@@ -2,13 +2,13 @@ package jp.kotmw.splatoon.event;
 
 import java.util.List;
 
+import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
+
 import jp.kotmw.splatoon.gamedatas.ArenaData;
 import jp.kotmw.splatoon.gamedatas.DataStore;
 import jp.kotmw.splatoon.gamedatas.PlayerData;
 import jp.kotmw.splatoon.gamedatas.WaitRoomData;
-
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
 
 public class BattleStartEvent extends Event{
 

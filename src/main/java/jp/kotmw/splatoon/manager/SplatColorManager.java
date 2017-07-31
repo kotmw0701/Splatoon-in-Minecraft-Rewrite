@@ -50,31 +50,17 @@ public class SplatColorManager {
 	 * 足元のブロックを取得して、それがチームカラーと一緒だったらtrue
 	 *
 	 * @param p 対象のプレイヤー
+	 * @param myteam 自チームか
+	 * 
 	 * @return チームカラーかどうか
 	 */
-	public static boolean isBelowBlockTeamColor(Player player) {
+	public static boolean isBelowBlockTeamColor(Player player, boolean myteam) {
 		PlayerData data = DataStore.getPlayerData(player.getName());
 		Location loc = player.getLocation().clone();
-		int teamcolorID = DataStore.getArenaData(data.getArena()).getSplatColor(data.getTeamid()).getColorID();
+		int colorID = DataStore.getArenaData(data.getArena()).getSplatColor((myteam ? data.getTeamid() : data.getOpponentTeamid())).getColorID();
 		if(loc.getBlock().getType() != Material.CARPET)
 			loc.add(0, -1, 0);
-		return SplatColorManager.getColorID(loc.getBlock()) == teamcolorID;
-	}
-
-	/**
-	 * 足元のブロックを取得して、敵チームカラーだった場合にはtrue
-	 *
-	 * @param player 対象のプレイヤー
-	 * @return 敵チームが塗ってあるブロックかどうか
-	 */
-	public static boolean isBelowBlockOpponentTeamColor(Player player) {
-		PlayerData data = DataStore.getPlayerData(player.getName());
-		Location loc = player.getLocation().clone();
-		int opponentteamcolorID = DataStore.getArenaData(data.getArena()).getSplatColor(data.getOpponentTeamid()).getColorID();
-		if(loc.getBlock().getType() != Material.CARPET)
-			loc.add(0, -1, 0);
-		return SplatColorManager.getColorID(loc.getBlock()) == opponentteamcolorID;
-
+		return SplatColorManager.getColorID(loc.getBlock()) == colorID;
 	}
 
 	public static boolean isTargetBlockTeamColor(Player p) {

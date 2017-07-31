@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
-public class PlayerStatusData {
+import jp.kotmw.splatoon.filedatas.PlayerFiles;
+
+public class PlayerStatusData extends PlayerFiles {
 
 	private String uuid;
 	private int win;
@@ -17,22 +20,6 @@ public class PlayerStatusData {
 	private int exp;
 	private int totalexp;
 	private List<String> weapons = new ArrayList<String>();
-
-	/*public PlayerStatusData(ResultSet set) {
-		try {
-			this.uuid = set.getString("UUID");
-			this.win = set.getInt("win");
-			this.lose = set.getInt("lose");
-			this.finalwin = set.getBoolean("finalwin");
-			this.winstreak = set.getInt("winstreak");
-			this.maxwinstreak = set.getInt("maxwinstreak");
-			this.rank = set.getInt("rank");
-			this.exp = set.getInt("exp");
-			this.totalexp = set.getInt("totalexp");
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}*/
 
 	public PlayerStatusData(String uuid, FileConfiguration file) {
 		this.uuid = uuid;
@@ -87,39 +74,36 @@ public class PlayerStatusData {
 		return weapons;
 	}
 
-	public void setUuid(String uuid) {
-		this.uuid = uuid;
+	/**
+	 *
+	 * @param uuid 武器を追加するプレイヤーのUUID
+	 * @param weapon ブキ名
+	 *
+	 * @return その武器を持っていない場合はtrue<br>
+	 * 持っている場合はfalseを返す
+	 */
+	public boolean addWeapon(String weapon) {
+		FileConfiguration file = YamlConfiguration.loadConfiguration(DirFile(filedir, uuid));
+		weapons = file.getStringList("Status.Weapons");
+		if(weapons.contains(weapon))
+			return false;
+		weapons.add(weapon);
+		setData(DirFile(filedir, uuid), "Status.Weapons", weapons);
+		return true;
 	}
 
-	public void setWin(int win) {
-		this.win = win;
-	}
-
-	public void setLose(int lose) {
-		this.lose = lose;
-	}
-
-	public void setFinalwin(boolean finalwin) {
-		this.finalwin = finalwin;
-	}
-
-	public void setWinstreak(int winstreak) {
-		this.winstreak = winstreak;
-	}
-
-	public void setMaxwinstreak(int maxwinstreak) {
-		this.maxwinstreak = maxwinstreak;
-	}
-
-	public void setRank(int rank) {
-		this.rank = rank;
-	}
-
-	public void setExp(int exp) {
-		this.exp = exp;
-	}
-
-	public void setTotalexp(int totalexp) {
-		this.totalexp = totalexp;
+	/**
+	 *
+	 * @param uuid 対象プレイヤーのハイフン抜きのUUID
+	 * @param weaponname 調べる武器名
+	 * @return 既に持っていればtrueが返される
+	 */
+	public boolean hasHaveWeapon(String weaponname) {
+		FileConfiguration file = YamlConfiguration.loadConfiguration(DirFile(filedir, uuid));
+		for(String haveweapon : file.getStringList("Status.Weapons")) {
+			if(haveweapon.equals(weaponname))
+				return true;
+		}
+		return false;
 	}
 }

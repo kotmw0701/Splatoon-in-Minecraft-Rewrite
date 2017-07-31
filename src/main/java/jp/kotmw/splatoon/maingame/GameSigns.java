@@ -15,7 +15,6 @@ import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import jp.kotmw.splatoon.filedatas.OtherFiles;
-import jp.kotmw.splatoon.filedatas.PlayerFiles;
 import jp.kotmw.splatoon.gamedatas.ArenaData;
 import jp.kotmw.splatoon.gamedatas.DataStore;
 import jp.kotmw.splatoon.gamedatas.DataStore.SignType;
@@ -55,7 +54,7 @@ public class GameSigns implements Listener {
 		} else if(sign.getLine(0).equalsIgnoreCase(statussign)) {
 
 		} else if(sign.getLine(0).equalsIgnoreCase(weaponsign)) {
-			boolean nohave = PlayerFiles.addWeapon(player.getUniqueId().toString().replaceAll("-", ""), sign.getLine(1));
+			boolean nohave = DataStore.getStatusData(player.getName()).addWeapon(sign.getLine(1));
 			if(nohave)
 				player.sendMessage(MainGame.Prefix+ChatColor.GOLD.toString()+ChatColor.BOLD+sign.getLine(1)+ChatColor.GREEN+"を購入しました");
 			else
