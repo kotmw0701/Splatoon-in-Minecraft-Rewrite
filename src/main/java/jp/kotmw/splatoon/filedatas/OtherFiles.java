@@ -47,6 +47,8 @@ public class OtherFiles extends PluginFiles {
 	}
 
 	public static void createRankSettingFile() {
+		if(new File(filepath+"RankFile.yml").exists())
+			return;
 		FileConfiguration file = new YamlConfiguration();
 		file.set("Rank.Rank2", 700);
 		file.set("Rank.Rank3", 1600);

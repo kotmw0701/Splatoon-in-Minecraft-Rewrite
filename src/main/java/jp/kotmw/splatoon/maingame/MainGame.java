@@ -47,7 +47,7 @@ public class MainGame extends MessageUtil{
 			player.sendMessage(MainGame.Prefix+reason);
 			return;
 		}
-		PlayerFiles.loadPlayerData(player.getUniqueId().toString(), player.getName());
+		PlayerFiles.checkPlayerData(player.getUniqueId().toString(), player.getName());
 		if(data.getTask() == null) {
 			BukkitRunnable task = new AnimationRunnable(data);
 			task.runTaskTimer(Main.main, 0, 5);

@@ -11,6 +11,7 @@ import jp.kotmw.splatoon.filedatas.PlayerFiles;
 public class PlayerStatusData extends PlayerFiles {
 
 	private String uuid;
+	private String name;
 	private int win;
 	private int lose;
 	private boolean finalwin;
@@ -19,10 +20,12 @@ public class PlayerStatusData extends PlayerFiles {
 	private int rank;
 	private int exp;
 	private int totalexp;
+	private int totalpaint;
 	private List<String> weapons = new ArrayList<String>();
 
 	public PlayerStatusData(String uuid, FileConfiguration file) {
 		this.uuid = uuid;
+		this.name = file.getString("Name");
 		this.win = file.getInt("Rate.Win");
 		this.lose = file.getInt("Rate.Lose");
 		this.finalwin = file.getBoolean("Rate.FinalWin");
@@ -31,11 +34,16 @@ public class PlayerStatusData extends PlayerFiles {
 		this.rank = file.getInt("Status.Rank");
 		this.exp = file.getInt("Status.Exp");
 		this.totalexp = file.getInt("Status.TotalExp");
+		this.totalpaint = file.getInt("Status.TotalPaint");
 		this.weapons = file.getStringList("Status.Weapons");
 	}
 
 	public String getUuid() {
 		return uuid;
+	}
+	
+	public String getName() {
+		return name;
 	}
 
 	public int getWin() {
@@ -69,9 +77,34 @@ public class PlayerStatusData extends PlayerFiles {
 	public int getTotalexp() {
 		return totalexp;
 	}
+	
+	public int getTotalPaint() {
+		return totalpaint;
+	}
 
 	public List<String> getWeapons() {
 		return weapons;
+	}
+	
+	public void setWinnerScore() {
+		win++;
+		if(finalwin) {
+			winstreak++;
+			if(winstreak > maxwinstreak)
+				maxwinstreak = winstreak;
+		}
+		finalwin = true;
+	}
+	
+	public void setLoserScore() {
+		lose++;
+		finalwin = false;
+		winstreak = 0;
+	}
+	
+	public boolean updateExp(int exp) {
+		
+		return false;
 	}
 
 	/**
@@ -99,11 +132,6 @@ public class PlayerStatusData extends PlayerFiles {
 	 * @return 既に持っていればtrueが返される
 	 */
 	public boolean hasHaveWeapon(String weaponname) {
-		FileConfiguration file = YamlConfiguration.loadConfiguration(DirFile(filedir, uuid));
-		for(String haveweapon : file.getStringList("Status.Weapons")) {
-			if(haveweapon.equals(weaponname))
-				return true;
-		}
-		return false;
+		return weapons.contains(weaponname);
 	}
 }

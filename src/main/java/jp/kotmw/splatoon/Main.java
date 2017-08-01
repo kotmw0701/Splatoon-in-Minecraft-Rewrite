@@ -9,6 +9,7 @@ import jp.kotmw.splatoon.commands.ConsoleCommands;
 import jp.kotmw.splatoon.commands.PlayerCommands;
 import jp.kotmw.splatoon.commands.SettingCommands;
 import jp.kotmw.splatoon.filedatas.OtherFiles;
+import jp.kotmw.splatoon.filedatas.PlayerFiles;
 import jp.kotmw.splatoon.filedatas.StageFiles;
 import jp.kotmw.splatoon.filedatas.WaitRoomFiles;
 import jp.kotmw.splatoon.filedatas.WeaponFiles;
@@ -48,6 +49,7 @@ public class Main extends JavaPlugin{
 		pm.registerEvents(new Bomb(), this);
 		//pm.registerEvents(new Barrier(), this);
 		OtherFiles.AllTemplateFileGenerator();
+		PlayerFiles.AllPlayerFileReload();
 		StageFiles.AllStageReload();
 		WaitRoomFiles.AllRoomReload();
 		OtherFiles.AllSignReload();

@@ -14,7 +14,7 @@ public class PlayerFiles extends PluginFiles{
 
 	protected static String filedir = "Players";
 
-	public static void createPlayerFile(String uuid, String name) {
+	private static void createPlayerFile(String uuid, String name) {
 		FileConfiguration file = new YamlConfiguration();
 		file.set("Name", name);
 		file.set("Rate.Win", 0);
@@ -38,11 +38,23 @@ public class PlayerFiles extends PluginFiles{
 	public static File PlayersDir() {
 		return new File(filepath + filedir);
 	}
-
-	public static void loadPlayerData(String uuid, String name) {
-		if(!PlayerFiles.AlreadyCreateFile(uuid)) {
-			PlayerFiles.createPlayerFile(uuid, name);
+	
+	private static List<String> getPlayerFileList() {
+		return getFileList(new File(filepath + filedir));
+	}
+	
+	public static void AllPlayerFileReload() {
+		for(String uuid : getPlayerFileList()) {
+			FileConfiguration file = YamlConfiguration.loadConfiguration(DirFile(filedir, uuid));
+			PlayerStatusData data = new PlayerStatusData(uuid, file);
+			DataStore.addStatusData(data.getName(), data);
 		}
+	}
+	
+	public static void checkPlayerData(String uuid, String name) {
+		if(DataStore.hasStatusData(name))
+			return;
+		PlayerFiles.createPlayerFile(uuid, name);
 		FileConfiguration file = YamlConfiguration.loadConfiguration(DirFile(filedir, uuid));
 		PlayerStatusData data = new PlayerStatusData(uuid, file);
 		DataStore.addStatusData(name, data);

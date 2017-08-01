@@ -137,7 +137,7 @@ public class StageFiles extends PluginFiles {
 		return data;
 	}
 
-	public static List<String> getArenaFileList() {
+	private static List<String> getArenaFileList() {
 		return getFileList(new File(filepath + filedir));
 	}
 
