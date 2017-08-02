@@ -21,7 +21,7 @@ public class PlayerData {
 	private boolean allcancel = false;
 	private Location loc; //プレイヤー参加前の座標
 	private List<ItemStack> items; //プレイヤー参加前のインベントリデータ
-	private float paintscore; //塗ったスコア
+	private double paintscore; //塗ったスコア
 	private BukkitRunnable task; //プレイヤーの武器のRunnable
 	private Thread thread;
 	private BukkitRunnable squidtask;
@@ -62,7 +62,7 @@ public class PlayerData {
 
 	public List<ItemStack> getRollbackItems() {return items;}
 
-	public float getScore() {return paintscore;}
+	public double getScore() {return paintscore;}
 
 	public BukkitRunnable getTask() {return task;}
 	
@@ -88,6 +88,10 @@ public class PlayerData {
 
 	public int getOpponentTeamid() {
 		return teamid == 1 ? 2 : 1;
+	}
+	
+	public PlayerStatusData getPlayerStatus() {
+		return DataStore.getStatusData(name);
 	}
 
 	public void setName(String name) {this.name = name;}
@@ -116,7 +120,7 @@ public class PlayerData {
 
 	public void setRollBackItems(List<ItemStack> items) {this.items = items;}
 
-	public void setScore(float paintscore) {this.paintscore = paintscore;}
+	public void setScore(double paintscore) {this.paintscore = paintscore;}
 
 	public void setTask(BukkitRunnable task) {this.task = task;}
 	

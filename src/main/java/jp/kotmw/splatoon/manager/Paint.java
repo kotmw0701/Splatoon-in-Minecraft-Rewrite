@@ -85,12 +85,12 @@ public class Paint {
 	}
 
 	private static void addScore(PlayerData data, boolean bonus) {
-		float score = data.getScore();
+		double score = data.getScore();
 		if(bonus) {
-			data.setScore(score + 0.2f);
+			data.setScore(score + 0.2);
 			return;
 		}
-		data.setScore(score + 0.1f);
+		data.setScore(score + 0.1);
 	}
 
 	public static void SpherePaint(Location center, double radius, PlayerData data) {

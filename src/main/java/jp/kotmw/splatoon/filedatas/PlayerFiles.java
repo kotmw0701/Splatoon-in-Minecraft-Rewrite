@@ -25,6 +25,7 @@ public class PlayerFiles extends PluginFiles{
 		file.set("Status.Rank", 1);
 		file.set("Status.Exp", 0);
 		file.set("Status.TotalExp", 0);
+		file.set("Status.TotalPaint", 0);
 		file.set("Status.Weapons", setWeapon());
 		file.set("Friends", new ArrayList<String>());
 		file.set("Invites", new ArrayList<String>());
@@ -66,20 +67,17 @@ public class PlayerFiles extends PluginFiles{
 		return list;
 	}
 	
-	public enum PlayerFile_Num {
-		WIN("Rate.Win"), 
-		LOSE("Rate.Lose"), 
-		RANK("Status.Rank"), 
-		EXP("Status.Exp");
-		
-		private final String pass;
-		
-		private PlayerFile_Num(String pass) {
-			this.pass = pass;
-		}
-		
-		public String getPass() {
-			return pass;
-		}
+	protected void updateStatusFile(PlayerStatusData data) {
+		FileConfiguration file = YamlConfiguration.loadConfiguration(DirFile(filedir, data.getUuid()));
+		file.set("Rate.Win", data.getWin());
+		file.set("Rate.Lose", data.getLose());
+		file.set("Rate.FinalWin", data.isFinalwin());
+		file.set("Rate.WinStreak", data.getWinstreak());
+		file.set("Rate.MaxWinStreak", data.getMaxwinstreak());
+		file.set("Status.Rank", data.getRank());
+		file.set("Status.Exp", data.getExp());
+		file.set("Status.TotalExp", data.getTotalexp());
+		file.set("Status.TotalPaint", data.getTotalPaint());
+		SettingFiles(file, DirFile(filedir, data.getUuid()));
 	}
 }

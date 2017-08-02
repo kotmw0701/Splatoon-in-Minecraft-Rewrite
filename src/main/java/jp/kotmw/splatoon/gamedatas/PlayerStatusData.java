@@ -18,8 +18,8 @@ public class PlayerStatusData extends PlayerFiles {
 	private int winstreak;
 	private int maxwinstreak;
 	private int rank;
-	private int exp;
-	private int totalexp;
+	private double exp;
+	private double totalexp;
 	private int totalpaint;
 	private List<String> weapons = new ArrayList<String>();
 
@@ -32,8 +32,8 @@ public class PlayerStatusData extends PlayerFiles {
 		this.winstreak = file.getInt("Rate.WinStreak");
 		this.maxwinstreak = file.getInt("Rate.MaxWinStreak");
 		this.rank = file.getInt("Status.Rank");
-		this.exp = file.getInt("Status.Exp");
-		this.totalexp = file.getInt("Status.TotalExp");
+		this.exp = file.getDouble("Status.Exp");
+		this.totalexp = file.getDouble("Status.TotalExp");
 		this.totalpaint = file.getInt("Status.TotalPaint");
 		this.weapons = file.getStringList("Status.Weapons");
 	}
@@ -70,11 +70,11 @@ public class PlayerStatusData extends PlayerFiles {
 		return rank;
 	}
 
-	public int getExp() {
+	public double getExp() {
 		return exp;
 	}
 
-	public int getTotalexp() {
+	public double getTotalexp() {
 		return totalexp;
 	}
 	
@@ -86,7 +86,7 @@ public class PlayerStatusData extends PlayerFiles {
 		return weapons;
 	}
 	
-	public void setWinnerScore() {
+	public void updateWinnerScore() {
 		win++;
 		if(finalwin) {
 			winstreak++;
@@ -96,17 +96,29 @@ public class PlayerStatusData extends PlayerFiles {
 		finalwin = true;
 	}
 	
-	public void setLoserScore() {
+	public void updateLoserScore() {
 		lose++;
 		finalwin = false;
 		winstreak = 0;
 	}
 	
-	public boolean updateExp(int exp) {
-		
-		return false;
+	public boolean updateScoreExp() {
+		PlayerData data = DataStore.getPlayerData(name);
+		double score = data.getScore()+exp;
+		if(rank == 20)//一時的にランク20以上は設定しない
+			return false;
+		totalexp += data.getScore();
+		boolean rankup = false;
+		while(score >= DataStore.getRankData().getNextRankExp(rank)) {
+			rankup = true;
+			score -= DataStore.getRankData().getNextRankExp(rank);
+			rank++;
+		}
+		exp = score;
+		updateStatusFile(this);
+		return rankup;
 	}
-
+	
 	/**
 	 *
 	 * @param uuid 武器を追加するプレイヤーのUUID

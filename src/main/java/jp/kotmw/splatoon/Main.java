@@ -56,6 +56,7 @@ public class Main extends JavaPlugin{
 		WeaponFiles.AllWeaponReload();
 		WeaponFiles.AllSubWeaponReload();
 		OtherFiles.ConfigReload();
+		OtherFiles.RankFileReload();
 	}
 
 	@Override

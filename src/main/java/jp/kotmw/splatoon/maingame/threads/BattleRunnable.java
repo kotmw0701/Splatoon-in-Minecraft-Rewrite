@@ -113,7 +113,7 @@ public class BattleRunnable extends BukkitRunnable {
 					for(ArmorStand stand : data.getAreastands())
 						stand.remove();
 					Paint.RollBack(data);
-					MainGame.end(data, DataStore.getArenaPlayersList(this.data.getName()));
+					MainGame.end(data);
 					this.cancel();
 					return;
 				}
@@ -129,7 +129,7 @@ public class BattleRunnable extends BukkitRunnable {
 				for(ArmorStand stand : data.getAreastands())
 					stand.remove();
 				Paint.RollBack(data);
-				MainGame.end(data, DataStore.getArenaPlayersList(this.data.getName()));
+				MainGame.end(data);
 			}
 			this.cancel();
 		}

@@ -122,9 +122,9 @@ public class Turf_War {
 			Random random = new Random();
 			int randomteam = random.nextInt(2);
 			if(randomteam == 1)
-				parce_team1+=0.01f;
+				parce_team1+=0.01;
 			else if(randomteam == 2)
-				parce_team2+=0.01f;
+				parce_team2+=0.01;
 		}
 		String result = "[ "+data.getSplatColor(1).getChatColor()+df.format(parce_team1)+ChatColor.WHITE+" ]      [ "
 		+data.getSplatColor(2).getChatColor()+df.format(parce_team2)+ChatColor.WHITE+" ]";
@@ -132,6 +132,7 @@ public class Turf_War {
 		String lose = ChatColor.BLUE.toString()+ChatColor.ITALIC+"You Lose...";
 		MainGame.sendTitleforTeam(data, 1, 0, 5, 0, parce_team1 > parce_team2 ? win : lose, result);
 		MainGame.sendTitleforTeam(data, 2, 0, 5, 0, parce_team1 > parce_team2 ? lose : win, result);
+		data.setTeamWin(parce_team1 > parce_team2 ? 1 : 2);
 	}
 	
 	public ArenaData getArena() {

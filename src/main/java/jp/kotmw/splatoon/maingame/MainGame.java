@@ -24,6 +24,7 @@ import jp.kotmw.splatoon.gamedatas.DataStore;
 import jp.kotmw.splatoon.gamedatas.DataStore.BattleType;
 import jp.kotmw.splatoon.gamedatas.DataStore.GameStatusEnum;
 import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.gamedatas.PlayerStatusData;
 import jp.kotmw.splatoon.gamedatas.SubWeaponData;
 import jp.kotmw.splatoon.gamedatas.WaitRoomData;
 import jp.kotmw.splatoon.maingame.threads.AnimationRunnable;
@@ -187,11 +188,18 @@ public class MainGame extends MessageUtil{
 		return null;
 	}
 
-	public static void end(ArenaData data, List<PlayerData> datas) {
+	public static void end(ArenaData data) {
 		data.clearStatus();
 		SplatScoreBoard.resetScoreboard(data);
-		for(PlayerData datalist : datas) {
+		for(PlayerData datalist : DataStore.getArenaPlayersList(data.getName())) {
+			PlayerStatusData statusData = datalist.getPlayerStatus();
+			if(data.getWinTeam() == datalist.getTeamid()) {
+				statusData.updateWinnerScore();
+			} else {
+				statusData.updateLoserScore();
+			}
 			Player player = Bukkit.getPlayer(datalist.getName());
+			if(statusData.updateScoreExp()) player.sendMessage(MainGame.Prefix+ChatColor.GREEN+"ランクが上がりました！");
 			player.getInventory().clear();
 			player.setGameMode(Bukkit.getDefaultGameMode());
 			for(PotionEffect potion : player.getActivePotionEffects())

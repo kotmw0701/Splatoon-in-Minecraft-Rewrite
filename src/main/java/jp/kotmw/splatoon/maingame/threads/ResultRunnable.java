@@ -41,7 +41,7 @@ public class ResultRunnable extends BukkitRunnable {
 			battle.sendResult();
 			Paint.RollBack(data);
 		} else if(tick < 0) {
-			MainGame.end(data, DataStore.getArenaPlayersList(data.getName()));
+			MainGame.end(data);
 			cancel();
 		}
 		tick--;

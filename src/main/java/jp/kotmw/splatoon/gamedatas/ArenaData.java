@@ -29,6 +29,7 @@ public class ArenaData {
 	private List<Location> team1 = new ArrayList<>();
 	private List<Location> team2 = new ArrayList<>();
 	private int teamscount;
+	private int winteam;
 	private SplatColor team1color;
 	private SplatColor team2color;
 	private BattleRunnable runtask;
@@ -124,6 +125,8 @@ public class ArenaData {
 	
 	public int getTeamsCount() {return teamscount;}
 	
+	public int getWinTeam() {return winteam;}
+	
 	public SplatColor getSplatColor(int team) {
 		switch(team) {
 		case 1:
@@ -163,6 +166,8 @@ public class ArenaData {
 
 	public void setTeam1(Location loc, int num) {team1.set(num-1, loc);}
 	public void setTeam2(Location loc, int num) {team2.set(num-1, loc);}
+	
+	public void setTeamWin(int winteam) {this.winteam = winteam;}
 
 	public void setTeam1Color(SplatColor color) {
 		this.team1color = color;

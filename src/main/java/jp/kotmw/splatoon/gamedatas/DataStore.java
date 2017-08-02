@@ -17,6 +17,7 @@ public class DataStore {
 	private static Map<String, PlayerStatusData> statusdata = new HashMap<>();
 	private static List<String> prioritylist = new ArrayList<>();
 	private static ConfigData config;
+	private static RankData rankData;
 
 	public static boolean hasArenaData(String arena) {
 		return arenadata.containsKey(arena);
@@ -150,6 +151,14 @@ public class DataStore {
 
 	public static ConfigData getConfig() {
 		return config;
+	}
+	
+	public static void setRank(RankData data) {
+		rankData = data;
+	}
+	
+	public static RankData getRankData() {
+		return rankData;
 	}
 
 	public static List<PlayerData> getArenaPlayersList(String arena) {

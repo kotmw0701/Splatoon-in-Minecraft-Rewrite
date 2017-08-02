@@ -12,6 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import jp.kotmw.splatoon.gamedatas.ConfigData;
 import jp.kotmw.splatoon.gamedatas.DataStore;
 import jp.kotmw.splatoon.gamedatas.DataStore.SignType;
+import jp.kotmw.splatoon.gamedatas.RankData;
 import jp.kotmw.splatoon.gamedatas.SignData;
 
 
@@ -120,6 +121,11 @@ public class OtherFiles extends PluginFiles {
 	public static void ConfigReload() {
 		FileConfiguration file = YamlConfiguration.loadConfiguration(new File(filepath+"Config.yml"));
 		DataStore.setConfig(new ConfigData(file));
+	}
+	
+	public static void RankFileReload() {
+		FileConfiguration file = YamlConfiguration.loadConfiguration(new File(filepath+"RankFile.yml"));
+		DataStore.setRank(new RankData(file));
 	}
 
 	public static void AllTemplateFileGenerator() {
