@@ -11,8 +11,8 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import jp.kotmw.splatoon.Main;
 import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.RankingPattern;
 import jp.kotmw.splatoon.maingame.MainGame;
 
 public class PlayerCommands implements CommandExecutor {
@@ -29,7 +29,7 @@ public class PlayerCommands implements CommandExecutor {
 				MainGame.leave(player);
 			else if("roomlist".equalsIgnoreCase(args[0])) {
 				player.sendMessage(ChatColor.GREEN+"待機部屋一覧");
-				for(String room : DataStore.getRoomList()) player.sendMessage("- "+room+" "+DataStore.getRoomPlayersList(room).size()+" / 8");
+				for(String room : DataStore.getRoomList()) player.sendMessage("- "+room+ChatColor.GREEN+" | "+ChatColor.WHITE+DataStore.getRoomPlayersList(room).size()+" / 8");
 			} else if("arenalist".equalsIgnoreCase(args[0])) {
 				player.sendMessage(ChatColor.GREEN+"ステージ一覧");
 				for(String room : DataStore.getArenaList()) player.sendMessage("- "+room+" "+DataStore.getArenaData(room).getGameStatus().getStats());
@@ -42,6 +42,22 @@ public class PlayerCommands implements CommandExecutor {
 				}
 				MainGame.join(player, DataStore.getRoomData(args[1]));
 				return true;
+			} else if("rank".equalsIgnoreCase(args[0])) {
+				RankingPattern pattern = getPattern(args[1]);
+				if(pattern == null) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"そのランキングは存在しません");
+					return false;
+				}
+				int i = 1;
+				player.sendMessage(ChatColor.GREEN.toString()+ChatColor.STRIKETHROUGH+"---------------"+ChatColor.WHITE+"[ Ranking ]"+ChatColor.GREEN.toString()+ChatColor.STRIKETHROUGH+"---------------");
+				player.sendMessage(ChatColor.AQUA.toString()+ ChatColor.BOLD + pattern.getText() +ChatColor.WHITE+ " のランキングは以下の通りです");
+				for(String ranking : DataStore.getRanking(pattern)) {
+					if(i >= 10)
+						break;
+					player.sendMessage(ranking.replaceAll("\\.0", ""));
+					i++;
+				}
+				player.sendMessage(ChatColor.GREEN.toString()+ChatColor.STRIKETHROUGH+"----------------------------------------");
 			}
 		} else if(args.length == 3) {
 			if("join".equalsIgnoreCase(args[0])) {
@@ -68,14 +84,6 @@ public class PlayerCommands implements CommandExecutor {
 				}
 				MainGame.join(targetPlayer, DataStore.getRoomData(args[1]));
 				return false;
-			} else if("setvec".equalsIgnoreCase(args[0])) {
-				try {
-				Main.xz = Double.valueOf(args[1]);
-				Main.y = Double.valueOf(args[2]);
-				Bukkit.broadcastMessage(MainGame.Prefix+"X: "+ChatColor.GREEN+Main.xz+ChatColor.WHITE+" Y: "+ChatColor.GREEN+Main.y+ChatColor.WHITE+" Z: "+ChatColor.GREEN+Main.xz);
-				} catch (NumberFormatException e) {
-					player.sendMessage(MainGame.Prefix+ChatColor.RED+"数字入れてくださいな");
-				}
 			}
 		}
 		return false;
@@ -93,5 +101,12 @@ public class PlayerCommands implements CommandExecutor {
 		Random random = new Random();
 		List<Player> list = new ArrayList<Player>(Bukkit.getOnlinePlayers());
 		return list.get(random.nextInt(list.size()));
+	}
+	
+	public RankingPattern getPattern(String pattern) {
+		for(RankingPattern pattern2 : RankingPattern.values()) 
+			if(pattern2.toString().equalsIgnoreCase(pattern))
+				return pattern2;
+		return null;
 	}
 }

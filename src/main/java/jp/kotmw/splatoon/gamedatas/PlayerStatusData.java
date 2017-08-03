@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import jp.kotmw.splatoon.filedatas.PlayerFiles;
+import jp.kotmw.splatoon.gamedatas.DataStore.RankingPattern;
 
 public class PlayerStatusData extends PlayerFiles {
 
@@ -86,6 +87,26 @@ public class PlayerStatusData extends PlayerFiles {
 		return weapons;
 	}
 	
+	public double getParam(RankingPattern pattern) {
+		switch (pattern) {
+		case LOSE:
+			return lose;
+		case MAXWINSTREAK:
+			return maxwinstreak;
+		case RANK:
+			return rank;
+		case TOTALPAINT:
+			return totalpaint;
+		case WIN:
+			return win;
+		case RATE:
+			return (win / (win+lose));
+		default:
+			break;
+		}
+		return 0;
+	}
+	
 	public void updateWinnerScore() {
 		win++;
 		if(finalwin) {
@@ -104,10 +125,11 @@ public class PlayerStatusData extends PlayerFiles {
 	
 	public boolean updateScoreExp() {
 		PlayerData data = DataStore.getPlayerData(name);
-		double score = data.getScore()+exp;
+		double score = (data.getScore()/10)+exp;
 		if(rank == 20)//一時的にランク20以上は設定しない
 			return false;
-		totalexp += data.getScore();
+		totalexp += (data.getScore()/10);
+		totalpaint += data.getScore();
 		boolean rankup = false;
 		while(score >= DataStore.getRankData().getNextRankExp(rank)) {
 			rankup = true;

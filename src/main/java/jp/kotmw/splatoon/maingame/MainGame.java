@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -199,7 +200,10 @@ public class MainGame extends MessageUtil{
 				statusData.updateLoserScore();
 			}
 			Player player = Bukkit.getPlayer(datalist.getName());
-			if(statusData.updateScoreExp()) player.sendMessage(MainGame.Prefix+ChatColor.GREEN+"ランクが上がりました！");
+			if(statusData.updateScoreExp()) {
+				player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.7f, 1);
+				player.sendMessage(MainGame.Prefix+ChatColor.GREEN+"ランクが上がりました！");
+			}
 			player.getInventory().clear();
 			player.setGameMode(Bukkit.getDefaultGameMode());
 			for(PotionEffect potion : player.getActivePotionEffects())

@@ -46,6 +46,10 @@ public class PlayerFiles extends PluginFiles{
 	
 	public static void AllPlayerFileReload() {
 		for(String uuid : getPlayerFileList()) {
+			if(!uuid.contains("-")) {
+				DirFile(filedir, uuid).delete();
+				continue;
+			}
 			FileConfiguration file = YamlConfiguration.loadConfiguration(DirFile(filedir, uuid));
 			PlayerStatusData data = new PlayerStatusData(uuid, file);
 			DataStore.addStatusData(data.getName(), data);

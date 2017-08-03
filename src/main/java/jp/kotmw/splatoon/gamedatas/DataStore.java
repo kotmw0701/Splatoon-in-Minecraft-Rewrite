@@ -1,9 +1,11 @@
 package jp.kotmw.splatoon.gamedatas;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.ChatColor;
 
@@ -183,6 +185,16 @@ public class DataStore {
 		}
 		return list;
 	}
+	
+	public static List<String> getRanking(RankingPattern pattern) {
+		List<String> list = new ArrayList<>();
+		Map<String, Double> rank = new HashMap<>();
+		for(Entry<String, PlayerStatusData> players : statusdata.entrySet()) rank.put(players.getKey(), players.getValue().getParam(pattern));
+		rank.entrySet().stream()
+		.sorted(Collections.reverseOrder(Entry.comparingByValue()))
+		.forEach(map -> list.add(ChatColor.AQUA+map.getKey()+ChatColor.GREEN+" : "+ChatColor.WHITE+map.getValue()));
+		return list;
+	}
 
 	public static void datasAllClear() {
 		arenadata.clear();
@@ -240,6 +252,25 @@ public class DataStore {
 
 		public String getType() {
 			return type;
+		}
+	}
+	
+	public enum RankingPattern {
+		WIN("勝数"), 
+		LOSE("敗数"), 
+		RANK("ランク"), 
+		TOTALPAINT("総塗り面積"), 
+		MAXWINSTREAK("最大連勝数"), 
+		RATE("勝率");
+		
+		private final String text;
+		
+		private RankingPattern(final String text) {
+			this.text = text;
+		}
+		
+		public String getText() {
+			return text;
 		}
 	}
 
