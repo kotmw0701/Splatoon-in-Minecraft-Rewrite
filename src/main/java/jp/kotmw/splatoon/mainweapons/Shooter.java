@@ -57,7 +57,7 @@ public class Shooter implements Listener {
 			return;
 		}
 		int tick = 1;
-		if(weapondata.getFirespeed() < 5)
+		if(weapondata.getFirespeed() < 5) //右クリックしてる時の連射(可変)
 			tick=tick+(5-weapondata.getFirespeed());
 		if(data.getTask() == null) {
 			BukkitRunnable task = new ShooterRunnable(player.getName());
