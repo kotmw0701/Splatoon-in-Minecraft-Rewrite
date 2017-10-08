@@ -12,6 +12,12 @@ public class DetailsColor {
 	
 	public DetailsColor(String code) {setColor(code);}
 	
+	public DetailsColor(int red, int green, int blue) {
+		this.red = Adjustmentparam(red);
+		this.green = Adjustmentparam(green);
+		this.blue = Adjustmentparam(blue);
+	}
+	
 	private void setColor(String code) {
 		int colorvalue = Integer.decode(code).intValue();
 		this.red = Adjustmentparam(((colorvalue >> 16) & 0xFF));

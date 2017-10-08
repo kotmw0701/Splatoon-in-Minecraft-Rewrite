@@ -1,6 +1,8 @@
 package jp.kotmw.splatoon.maingame;
 
+import org.bukkit.Location;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
@@ -93,6 +95,7 @@ public class SquidMode implements Listener {
 				data.setPlayerSquid(null);
 			}
 		}
+		if(canSlipBlock_under(player.getLocation())) player.teleport(player.getLocation().add(0, -0.1, 0));
 	}
 
 	@EventHandler
@@ -113,5 +116,43 @@ public class SquidMode implements Listener {
 		squid.setCustomName(player.getName());
 		squid.setAI(false);
 		data.setPlayerSquid(squid);
+	}
+	
+	private boolean canSlipBlock_under(Location location) {
+		Location loc = location.clone().add(0, -1, 0);
+		return isSlipBlock(loc);
+	}
+	
+	@SuppressWarnings("unused")
+	private Block canSlipBlock_front(PlayerMoveEvent e) {
+		Location before = e.getFrom(), after = e.getTo();
+		double x = before.getX() - after.getX(), 
+				z = before.getZ() - after.getZ();
+		if(Math.abs(x) >= Math.abs(z)) {
+			for(int i = 0; i<= 1; i++) {
+				Location loc = after.clone().add((x >= 0 ? i : -i), 0, 0);
+				if(isSlipBlock(loc))
+					return loc.getBlock();
+			}
+		} else if(Math.abs(z) >= Math.abs(x)) {
+			for(int i = 0; i<= 1; i++) {
+				Location loc = after.clone().add(0, 0, (z >= 0 ? i : -i));
+				if(isSlipBlock(loc))
+					return loc.getBlock();
+			}
+		}
+		return null;
+	}
+	
+	public boolean isSlipBlock(Location location) {
+		switch(location.getBlock().getType()) {
+		case IRON_FENCE:
+		case IRON_TRAPDOOR:
+		case STAINED_GLASS_PANE:
+		case THIN_GLASS:
+			return true;
+		default:
+			return false;
+		}
 	}
 }

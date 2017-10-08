@@ -113,7 +113,7 @@ public class Bomb implements Listener {
 			tntprimed.setFuseTicks(2*20);
 			tntprimed.setYield(0);
 			stand.setCustomName(player.getName());
-			stand.addPassenger(tntprimed);
+			stand.setPassenger(tntprimed);
 			stand.setGravity(false);
 			stand.setVisible(false);
 			stand.setSmall(true);

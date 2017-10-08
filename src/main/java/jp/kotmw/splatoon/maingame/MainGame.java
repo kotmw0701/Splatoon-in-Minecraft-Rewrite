@@ -9,7 +9,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
@@ -225,10 +224,16 @@ public class MainGame extends MessageUtil{
 	}
 
 
-	public static void Damager(PlayerData data, Block block, int damage) {
+	/*public static void Damager(PlayerData data, Block block, int damage) {
 		if(block == null)
 			return;
 		Damager(data, block.getX(), block.getY(), block.getZ(), 20);
+	}*/
+	
+	public static void Damager(PlayerData data, Location location, int damage) {
+		if(location == null)
+			return;
+		Damager(data, location.getBlockX(), location.getBlockY(), location.getBlockZ(), 20);
 	}
 
 	public static void Damager(PlayerData player, int x, int y, int z, int damage) {

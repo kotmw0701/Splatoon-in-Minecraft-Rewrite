@@ -2,19 +2,8 @@ package jp.kotmw.splatoon.mainweapons;
 
 import java.util.Random;
 
-import jp.kotmw.splatoon.Main;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.DataStore.WeaponType;
-import jp.kotmw.splatoon.gamedatas.PlayerData;
-import jp.kotmw.splatoon.gamedatas.WeaponData;
-import jp.kotmw.splatoon.maingame.MainGame;
-import jp.kotmw.splatoon.mainweapons.threads.RollerRunnable;
-import jp.kotmw.splatoon.manager.Paint;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
@@ -26,6 +15,19 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.util.Vector;
+
+import jp.kotmw.splatoon.Main;
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.WeaponType;
+import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.gamedatas.WeaponData;
+import jp.kotmw.splatoon.maingame.MainGame;
+import jp.kotmw.splatoon.mainweapons.threads.RollerRunnable;
+import jp.kotmw.splatoon.manager.Paint;
+import jp.kotmw.splatoon.util.DetailsColor;
+import jp.kotmw.splatoon.util.ParticleAPI;
+import jp.kotmw.splatoon.util.ParticleAPI.EnumParticle;
+import jp.kotmw.splatoon.util.Polar_coodinates;
 
 public class Roller implements Listener {
 
@@ -40,77 +42,126 @@ public class Roller implements Listener {
 				|| action == Action.LEFT_CLICK_BLOCK
 				|| action == Action.PHYSICAL)
 			return;
-		Player p = e.getPlayer();
-		ItemStack item = p.getInventory().getItemInMainHand();
-		PlayerData player = DataStore.getPlayerData(p.getName());
-		if(DataStore.getWeapondata(player.getWeapon()).getType() != WeaponType.Roller)
+		Player player = e.getPlayer();
+		ItemStack item = player.getInventory().getItemInMainHand();
+		PlayerData data = DataStore.getPlayerData(player.getName());
+		if(DataStore.getWeapondata(data.getWeapon()).getType() != WeaponType.Roller)
 			return;
-		if(player.isAllCancel()
+		if(data.isAllCancel()
 				|| item == null
-				|| item.getType() != DataStore.getWeapondata(player.getWeapon()).getItemtype()
+				|| item.getType() != DataStore.getWeapondata(data.getWeapon()).getItemtype()
 				|| !item.hasItemMeta()
 				|| item.getItemMeta().getLore().size() < 5
-				|| !item.getItemMeta().getDisplayName().equalsIgnoreCase(player.getWeapon()))
+				|| !item.getItemMeta().getDisplayName().equalsIgnoreCase(data.getWeapon()))
 			return;
-		WeaponData weapon = DataStore.getWeapondata(player.getWeapon());
-		if(p.getExp() < weapon.getCost()) {
-			MainGame.sendTitle(player, 0, 5, 0, " ", ChatColor.RED+"インクがありません!");
+		WeaponData weapon = DataStore.getWeapondata(data.getWeapon());
+		if(player.getExp() < weapon.getCost()) {
+			MainGame.sendTitle(data, 0, 5, 0, " ", ChatColor.RED+"インクがありません!");
 			return;
 		}
-		if(player.getTask() == null) {
-			BukkitRunnable task = new RollerRunnable(p.getName());
+		if(data.getTask() == null) {
+			BukkitRunnable task = new RollerRunnable(player.getName());
 			task.runTaskTimer(Main.main, 0, 1);
-			player.setTask(task);
+			data.setTask(task);
 		}
-		player.setTick(5);
-		p.setExp((float) (p.getExp()-weapon.getCost()));
-		if(!player.isPaint()) {
-			player.setPaint(true);
+		data.setTick(5);
+		player.setExp((float) (player.getExp()-weapon.getCost()));
+		if(!data.isPaint()) {
+			data.setPaint(true);
 			//p.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 2, 5));
-			RollerSplash(p, 12);
-			Location loc = p.getLocation().clone();
-			RollPaint(player,
-					PlayerDirectionID_Eight(loc.getYaw()),
-					loc.getWorld(),
-					loc.getBlockX(),
-					loc.getBlockY(),
-					loc.getBlockZ());
+			RollerSplash(player, 12);
+			DetailsColor color = DataStore.getArenaData(data.getArena()).getSplatColor(data.getTeamid()).getDetailsColor();
+			Location location = player.getLocation();
+			float yaw = -player.getLocation().getYaw();
+			Polar_coodinates pc, pc2 = new Polar_coodinates(player.getWorld(), 2, Math.toRadians(yaw), 0);
+			for(double i = -2.5; i <= 2.5; i+=0.5) {
+				for(int j = 0; j <= 1; j++) {
+					pc = new Polar_coodinates(player.getWorld(), i, Math.toRadians(yaw)+(Math.PI/2), 0);
+					Location judgeloc = location.clone().add(0, j-0.5, 0).add(pc2.convertLocation()).add(pc.convertLocation());
+					Paint.PaintWool(data, judgeloc.getBlock());
+					MainGame.Damager(data, judgeloc, DataStore.getWeapondata(data.getWeapon()).getDamage());
+					new ParticleAPI.Particle(EnumParticle.REDSTONE, 
+							location.clone().add(0, j-0.5, 0).add(pc2.convertLocation()).add(pc.convertLocation()),
+							color.getRed(),
+							color.getGreen(),
+							color.getBlue(),
+							1,
+							0).sendParticle(player);
+				}
+			}
 		}
 	}
+	
+	/*@EventHandler
+	public void onInteract2(PlayerInteractEvent e) {
+		Action action = e.getAction();
+		if(action == Action.LEFT_CLICK_AIR
+				|| action == Action.LEFT_CLICK_BLOCK
+				|| action == Action.PHYSICAL)
+			return;
+		Player player = e.getPlayer();
+		Location location = player.getLocation();
+		float yaw = -player.getLocation().getYaw();
+		Polar_coodinates pc, pc2 = new Polar_coodinates(player.getWorld(), 2, Math.toRadians(yaw), 0);
+		for(double i = -2.5; i <= 2.5; i+=0.5) {
+			for(int j = 0; j <= 1; j++) {
+				pc = new Polar_coodinates(player.getWorld(), i, Math.toRadians(yaw)+(Math.PI/2), 0);
+				new ParticleAPI.Particle(EnumParticle.REDSTONE, 
+						location.clone().add(0, j-0.5, 0).add(pc2.convertLocation()).add(pc.convertLocation()),
+						0.1f, 
+						0.1f, 
+						0.1f, 
+						1,
+						0).sendParticle(player);
+			}
+		}
+	}*/
 
 	@EventHandler
 	public void onMove(PlayerMoveEvent e) {
-		Player p = e.getPlayer();
-		if(!DataStore.hasPlayerData(p.getName()))
+		Player player = e.getPlayer();
+		if(!DataStore.hasPlayerData(player.getName()))
 			return;
 		if(DataStore.getPlayerData(e.getPlayer().getName()).getArena() == null)
 			return;
-		PlayerData player = DataStore.getPlayerData(p.getName());
+		PlayerData data = DataStore.getPlayerData(player.getName());
 		ItemStack item = e.getPlayer().getInventory().getItemInMainHand();
-		WeaponData weapon = DataStore.getWeapondata(player.getWeapon());
+		WeaponData weapon = DataStore.getWeapondata(data.getWeapon());
 		if(weapon.getType() != WeaponType.Roller)
 			return;
-		if(player.isAllCancel()
+		if(data.isAllCancel()
 				|| item == null
 				|| item.getType() != weapon.getItemtype()
 				|| !item.hasItemMeta()
 				|| item.getItemMeta().getLore().size() < 5
-				|| !item.getItemMeta().getDisplayName().equalsIgnoreCase(player.getWeapon()))
+				|| !item.getItemMeta().getDisplayName().equalsIgnoreCase(data.getWeapon()))
 			return;
-		if(!player.isPaint())
+		if(!data.isPaint())
 			return;
-		if(p.getExp() < weapon.getCost()) {
-			MainGame.sendTitle(player, 0, 5, 0, " ", ChatColor.RED+"インクがありません!");
+		if(player.getExp() < weapon.getCost()) {
+			MainGame.sendTitle(data, 0, 5, 0, " ", ChatColor.RED+"インクがありません!");
 			return;
 		}
-		Location loc = p.getLocation().clone();
-		p.setExp((float) (p.getExp()-weapon.getCost()));
-		RollPaint(player,
-				PlayerDirectionID_Eight(loc.getYaw()),
-				loc.getWorld(),
-				loc.getBlockX(),
-				loc.getBlockY(),
-				loc.getBlockZ());
+		player.setExp((float) (player.getExp()-weapon.getCost()));
+		DetailsColor color = DataStore.getArenaData(data.getArena()).getSplatColor(data.getTeamid()).getDetailsColor();
+		Location location = player.getLocation();
+		float yaw = -player.getLocation().getYaw();
+		Polar_coodinates pc, pc2 = new Polar_coodinates(player.getWorld(), 2, Math.toRadians(yaw), 0);
+		for(double i = -2.5; i <= 2.5; i+=0.5) {
+			for(int j = 0; j <= 1; j++) {
+				pc = new Polar_coodinates(player.getWorld(), i, Math.toRadians(yaw)+(Math.PI/2), 0);
+				Location judgeloc = location.clone().add(0, j-0.5, 0).add(pc2.convertLocation()).add(pc.convertLocation());
+				Paint.PaintWool(data, judgeloc.getBlock());
+				MainGame.Damager(data, judgeloc, DataStore.getWeapondata(data.getWeapon()).getDamage());
+				new ParticleAPI.Particle(EnumParticle.REDSTONE, 
+						location.clone().add(0, j-0.5, 0).add(pc2.convertLocation()).add(pc.convertLocation()),
+						color.getRed(), 
+						color.getGreen(), 
+						color.getBlue(), 
+						1,
+						0).sendParticle(player);
+			}
+		}
 	}
 
 	@EventHandler
@@ -127,85 +178,6 @@ public class Roller implements Listener {
 		if(DataStore.getWeapondata(data.getWeapon()).getType() != WeaponType.Roller)
 			return;
 		Paint.SpherePaint(e.getEntity().getLocation(), 1.4, data);
-	}
-
-	private void RollPaint(PlayerData data, int DirectionID, World world, int Xo, int Yo, int Zo) {
-		if(DirectionID == 0)
-			Zo += 2;
-		else if(DirectionID == 1)
-			Zo += 3;
-		else if(DirectionID == 2)
-			Xo -= 2;
-		else if(DirectionID == 3)
-			Xo -= 3;
-		else if(DirectionID == 4)
-			Zo -= 2;
-		else if(DirectionID == 5)
-			Zo -= 3;
-		else if(DirectionID == 6)
-			Xo += 2;
-		else if(DirectionID == 7)
-			Xo += 3;
-		int x1, x2, y1, y2, z1, z2;
-		int damage = DataStore.getWeapondata(data.getWeapon()).getDamage();
-		y1 = Yo - 1; y2 = Yo;
-		if(DirectionID == 0 || DirectionID == 4) {
-			x1 = Xo - 2; x2 = Xo + 2;
-			for (int xPoint = x1; xPoint <= x2; xPoint++) {
-				for (int yPoint = y1; yPoint <= y2; yPoint++) {
-					Block block = world.getBlockAt(xPoint, yPoint, Zo);
-					Paint.PaintWool(data, block);
-					MainGame.Damager(data, xPoint, yPoint, Zo, damage);
-				}
-			}
-			return;
-		} else if(DirectionID == 2 || DirectionID == 6) {
-			z1 = Zo - 2; z2 = Zo + 2;
-			for (int zPoint = z1; zPoint <= z2; zPoint++) {
-				for (int yPoint = y1; yPoint <= y2; yPoint++) {
-					Block block = world.getBlockAt(Xo, yPoint, zPoint);
-					Paint.PaintWool(data, block);
-					MainGame.Damager(data, Xo, yPoint, zPoint, damage);
-				}
-			}
-			return;
-		} else if(DirectionID == 1
-				|| DirectionID == 3
-				|| DirectionID == 5
-				|| DirectionID == 7) {
-			for(int i = 0; i<=3 ; i++) {
-				for (int yPoint = y1; yPoint <= y2; yPoint++) {
-					int x = Xo, z = Zo;
-					Block block = null;
-					Block block_ = null;
-					if(DirectionID == 1) {
-						x-=i; z-=i;
-						block = world.getBlockAt(x, yPoint, z);
-						if(i<3)
-							block_ = world.getBlockAt(x, yPoint, z-1);
-					} else if(DirectionID == 3) {
-						x+=i; z-=i;
-						block = world.getBlockAt(x, yPoint, z);
-						if(i<3)
-							block_ = world.getBlockAt(x+1, yPoint, z);
-					} else if(DirectionID == 5) {
-						x+=i; z+=i;
-						block = world.getBlockAt(x, yPoint, z);
-						if(i<3)
-							block_ = world.getBlockAt(x, yPoint, z+1);
-					} else if(DirectionID == 7) {
-						x-=i; z+=i;
-						block = world.getBlockAt(x, yPoint, z);
-						if(i<3)
-							block_ = world.getBlockAt(x-1, yPoint, z);
-					}
-					Paint.PaintWool(data, block);
-					Paint.PaintWool(data, block_);
-					MainGame.Damager(data, x, yPoint, z, damage);
-					MainGame.Damager(data, block_, damage);
-				}
-			}
-		}
 	}
 
 	public static void RollerSplash(Player player, int count) {
