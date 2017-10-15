@@ -155,6 +155,6 @@ public class SquidMode implements Listener {
 	}
 	
 	public boolean isSlipBlock(Location location) {
-		return DataStore.getConfig().getCanSplitBlocks().contains(location.getBlock().getType().toString());
+		return DataStore.getConfig().getCanSlipBlocks().contains(location.getBlock().getType().toString());
 	}
 }

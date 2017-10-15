@@ -42,7 +42,7 @@ public class OtherFiles extends PluginFiles {
 		file.set("FinishTeleportLobby", false);
 		file.set("UseDatabase", false);
 		file.set("CanPaintColors", Arrays.stream(DyeColor.values()).map(color -> color.toString()).collect(Collectors.toList()));
-		file.set("CanSplitBlocks", Arrays.asList("IRON_FENCE", "IRON_TRAPDOOR"));
+		file.set("CanSliplocks", Arrays.asList("IRON_FENCE", "IRON_TRAPDOOR"));
 		SettingFiles(file, new File(filepath+"Config.yml"));
 	}
 
@@ -117,7 +117,7 @@ public class OtherFiles extends PluginFiles {
 		file.set("Time.Splat_Zones", data.getTimeforSplatZones());
 		file.set("FinishTeleportLobby", data.isFinishteleportlobby());
 		file.set("CanPaintColors", data.getCanpaintcolors());
-		file.set("CanSplitBlocks", data.getCanSplitBlocks());
+		file.set("CanSlipBlocks", data.getCanSlipBlocks());
 		SettingFiles(file, new File(filepath+"Config.yml"));
 		return true;
 	}

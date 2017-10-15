@@ -17,7 +17,7 @@ public class ConfigData {
 	private boolean finishteleportlobby;
 	private boolean usesql;
 	private List<String> canpaintcolors = new ArrayList<>();
-	private List<String> cansplitblocks = new ArrayList<>();
+	private List<String> canslipblocks = new ArrayList<>();
 
 	public ConfigData(FileConfiguration file) {
 		this.configversion = file.getString("ConfigVersion", "4");
@@ -29,9 +29,9 @@ public class ConfigData {
 		this.canpaintcolors = (file.getStringList("CanPaintColors").isEmpty() 
 				? Arrays.stream(DyeColor.values()).map(color -> color.toString()).collect(Collectors.toList())
 						: file.getStringList("CanPaintColors"));
-		this.cansplitblocks = (file.getStringList("CanSplitBlocks").isEmpty() 
+		this.canslipblocks = (file.getStringList("CanSlipBlocks").isEmpty() 
 				? Arrays.asList("IRON_FENCE", "IRON_TRAPDOOR")
-						: file.getStringList("CanSplitBlocks"));
+						: file.getStringList("CanSlipBlocks"));
 		//TODO 今後可変するようにした場合、上2つのArrays部分をArrayListでラップしないとエラー出る可能性
 	}
 
@@ -56,7 +56,7 @@ public class ConfigData {
 	public List<String> getCanpaintcolors() {
 		return canpaintcolors;
 	}
-	public List<String> getCanSplitBlocks() {
-		return cansplitblocks;
+	public List<String> getCanSlipBlocks() {
+		return canslipblocks;
 	}
 }
