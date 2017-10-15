@@ -2,6 +2,7 @@ package jp.kotmw.splatoon.filedatas;
 
 import java.io.File;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.Location;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -23,7 +24,7 @@ public class WaitRoomFiles extends PluginFiles {
 		file.set("Room.Z", l.getZ());
 		file.set("Room.Yaw", l.getYaw());
 		file.set("Room.Pitch", l.getPitch());
-		file.set("Room.SelectList", DataStore.getArenaList());
+		file.set("Room.SelectList", DataStore.getArenaList().stream().map(arenas -> arenas.getName()).collect(Collectors.toList()));
 		file.set("Room.BattleType", type.toString());
 		DataStore.addRoomData(room, new WaitRoomData(room, file));
 		SettingFiles(file, DirFile(filedir, room));

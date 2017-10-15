@@ -5,6 +5,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -43,18 +44,7 @@ public class Listeners implements Listener {
 			e.setCancelled(true);
 			return;
 		}
-		for(String arena : DataStore.getArenaList()) {
-			ArenaData data  = DataStore.getArenaData(arena);
-			if(!data.isStatus())
-				return;
-			if(((data.getStagePosition1().getBlockX() >= e.getBlock().getX()) && (e.getBlock().getX() >= data.getStagePosition2().getBlockX()))
-					&& ((data.getStagePosition1().getBlockY() >= e.getBlock().getY()) && (e.getBlock().getY() >= data.getStagePosition2().getBlockY()))
-					&& ((data.getStagePosition1().getBlockZ() >= e.getBlock().getZ()) && (e.getBlock().getZ() >= data.getStagePosition2().getBlockZ()))) {
-				e.setCancelled(true);
-				e.getPlayer().sendMessage(MainGame.Prefix+ChatColor.RED+"範囲内編集をするには、Editmodeを有効にしてください");
-				return;
-			}
-		}
+		e.setCancelled(isIn(e.getPlayer(), e.getBlock()));
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
@@ -63,19 +53,22 @@ public class Listeners implements Listener {
 			e.setCancelled(true);
 			return;
 		}
-		for(String arena : DataStore.getArenaList()) {
-			ArenaData data  = DataStore.getArenaData(arena);
+		e.setCancelled(isIn(e.getPlayer(), e.getBlock()));
+	}
+	
+	private boolean isIn(Player player, Block block) {
+		for(ArenaData data : DataStore.getArenaList()) {
 			if(!data.isStatus())
-				return;
-			if(((data.getStagePosition1().getBlockX() >= e.getBlock().getX()) && (e.getBlock().getX() >= data.getStagePosition2().getBlockX()))
-					&& ((data.getStagePosition1().getBlockY() >= e.getBlock().getY()) && (e.getBlock().getY() >= data.getStagePosition2().getBlockY()))
-					&& ((data.getStagePosition1().getBlockZ() >= e.getBlock().getZ()) && (e.getBlock().getZ() >= data.getStagePosition2().getBlockZ()))) {
-				e.setCancelled(true);
-				e.getPlayer().sendMessage(MainGame.Prefix+ChatColor.RED+"範囲内編集をするには、Editmodeを有効にしてください");
-				return;
+				return false;
+			if(((data.getStagePosition1().getBlockX() >= block.getX()) && (block.getX() >= data.getStagePosition2().getBlockX()))
+					&& ((data.getStagePosition1().getBlockY() >= block.getY()) && (block.getY() >= data.getStagePosition2().getBlockY()))
+					&& ((data.getStagePosition1().getBlockZ() >= block.getZ()) && (block.getZ() >= data.getStagePosition2().getBlockZ()))) {
+				player.sendMessage(MainGame.Prefix+ChatColor.RED+"範囲内編集をするには、Editmodeを有効にしてください");
+				player.sendMessage(MainGame.Prefix+"対象ステージ : "+data.getName());
+				return true;
 			}
 		}
-		
+		return false;
 	}
 
 	@EventHandler(priority = EventPriority.HIGH)
@@ -113,10 +106,16 @@ public class Listeners implements Listener {
 			e.setCancelled(true);
 			return;
 		}
-		if(player.getLocation().getBlock().getType() == Material.WATER ||
-				player.getLocation().getBlock().getType() == Material.STATIONARY_WATER) {
+		Location location = player.getLocation();
+		if(location.getBlock().getType() == Material.WATER ||
+				location.getBlock().getType() == Material.STATIONARY_WATER) {
 			player.damage(20);
 		}
+		if(DataStore.getPlayerData(player.getName()).getArena() == null)
+			return;
+		ArenaData data = DataStore.getArenaData(DataStore.getPlayerData(player.getName()).getArena());
+		if(location.getBlockY() <= data.getStagePosition2().getBlockY())
+			player.damage(20);
 	}
 
 	@EventHandler

@@ -25,12 +25,11 @@ import jp.kotmw.splatoon.manager.TeamCountManager;
 
 public class SplatZones extends Turf_War {
 
-	public SplatZones(String arena) {
-		super(arena);
+	public SplatZones(ArenaData data) {
+		super(data);
 	}
 
 	public void showZone() {
-		ArenaData data = DataStore.getArenaData(arena);
 		List<ArmorStand> areastands = new ArrayList<ArmorStand>();
 		int x1 = (int)data.getAreaPosition1().getX();
 		int y1 = (int)data.getAreaPosition1().getY();
@@ -61,7 +60,6 @@ public class SplatZones extends Turf_War {
 	}
 
 	public void checkArea() {
-		ArenaData data = DataStore.getArenaData(arena);
 		int team1 = 0, team2 = 0;
 		int x1 = (int)data.getAreaPosition1().getX();
 		int y1 = (int)data.getAreaPosition1().getY();
@@ -146,7 +144,6 @@ public class SplatZones extends Turf_War {
 	}
 
 	public void EnsureArea(int ensureteam) {
-		ArenaData data = DataStore.getArenaData(arena);
 		int x1 = (int)data.getAreaPosition1().getX();
 		int z1 = (int)data.getAreaPosition1().getZ();
 		int x2 = (int)data.getAreaPosition2().getX();

@@ -1,8 +1,11 @@
 package jp.kotmw.splatoon.gamedatas;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.bukkit.DyeColor;
 import org.bukkit.configuration.file.FileConfiguration;
 
 public class ConfigData {
@@ -14,15 +17,22 @@ public class ConfigData {
 	private boolean finishteleportlobby;
 	private boolean usesql;
 	private List<String> canpaintcolors = new ArrayList<>();
+	private List<String> cansplitblocks = new ArrayList<>();
 
 	public ConfigData(FileConfiguration file) {
-		this.configversion = file.getString("ConfigVersion");
-		this.TransfarCount = file.getInt("TransfarCount");
-		this.TurfWar = file.getInt("Time.Turf_War");
-		this.SplatZones = file.getInt("Time.Splat_Zones");
-		this.finishteleportlobby = file.getBoolean("FinishTeleportLobby");
-		this.usesql = file.getBoolean("UseDatabase");
-		this.canpaintcolors = file.getStringList("CanPaintColors");
+		this.configversion = file.getString("ConfigVersion", "4");
+		this.TransfarCount = file.getInt("TransfarCount", 10);
+		this.TurfWar = file.getInt("Time.Turf_War", 180);
+		this.SplatZones = file.getInt("Time.Splat_Zones", 300);
+		this.finishteleportlobby = file.getBoolean("FinishTeleportLobby", false);
+		this.usesql = file.getBoolean("UseDatabase", false);
+		this.canpaintcolors = (file.getStringList("CanPaintColors").isEmpty() 
+				? Arrays.stream(DyeColor.values()).map(color -> color.toString()).collect(Collectors.toList())
+						: file.getStringList("CanPaintColors"));
+		this.cansplitblocks = (file.getStringList("CanSplitBlocks").isEmpty() 
+				? Arrays.asList("IRON_FENCE", "IRON_TRAPDOOR")
+						: file.getStringList("CanSplitBlocks"));
+		//TODO 今後可変するようにした場合、上2つのArrays部分をArrayListでラップしないとエラー出る可能性
 	}
 
 	public String getConfigversion() {
@@ -45,5 +55,8 @@ public class ConfigData {
 	}
 	public List<String> getCanpaintcolors() {
 		return canpaintcolors;
+	}
+	public List<String> getCanSplitBlocks() {
+		return cansplitblocks;
 	}
 }

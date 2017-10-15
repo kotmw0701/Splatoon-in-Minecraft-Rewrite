@@ -31,7 +31,7 @@ public class SquidRunnable extends BukkitRunnable {
 		}
 		if(!data.isSquidMode())
 			return;
-		if(!SplatColorManager.isBelowBlockTeamColor(Bukkit.getPlayer(name), true))
+		if((!SplatColorManager.isBelowBlockTeamColor(Bukkit.getPlayer(name), true)) && !data.isClimb())
 			return;
 		Player player = Bukkit.getPlayer(name);
 		float ink = player.getExp();

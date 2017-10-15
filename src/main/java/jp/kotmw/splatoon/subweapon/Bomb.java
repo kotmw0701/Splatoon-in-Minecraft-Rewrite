@@ -50,7 +50,7 @@ public class Bomb implements Listener {
 				|| !item.getItemMeta().getDisplayName().equalsIgnoreCase(subweapon.getName()))
 			return;
 		if(p.getExp() < subweapon.getCost()) {
-			MainGame.sendTitle(player, 0, 5, 0, " ", ChatColor.RED+"インクがありません!");
+			MainGame.sendActionBar(player, ChatColor.RED+"インクがありません!");
 			return;
 		}
 		launch(p, subweapon);

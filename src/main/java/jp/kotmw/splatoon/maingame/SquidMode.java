@@ -96,6 +96,16 @@ public class SquidMode implements Listener {
 			}
 		}
 		if(canSlipBlock_under(player.getLocation())) player.teleport(player.getLocation().add(0, -0.1, 0));
+		/*Block block = canSlipBlock_front(e);
+		if(block == null)
+			return;
+		new ParticleAPI.Particle(EnumParticle.REDSTONE, 
+				block.getLocation().clone().add(0.5, 0, 0.5),
+				0.1f, 
+				0.1f, 
+				0.1f, 
+				1,
+				0).sendParticle(player);*/
 	}
 
 	@EventHandler
@@ -145,14 +155,6 @@ public class SquidMode implements Listener {
 	}
 	
 	public boolean isSlipBlock(Location location) {
-		switch(location.getBlock().getType()) {
-		case IRON_FENCE:
-		case IRON_TRAPDOOR:
-		case STAINED_GLASS_PANE:
-		case THIN_GLASS:
-			return true;
-		default:
-			return false;
-		}
+		return DataStore.getConfig().getCanSplitBlocks().contains(location.getBlock().getType().toString());
 	}
 }

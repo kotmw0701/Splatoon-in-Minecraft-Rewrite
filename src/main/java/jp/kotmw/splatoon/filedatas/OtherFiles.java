@@ -1,8 +1,9 @@
 package jp.kotmw.splatoon.filedatas;
 
 import java.io.File;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
@@ -34,16 +35,14 @@ public class OtherFiles extends PluginFiles {
 		if(new File(filepath+"Config.yml").exists())
 			return;
 		FileConfiguration file = new YamlConfiguration();
-		file.set("ConfigVersion", Integer.toHexString(3));
+		file.set("ConfigVersion", 4);
 		file.set("TransfarCount", 10);
 		file.set("Time.Turf_War", 180);
 		file.set("Time.Splat_Zones", 300);
 		file.set("FinishTeleportLobby", false);
 		file.set("UseDatabase", false);
-		List<String> colors = new ArrayList<String>();
-		for(DyeColor color : DyeColor.values())
-			colors.add(color.toString());
-		file.set("CanPaintColors", colors);
+		file.set("CanPaintColors", Arrays.stream(DyeColor.values()).map(color -> color.toString()).collect(Collectors.toList()));
+		file.set("CanSplitBlocks", Arrays.asList("IRON_FENCE", "IRON_TRAPDOOR"));
 		SettingFiles(file, new File(filepath+"Config.yml"));
 	}
 
@@ -99,10 +98,8 @@ public class OtherFiles extends PluginFiles {
 	private static String SignFile(String name, SignType type) {
 		int i = 1;
 		String filename = type.getType()+"_"+name+"_"+i;
-		while(getSignFileList().contains(filename)) {
-			i++;
-			filename = type.getType()+"_"+name+"_"+i;
-		}
+		while(getSignFileList().contains(filename))
+			filename = type.getType()+"_"+name+"_"+(++i);
 		return filename;
 	}
 
@@ -110,6 +107,21 @@ public class OtherFiles extends PluginFiles {
 		return new File(SignDir()+File.separator+filename+".yml").delete();
 	}
 
+	public static boolean configUpdater(ConfigData data) {
+		if(data.getConfigversion().equalsIgnoreCase("4"))
+			return false;
+		FileConfiguration file = new YamlConfiguration();
+		file.set("ConfigVersion", 4);
+		file.set("TransfarCount", data.getTransfarCount());
+		file.set("Time.Turf_War", data.getTimeforTurfWar());
+		file.set("Time.Splat_Zones", data.getTimeforSplatZones());
+		file.set("FinishTeleportLobby", data.isFinishteleportlobby());
+		file.set("CanPaintColors", data.getCanpaintcolors());
+		file.set("CanSplitBlocks", data.getCanSplitBlocks());
+		SettingFiles(file, new File(filepath+"Config.yml"));
+		return true;
+	}
+	
 	public static void AllSignReload() {
 		for(String sign : getSignFileList()) {
 			FileConfiguration file = YamlConfiguration.loadConfiguration(DirFile(signfiledir, sign));
@@ -119,8 +131,12 @@ public class OtherFiles extends PluginFiles {
 	}
 
 	public static void ConfigReload() {
-		FileConfiguration file = YamlConfiguration.loadConfiguration(new File(filepath+"Config.yml"));
-		DataStore.setConfig(new ConfigData(file));
+		ConfigData data = new ConfigData(YamlConfiguration.loadConfiguration(new File(filepath+"Config.yml")));
+		if(configUpdater(data)) {
+			FileConfiguration file = YamlConfiguration.loadConfiguration(new File(filepath+"Config.yml"));
+			data = new ConfigData(file);
+		}
+		DataStore.setConfig(data);
 	}
 	
 	public static void RankFileReload() {

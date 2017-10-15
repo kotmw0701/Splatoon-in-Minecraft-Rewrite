@@ -11,8 +11,10 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import jp.kotmw.splatoon.gamedatas.ArenaData;
 import jp.kotmw.splatoon.gamedatas.DataStore;
 import jp.kotmw.splatoon.gamedatas.DataStore.RankingPattern;
+import jp.kotmw.splatoon.gamedatas.WaitRoomData;
 import jp.kotmw.splatoon.maingame.MainGame;
 
 public class PlayerCommands implements CommandExecutor {
@@ -22,17 +24,25 @@ public class PlayerCommands implements CommandExecutor {
 		if(!(sender instanceof Player))
 			return false;
 		Player player = (Player)sender;
-		if(args.length < 1) {
-			//コマンドリスト
+		if(args.length == 0) {
+			player.sendMessage(MainGame.Prefix);
+			player.sendMessage("-----Player Command List-----");
+			player.sendMessage("/splat join <room> [player]");
+			player.sendMessage("/splat leave");
+			player.sendMessage("/splat roomlist");
+			player.sendMessage("/splat arenalist");
+			player.sendMessage("/splat rank <win/lose/rank/rate/totalpaint/maxwinstreak>");
+			player.sendMessage("------------------------------");
+			return true;
 		} else if(args.length == 1) {
 			if("leave".equalsIgnoreCase(args[0]))
 				MainGame.leave(player);
 			else if("roomlist".equalsIgnoreCase(args[0])) {
 				player.sendMessage(ChatColor.GREEN+"待機部屋一覧");
-				for(String room : DataStore.getRoomList()) player.sendMessage("- "+room+ChatColor.GREEN+" | "+ChatColor.WHITE+DataStore.getRoomPlayersList(room).size()+" / 8");
+				for(WaitRoomData room : DataStore.getRoomList()) player.sendMessage("- "+room+ChatColor.GREEN+" | "+ChatColor.WHITE+DataStore.getRoomPlayersList(room.getName()).size()+" / 8");
 			} else if("arenalist".equalsIgnoreCase(args[0])) {
 				player.sendMessage(ChatColor.GREEN+"ステージ一覧");
-				for(String room : DataStore.getArenaList()) player.sendMessage("- "+room+" "+DataStore.getArenaData(room).getGameStatus().getStats());
+				for(ArenaData room : DataStore.getArenaList()) player.sendMessage("- "+room.getName()+" "+room.getGameStatus().getStats());
 			}
 		} else if(args.length == 2) {
 			if("join".equalsIgnoreCase(args[0])) {
@@ -58,6 +68,8 @@ public class PlayerCommands implements CommandExecutor {
 					i++;
 				}
 				player.sendMessage(ChatColor.GREEN.toString()+ChatColor.STRIKETHROUGH+"----------------------------------------");
+			} else if("spectate".equalsIgnoreCase(args[0])) {
+				
 			}
 		} else if(args.length == 3) {
 			if("join".equalsIgnoreCase(args[0])) {

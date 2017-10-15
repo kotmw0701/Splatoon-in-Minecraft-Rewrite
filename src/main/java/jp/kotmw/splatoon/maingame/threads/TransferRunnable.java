@@ -71,11 +71,11 @@ public class TransferRunnable extends BukkitRunnable {
 			}
 			switch(type) {
 			case Turf_War:
-				data.setBattleClass(new Turf_War(data.getName()));
+				data.setBattleClass(new Turf_War(data));
 				SplatZones.clearAreaStand(data);
 				break;
 			case Splat_Zones:
-				data.setBattleClass(new SplatZones(data.getName()));
+				data.setBattleClass(new SplatZones(data));
 				((SplatZones)data.getBattleClass()).showZone();
 				break;
 			case Rain_Maker:

@@ -63,8 +63,7 @@ public class Main extends JavaPlugin{
 	public void onDisable() {
 		schedule = false;
 		DataStore.datasAllClear();
-		for(String arena : DataStore.getArenaList()) {
-			ArenaData data = DataStore.getArenaData(arena);
+		for(ArenaData data : DataStore.getArenaList()) {
 			if(data.getTask()!=null) {
 				data.getTask().cancel();
 				Paint.RollBack(data);

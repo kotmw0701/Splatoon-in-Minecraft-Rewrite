@@ -29,10 +29,11 @@ import jp.kotmw.splatoon.gamedatas.SubWeaponData;
 import jp.kotmw.splatoon.gamedatas.WaitRoomData;
 import jp.kotmw.splatoon.maingame.threads.AnimationRunnable;
 import jp.kotmw.splatoon.maingame.threads.TransferRunnable;
+import jp.kotmw.splatoon.manager.Paint;
 import jp.kotmw.splatoon.manager.SplatScoreBoard;
 import jp.kotmw.splatoon.util.MessageUtil;
 
-public class MainGame extends MessageUtil{
+public class MainGame extends MessageUtil {
 
 	public static String Prefix = "[ "+ChatColor.GREEN+"Splatoon"+ChatColor.WHITE+" ] ";
 
@@ -188,20 +189,23 @@ public class MainGame extends MessageUtil{
 		return null;
 	}
 
-	public static void end(ArenaData data) {
+	public static void end(ArenaData data, boolean tf) {
+		Paint.RollBack(data);
 		data.clearStatus();
 		SplatScoreBoard.resetScoreboard(data);
 		for(PlayerData datalist : DataStore.getArenaPlayersList(data.getName())) {
-			PlayerStatusData statusData = datalist.getPlayerStatus();
-			if(data.getWinTeam() == datalist.getTeamid()) {
-				statusData.updateWinnerScore();
-			} else {
-				statusData.updateLoserScore();
-			}
 			Player player = Bukkit.getPlayer(datalist.getName());
-			if(statusData.updateScoreExp()) {
-				player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.7f, 1);
-				player.sendMessage(MainGame.Prefix+ChatColor.GREEN+"ランクが上がりました！");
+			if(!tf) {
+				PlayerStatusData statusData = datalist.getPlayerStatus();
+				if(data.getWinTeam() == datalist.getTeamid()) {
+					statusData.updateWinnerScore();
+				} else {
+					statusData.updateLoserScore();
+				}
+				if(statusData.updateScoreExp()) {
+					player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.7f, 1);
+					player.sendMessage(MainGame.Prefix+ChatColor.GREEN+"ランクが上がりました！");
+				}
 			}
 			player.getInventory().clear();
 			player.setGameMode(Bukkit.getDefaultGameMode());
@@ -279,7 +283,7 @@ public class MainGame extends MessageUtil{
 					continue;
 				}
 				//距離減衰式を入れる
-				 target.damage(subWeaponData.getMaxDamage());
+				target.damage(subWeaponData.getMaxDamage());
 			}
 		}
 	}

@@ -8,7 +8,6 @@ import jp.kotmw.splatoon.gamedatas.DataStore;
 import jp.kotmw.splatoon.gamedatas.PlayerData;
 import jp.kotmw.splatoon.maingame.MainGame;
 import jp.kotmw.splatoon.maingame.Turf_War;
-import jp.kotmw.splatoon.manager.Paint;
 
 public class ResultRunnable extends BukkitRunnable {
 
@@ -39,9 +38,8 @@ public class ResultRunnable extends BukkitRunnable {
 			}
 		} else if(tick < 15 && tick >= 11) {
 			battle.sendResult();
-			Paint.RollBack(data);
 		} else if(tick < 0) {
-			MainGame.end(data);
+			MainGame.end(data, false);
 			cancel();
 		}
 		tick--;

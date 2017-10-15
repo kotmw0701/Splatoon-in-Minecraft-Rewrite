@@ -4,7 +4,6 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Snowball;
 import org.bukkit.event.EventHandler;
@@ -53,11 +52,11 @@ public class Shooter implements Listener {
 			return;
 		WeaponData weapondata = DataStore.getWeapondata(data.getWeapon());
 		if(player.getExp() < weapondata.getCost()) {
-			MainGame.sendTitle(data, 0, 5, 0, " ", ChatColor.RED+"インクがありません!");
+			MainGame.sendActionBar(data, ChatColor.RED+"インクがありません!");
 			return;
 		}
 		int tick = 1;
-		if(weapondata.getFirespeed() < 5) //右クリックしてる時の連射(可変)
+		if(weapondata.getFirespeed() < 5)
 			tick=tick+(5-weapondata.getFirespeed());
 		if(data.getTask() == null) {
 			BukkitRunnable task = new ShooterRunnable(player.getName());
@@ -101,16 +100,6 @@ public class Shooter implements Listener {
 				return;
 			e.setDamage(data.getDamage());
 		}
-	}
-
-	@EventHandler
-	public void onArmorstanddamage(EntityDamageByEntityEvent e) {
-		if(e.getEntity().getType() != EntityType.ARMOR_STAND || !(e.getDamager() instanceof Snowball))
-			return;
-		Snowball ball = (Snowball) e.getDamager();
-		if(!(ball.getShooter() instanceof Player) || !DataStore.hasPlayerData(((Player)ball.getShooter()).getName()))
-			return;
-		e.setCancelled(true);
 	}
 
 	public static void shoot(PlayerData data) {

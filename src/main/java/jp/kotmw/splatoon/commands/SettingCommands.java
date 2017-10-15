@@ -31,7 +31,7 @@ import jp.kotmw.splatoon.manager.Paint;
 import jp.kotmw.splatoon.manager.SplatColorManager;
 import jp.kotmw.splatoon.manager.SplatScoreBoard;
 
-public class SettingCommands implements CommandExecutor{
+public class SettingCommands implements CommandExecutor {
 
 	List<ArmorStand> stands = new ArrayList<ArmorStand>();
 

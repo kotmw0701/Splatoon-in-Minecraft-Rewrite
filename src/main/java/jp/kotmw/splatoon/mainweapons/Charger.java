@@ -1,20 +1,7 @@
 package jp.kotmw.splatoon.mainweapons;
 
-import jp.kotmw.splatoon.Main;
-import jp.kotmw.splatoon.gamedatas.ArenaData;
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.DataStore.WeaponType;
-import jp.kotmw.splatoon.gamedatas.PlayerData;
-import jp.kotmw.splatoon.gamedatas.WeaponData;
-import jp.kotmw.splatoon.maingame.MainGame;
-import jp.kotmw.splatoon.mainweapons.threads.ChargerRunnable;
-import jp.kotmw.splatoon.manager.Paint;
-
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,7 +9,14 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.BlockIterator;
+
+import jp.kotmw.splatoon.Main;
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.WeaponType;
+import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.gamedatas.WeaponData;
+import jp.kotmw.splatoon.maingame.MainGame;
+import jp.kotmw.splatoon.mainweapons.threads.ChargerRunnable;
 
 public class Charger implements Listener {
 
@@ -51,7 +45,7 @@ public class Charger implements Listener {
 			return;
 		WeaponData weapon = DataStore.getWeapondata(player.getWeapon());
 		if(p.getExp() < weapon.getCost() && player.getCharge() <= 0) {
-			MainGame.sendTitle(player, 0, 5, 0, " ", ChatColor.RED+"インクがありません!");
+			MainGame.sendActionBar(player, ChatColor.RED+"インクがありません!");
 			return;
 		}
 		if(player.getCharge() <= 0)
@@ -62,25 +56,5 @@ public class Charger implements Listener {
 			player.setTask(task);
 		}
 		player.setTick(5);
-	}
-
-	public static void launch(PlayerData data, int charge) {
-		WeaponData weapon = DataStore.getWeapondata(data.getWeapon());
-		Paint.SpherePaint(Bukkit.getPlayer(data.getName()).getLocation(), 1.2, data);
-		//int full = weapon.getFullcharge();
-		int shootlength = 35;
-		ArenaData arena = DataStore.getArenaData(data.getArena());
-		BlockIterator seeblock = new BlockIterator(Bukkit.getPlayer(data.getName()), shootlength);
-		while(seeblock.hasNext()) {
-			Block block = seeblock.next();
-			Location loc = block.getLocation().clone();
-			while(loc.getBlock().getType() == Material.AIR) {
-				if(loc.getBlockY() <=arena.getStagePosition2().getY())
-					break;
-				loc.add(0,-1,0);
-			}
-			Paint.SpherePaint(loc, 1.5, data);
-			MainGame.Damager(data, loc.getBlockX(), loc.getBlockY(), loc.getBlockZ(), weapon.getDamage());
-		}
 	}
 }

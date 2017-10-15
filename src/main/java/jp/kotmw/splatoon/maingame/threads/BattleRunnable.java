@@ -17,7 +17,6 @@ import jp.kotmw.splatoon.gamedatas.DataStore.GameStatusEnum;
 import jp.kotmw.splatoon.gamedatas.PlayerData;
 import jp.kotmw.splatoon.maingame.MainGame;
 import jp.kotmw.splatoon.maingame.SplatZones;
-import jp.kotmw.splatoon.manager.Paint;
 import jp.kotmw.splatoon.manager.SplatScoreBoard;
 
 public class BattleRunnable extends BukkitRunnable {
@@ -112,8 +111,7 @@ public class BattleRunnable extends BukkitRunnable {
 					}
 					for(ArmorStand stand : data.getAreastands())
 						stand.remove();
-					Paint.RollBack(data);
-					MainGame.end(data);
+					MainGame.end(data, true);
 					this.cancel();
 					return;
 				}
@@ -128,8 +126,7 @@ public class BattleRunnable extends BukkitRunnable {
 			else if(type == BattleType.Splat_Zones) {
 				for(ArmorStand stand : data.getAreastands())
 					stand.remove();
-				Paint.RollBack(data);
-				MainGame.end(data);
+				MainGame.end(data, false);
 			}
 			this.cancel();
 		}

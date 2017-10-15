@@ -72,13 +72,13 @@ public class DataStore {
 	public static PlayerStatusData getStatusData(String name) {
 		return statusdata.get(name);
 	}
-
-	public static List<String> getArenaList() {
-		return new ArrayList<String>(arenadata.keySet());
+	
+	public static List<ArenaData> getArenaList() {
+		return new ArrayList<ArenaData>(arenadata.values());
 	}
 
-	public static List<String> getRoomList() {
-		return new ArrayList<String>(roomdata.keySet());
+	public static List<WaitRoomData> getRoomList() {
+		return new ArrayList<WaitRoomData>(roomdata.values());
 	}
 
 	public static List<SignData> getSignDataList() {

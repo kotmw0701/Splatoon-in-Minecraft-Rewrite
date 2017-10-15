@@ -24,12 +24,12 @@ public class BlockPaintEvent extends Event{
 		this.arena = arena;
 	}
 
-	public Player getPlayer() {
-		return Bukkit.getPlayer(player.getName());
-	}
-
 	public PlayerData getPlayerData() {
 		return player;
+	}
+	
+	public Player getPlayer() {
+		return Bukkit.getPlayer(player.getName());
 	}
 
 	public Block getBlock() {

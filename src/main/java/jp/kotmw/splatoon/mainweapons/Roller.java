@@ -56,7 +56,7 @@ public class Roller implements Listener {
 			return;
 		WeaponData weapon = DataStore.getWeapondata(data.getWeapon());
 		if(player.getExp() < weapon.getCost()) {
-			MainGame.sendTitle(data, 0, 5, 0, " ", ChatColor.RED+"インクがありません!");
+			MainGame.sendActionBar(data, ChatColor.RED+"インクがありません!");
 			return;
 		}
 		if(data.getTask() == null) {
@@ -74,14 +74,14 @@ public class Roller implements Listener {
 			Location location = player.getLocation();
 			float yaw = -player.getLocation().getYaw();
 			Polar_coodinates pc, pc2 = new Polar_coodinates(player.getWorld(), 2, Math.toRadians(yaw), 0);
-			for(double i = -2.5; i <= 2.5; i+=0.5) {
+			for(double i = -2.0; i <= 2.0; i+=0.5) {
 				for(int j = 0; j <= 1; j++) {
 					pc = new Polar_coodinates(player.getWorld(), i, Math.toRadians(yaw)+(Math.PI/2), 0);
 					Location judgeloc = location.clone().add(0, j-0.5, 0).add(pc2.convertLocation()).add(pc.convertLocation());
 					Paint.PaintWool(data, judgeloc.getBlock());
 					MainGame.Damager(data, judgeloc, DataStore.getWeapondata(data.getWeapon()).getDamage());
 					new ParticleAPI.Particle(EnumParticle.REDSTONE, 
-							location.clone().add(0, j-0.5, 0).add(pc2.convertLocation()).add(pc.convertLocation()),
+							judgeloc,
 							color.getRed(),
 							color.getGreen(),
 							color.getBlue(),
@@ -139,7 +139,7 @@ public class Roller implements Listener {
 		if(!data.isPaint())
 			return;
 		if(player.getExp() < weapon.getCost()) {
-			MainGame.sendTitle(data, 0, 5, 0, " ", ChatColor.RED+"インクがありません!");
+			MainGame.sendActionBar(data, ChatColor.RED+"インクがありません!");
 			return;
 		}
 		player.setExp((float) (player.getExp()-weapon.getCost()));
@@ -147,14 +147,14 @@ public class Roller implements Listener {
 		Location location = player.getLocation();
 		float yaw = -player.getLocation().getYaw();
 		Polar_coodinates pc, pc2 = new Polar_coodinates(player.getWorld(), 2, Math.toRadians(yaw), 0);
-		for(double i = -2.5; i <= 2.5; i+=0.5) {
+		for(double i = -2.0; i <= 2.0; i+=0.5) {
 			for(int j = 0; j <= 1; j++) {
 				pc = new Polar_coodinates(player.getWorld(), i, Math.toRadians(yaw)+(Math.PI/2), 0);
 				Location judgeloc = location.clone().add(0, j-0.5, 0).add(pc2.convertLocation()).add(pc.convertLocation());
 				Paint.PaintWool(data, judgeloc.getBlock());
 				MainGame.Damager(data, judgeloc, DataStore.getWeapondata(data.getWeapon()).getDamage());
 				new ParticleAPI.Particle(EnumParticle.REDSTONE, 
-						location.clone().add(0, j-0.5, 0).add(pc2.convertLocation()).add(pc.convertLocation()),
+						judgeloc,
 						color.getRed(), 
 						color.getGreen(), 
 						color.getBlue(), 
