@@ -16,7 +16,9 @@ public class ResultRunnable extends BukkitRunnable {
 	private int i = 0;
 	private int ii = 98;
 	private double parcent;
-
+	private static String base = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
+	private static String space = "            ";
+ 
 	public ResultRunnable(Turf_War battle) {
 		this.battle = battle;
 		parcent =  ((double)battle.getTeam1Result() / (double)(battle.getTeam1Result()+battle.getTeam2Result()))*100;
@@ -47,16 +49,11 @@ public class ResultRunnable extends BukkitRunnable {
 
 	private static String MeterText(ArenaData data, int i, int ii)
 	{
-		String base = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
-		String space = "            ";
-
 		return data.getSplatColor(1).getChatColor()+base.substring(0, i)+ ChatColor.GRAY +base.substring(i + 1, ii)+ data.getSplatColor(2).getChatColor()+base.substring(ii + 1, 99)+ space;
 	}
 
 	private static String MeterText2(ArenaData data, int i, int ii)
 	{
-		String base = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
-		String space = "            ";
 		return data.getSplatColor(1).getChatColor()+base.substring(0, i)+ data.getSplatColor(2).getChatColor()+base.substring(ii, 99)+ space;
 	}
 

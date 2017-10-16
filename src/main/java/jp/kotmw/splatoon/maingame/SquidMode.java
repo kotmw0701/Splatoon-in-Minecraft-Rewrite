@@ -74,8 +74,7 @@ public class SquidMode implements Listener {
 		Player player = e.getPlayer();
 		PlayerData data = DataStore.getPlayerData(player.getName());
 		LivingEntity squid = data.getPlayerSquid();
-		if(squid != null)
-			squid.teleport(player.getLocation());
+		if(squid != null) squid.teleport(player.getLocation());
 		if(SplatColorManager.isTargetBlockTeamColor(player)) {
 			data.setClimb(true);
 			player.setAllowFlight(true);
