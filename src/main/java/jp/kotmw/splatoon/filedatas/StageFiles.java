@@ -144,15 +144,19 @@ public class StageFiles extends PluginFiles {
 	/**
 	 *
 	 * @param arena
-	 * @return 設定が終わってない、若しくはMapに入ってない場合、有効化されていればfalseを返す
+	 * @return 設定が終わってない、若しくはMapに入ってない場合、既に有効化されていればfalseを返す
 	 */
 	public static boolean isFinishSetup(ArenaData data) {
 		if(!DataStore.hasArenaData(data.getName()))
 			return false;
-		for(int i = 1; i <= 4; i++) {
-			double y_1 = data.getTeam1(i).getY();
-			double y_2 = data.getTeam2(i).getY();
-			if((y_1 == 0)||(y_2 == 0))
+		if(data.getMinimumPlayerNum() != data.getMaximumPlayerNum())
+			return false;
+		for(int i = 1; i <= data.getMaximumPlayerNum(); i++) {
+			jp.kotmw.splatoon.util.Location location = data.getTeamPlayerPosision(1, i);
+			if(location == null)
+				return false;
+			double y = location.getY();
+			if(y <= 0)
 				return false;
 		}
 		return true;

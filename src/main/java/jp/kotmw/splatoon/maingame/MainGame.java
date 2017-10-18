@@ -172,7 +172,6 @@ public class MainGame extends MessageUtil {
 		for(String arena : arenas) {
 			if(!DataStore.hasArenaData(arena))
 				continue;
-			System.out.println(arena);
 			ArenaData arenadata = DataStore.getArenaData(arena);
 			if(data.getBattleType() == BattleType.Splat_Zones) {
 					if(arenadata.getAreaPosition1().getX() == 0
@@ -183,6 +182,9 @@ public class MainGame extends MessageUtil {
 								&&(arenadata.getAreaPosition1().getZ() == arenadata.getAreaPosition2().getZ()))
 						continue;
 			}
+			if(!data.isLimitBreak())
+				if((arenadata.getMaximumTeamNum() > 2) || (arenadata.getMaximumPlayerNum() > 4))
+					continue;
 			if(arenadata.getGameStatus() == GameStatusEnum.ENABLE)
 				return arenadata;
 		}

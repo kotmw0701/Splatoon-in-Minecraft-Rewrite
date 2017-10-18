@@ -2,8 +2,6 @@ package jp.kotmw.splatoon.subweapon.threads;
 
 import java.util.Random;
 
-import jp.kotmw.splatoon.Main;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -14,6 +12,7 @@ import org.bukkit.util.Vector;
 public class SprinklerRunnable extends BukkitRunnable {
 
 	private Location l;
+	private double xz = 0.2, y = 0.2;
 
 	public SprinklerRunnable(Location l) {
 		this.l = l;
@@ -33,7 +32,7 @@ public class SprinklerRunnable extends BukkitRunnable {
 		double x = Math.cos(Math.toRadians(angle));
 		double z = Math.sin(Math.toRadians(angle));
 		Entity ball = l.getWorld().spawnEntity(l.add(0.5,1,0.5), EntityType.SNOWBALL);
-		Vector vec = new Vector(x*Main.xz,Main.y,z*Main.xz);
+		Vector vec = new Vector(x*xz,y,z*xz);
 		ball.setVelocity(vec);
 	}
 }

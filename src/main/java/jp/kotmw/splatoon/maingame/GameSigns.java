@@ -146,7 +146,7 @@ public class GameSigns implements Listener {
 					&& data.getName().equalsIgnoreCase(room)) {
 				Location l = new Location(Bukkit.getWorld(data.getWorld()), data.getX(), data.getY(), data.getZ());
 				Sign sign = (Sign)l.getBlock().getState();
-				sign.setLine(2, DataStore.getRoomPlayersList(room).size()+" / 8");
+				sign.setLine(2, DataStore.getRoomPlayersList(room).size()+" / "+(DataStore.getRoomData(room).isLimitBreak() ? "∞" : "8"));
 				sign.update();
 			}
 		}

@@ -33,8 +33,7 @@ public class RespawnRunnable extends BukkitRunnable {
 					ChatColor.BOLD+second+ChatColor.WHITE+" ]");
 		} else {
 			PlayerData data = DataStore.getPlayerData(player.getName());
-			Location loc = data.getTeamid() == 1
-					? DataStore.getArenaData(data.getArena()).getTeam1(1).convertLocation() : DataStore.getArenaData(data.getArena()).getTeam2(1).convertLocation();
+			Location loc = DataStore.getArenaData(data.getArena()).getTeamPlayerPosision(data.getTeamid(), 1).convertLocation();
 			player.getInventory().setHeldItemSlot(0);//1.2.8 復帰した時に武器スロットに設定されなかったため
 			player.teleport(loc);
 			player.setGameMode(GameMode.ADVENTURE);

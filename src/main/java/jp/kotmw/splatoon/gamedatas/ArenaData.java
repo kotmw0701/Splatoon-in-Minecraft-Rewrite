@@ -1,7 +1,9 @@
 package jp.kotmw.splatoon.gamedatas;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
@@ -26,12 +28,11 @@ public class ArenaData {
 	private int totalpaintblock;
 	private Location stagepos1, stagepos2;
 	private Location areapos1, areapos2;
-	private List<Location> team1 = new ArrayList<>();
-	private List<Location> team2 = new ArrayList<>();
+	private Map<Integer, List<Location>> posisions = new HashMap<>();
 	private int teamscount;
+	private int playerscount;
 	private int winteam;
-	private SplatColor team1color;
-	private SplatColor team2color;
+	private Map<Integer, SplatColor> teamcolor = new HashMap<>();
 	private BattleRunnable runtask;
 	private GameStatusEnum gameStatus;
 	private Scoreboard scoreboard;
@@ -71,12 +72,11 @@ public class ArenaData {
 			this.areapos1 = new Location(null, 0, 0, 0);
 			this.areapos2 = new Location(null, 0, 0, 0);
 		}
-		for(int i = 1; i <= 8; i++) {
-			if(!file.contains("SpawnPos.Team"+i)) {
-				teamscount = i-1;
-				break;
-			}
-			for(int ii = 1; ii <= 4; ii++) {
+		this.teamscount = getMaxTeam(file);
+		this.playerscount = getMaxPlayer(file);
+		for(int i = 1; i <= this.teamscount; i++) {
+			List<Location> poss = new ArrayList<>();
+			for(int ii = 1; ii <= this.playerscount; ii++) {
 				String[] teamloc = file.getString("SpawnPos.Team"+i+".P"+ii+".Loc").split("/");
 				String[] teamrotation = file.getString("SpawnPos.Team"+i+".P"+ii+".HeadRotation").split("/");
 				double x = Double.valueOf(teamloc[0]);
@@ -84,15 +84,9 @@ public class ArenaData {
 				double z = Double.valueOf(teamloc[2]);
 				float yaw = Float.valueOf(teamrotation[0]);
 				float pitch = Float.valueOf(teamrotation[1]);
-				switch (i) {
-				case 1:
-					team1.add(new Location(world, x, y, z, yaw, pitch));
-					break;
-				case 2:
-					team2.add(new Location(world, x, y, z, yaw, pitch));
-					break;
-				}
+				poss.add(new Location(world, x, y, z, yaw, pitch));
 			}
+			posisions.put(i, poss);
 		}
 		this.team1_count = new TeamCountManager();
 		this.team2_count = new TeamCountManager();
@@ -110,33 +104,52 @@ public class ArenaData {
 	/**
 	 * チームスポーン地点を取得
 	 *
-	 * @param num 1～4の範囲で
+	 * @param team チームの番号(最大値は getTeamsCount() で取得可能)
+	 * @param num テレポート場所の数 (最大 getPlayersCount() で取得可能)
 	 * @return 引数の番号の座標が帰ってくる
 	 */
-	public Location getTeam1(int num) {return team1.get(num-1);}
-
-	/**
-	 * チームスポーン地点を取得
-	 *
-	 * @param num 1～4の範囲で
-	 * @return 引数の番号の座標が帰ってくる
-	 */
-	public Location getTeam2(int num) {return team2.get(num-1);}
+	public Location getTeamPlayerPosision(int team, int num) {
+		if((team > teamscount || team < 0) || (num > playerscount || num < 0))
+			return null;
+		if(posisions.containsKey(team))
+			return posisions.get(team).get(num-1);
+		return null;
+	}
 	
-	public int getTeamsCount() {return teamscount;}
+	public int getMaximumTeamNum() {return teamscount;}
+	
+	public int getMinimumPlayerNum() {
+		int minimun = 20;
+		for(int i = 1; i <= teamscount; i++) {
+			if(!posisions.containsKey(i))
+				continue;
+			if(minimun > posisions.get(i).size())
+				minimun = posisions.get(i).size();
+		}
+		return minimun;
+	}
+	
+	public int getMaximumPlayerNum() {
+		int maximum = 4;
+		for(int i = 1; i <= teamscount; i++) {
+			if(!posisions.containsKey(i))
+				continue;
+			if(maximum < posisions.get(i).size())
+				maximum = posisions.get(i).size();
+		}
+		return maximum;
+	}
+	
+	public int getMaximumPlayerNum(int team) {
+		return (posisions.containsKey(team) ? posisions.get(team).size() : 0);
+	}
 	
 	public int getWinTeam() {return winteam;}
 	
 	public SplatColor getSplatColor(int team) {
-		switch(team) {
-		case 1:
-			return team1color;
-		case 2:
-			return team2color;
-		default:
-			break;
-		}
-		return SplatColor.WHITE;
+		if(team > teamscount)
+			return SplatColor.WHITE;
+		return teamcolor.get(team);
 	}
 
 	public BattleRunnable getTask() {return runtask;}
@@ -164,17 +177,16 @@ public class ArenaData {
 	public void setWorld(String world) {this.world = world;}
 	public void setTotalpaintblock(int totalpaintblock) {this.totalpaintblock = totalpaintblock;}
 
-	public void setTeam1(Location loc, int num) {team1.set(num-1, loc);}
-	public void setTeam2(Location loc, int num) {team2.set(num-1, loc);}
+	public void setTeamPlayerPosision(Location loc, int team, int num) {
+		List<Location> locations = (posisions.containsKey(team) ? posisions.get(team) : new ArrayList<>());
+		locations.add(loc);
+		posisions.put(team, locations);
+	}
 	
 	public void setTeamWin(int winteam) {this.winteam = winteam;}
 
-	public void setTeam1Color(SplatColor color) {
-		this.team1color = color;
-	}
-
-	public void setTeam2Color(SplatColor color) {
-		this.team2color = color;
+	public void setTeamColor(SplatColor color, int team) {
+		teamcolor.put(team, color);
 	}
 
 	public void setTask(BattleRunnable task) {
@@ -213,10 +225,22 @@ public class ArenaData {
 				" Status="+status+
 				" World="+world+
 				" TotalNum="+totalpaintblock+
-				" Team1Color="+team1color+
-				" Team2Color="+team2color+
 				" GameStatus="+gameStatus+
 				" TotalAreaNum="+totalareablock+
 				"]";
+	}
+	
+	private int getMaxPlayer(FileConfiguration file) {
+		for(int i = 0; i <= 20; i++)
+			if(!file.contains("SpawnPos.Team1.P"+(i+1)))
+				return i;
+		return 4;
+	}
+	
+	private int getMaxTeam(FileConfiguration file) {
+		for(int i = 0; i <= 8; i++)
+			if(!file.contains("SpawnPos.Team"+(i+1)))
+				return i;
+		return 2;
 	}
 }

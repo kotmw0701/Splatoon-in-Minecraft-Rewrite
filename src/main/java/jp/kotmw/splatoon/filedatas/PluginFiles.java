@@ -29,7 +29,6 @@ public class PluginFiles {
 			e.printStackTrace();
 		}
 	}
-
 	/**
 	 * plugins/<プラグイン名>/
 	 * 以下の階層にあるディレクトリの中にあるYAMLファイルを取得

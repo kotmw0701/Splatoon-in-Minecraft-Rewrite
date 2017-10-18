@@ -20,9 +20,12 @@ import jp.kotmw.splatoon.util.SplatColor;
 public class SplatColorManager {
 
 	public static void SetColor(ArenaData data) {
-		SplatColor team1 = randomColor(), team2 = randomColor(team1);
-		data.setTeam1Color(team1);
-		data.setTeam2Color(team2);
+		List<SplatColor> already = new ArrayList<>();
+		for(int team = 1; team <= data.getMaximumTeamNum(); team++) {
+			SplatColor color = randomColor(already.toArray(new SplatColor[already.size()]));
+			data.setTeamColor(color, team);
+			already.add(color);
+		}
 	}
 
 	/**

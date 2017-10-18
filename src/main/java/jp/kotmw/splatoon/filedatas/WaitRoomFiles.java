@@ -43,6 +43,15 @@ public class WaitRoomFiles extends PluginFiles {
 		return new File(filepath + filedir);
 	}
 
+	public static boolean RoomLoad(String room) {
+		if(!AlreadyCreateFile(room))
+			return false;
+		FileConfiguration file = YamlConfiguration.loadConfiguration(DirFile(filedir, room));
+		WaitRoomData data = new WaitRoomData(room, file);
+		DataStore.addRoomData(room, data);
+		return true;
+	}
+	
 	public static void AllRoomReload() {
 		for(String room : getRoomList()) {
 			FileConfiguration file = YamlConfiguration.loadConfiguration(DirFile(filedir, room));

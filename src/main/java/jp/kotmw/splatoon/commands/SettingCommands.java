@@ -89,8 +89,8 @@ public class SettingCommands implements CommandExecutor {
 					+ChatColor.YELLOW+"/splatsetting "+name+" editmode"+ChatColor.GREEN+"のコマンドを使用してステージを無効化してからsetarenaのコマンドを再実行してください");
 					return false;
 				}
-				if(name.length() > 16) {
-					player.sendMessage(MainGame.Prefix+ChatColor.RED+"ステージ名は16文字以下にしてください");
+				if(name.getBytes().length > 16) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"ステージ名は16バイト以下にしてください");
 					return false;
 				}
 				WorldEditPlugin worldEdit = (WorldEditPlugin)Bukkit.getPluginManager().getPlugin("WorldEdit");
@@ -155,8 +155,8 @@ public class SettingCommands implements CommandExecutor {
 				player.sendMessage(MainGame.Prefix+ChatColor.GREEN+"設定完了を確認し、使用可能になりました！");
 				return true;
 			} else if("setroom".equalsIgnoreCase(args[1])) {
-				if(name.length() > 16) {
-					player.sendMessage(MainGame.Prefix+ChatColor.RED+"待機部屋名は16文字以下にしてください");
+				if(name.getBytes().length > 16) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"待機部屋名は16バイト以下にしてください");
 					return false;
 				}
 				if(DataStore.hasRoomData(name)) {
@@ -173,6 +173,15 @@ public class SettingCommands implements CommandExecutor {
 					player.sendMessage(MainGame.Prefix+ChatColor.YELLOW+name+ChatColor.GREEN+" という待機部屋を作成しました");
 				}
 				WaitRoomFiles.creareWaitRoom(name, player.getLocation(), BattleType.Turf_War);
+				return true;
+			} else if("loadroom".equalsIgnoreCase(args[1])) {
+				boolean already = DataStore.hasRoomData(name);
+				if(!WaitRoomFiles.RoomLoad(name)) {
+					player.sendMessage(MainGame.Prefix+ChatColor.RED+"対象の待機部屋データファイルが存在しません");
+					return false;
+				}
+				player.sendMessage(MainGame.Prefix+ChatColor.GREEN+"対象の待機部屋データを"+(already ? "再" : "")+"読み込みました");
+				GameSigns.UpdateJoinSign(name);
 				return true;
 			} else if("removeroom".equalsIgnoreCase(args[1])){
 				if(!DataStore.hasRoomData(name)) {
@@ -286,17 +295,18 @@ public class SettingCommands implements CommandExecutor {
 					+ChatColor.YELLOW+"/settingfiles "+name+" editmode"+ChatColor.GREEN+"のコマンドを使用してステージを無効化してからsetarenaのコマンドを再実行してください");
 					return false;
 				}
-				if(!NumberUtils.isNumber(args[2])
-						|| !NumberUtils.isNumber(args[3])) {
+				if(!NumberUtils.isNumber(args[2].replaceAll("@", ""))
+						|| !NumberUtils.isNumber(args[3].replaceAll("@", ""))) {
 					player.sendMessage(MainGame.Prefix+ ChatColor.RED + "両方とも数値を入れてください");
 					return false;
 				}
-				int team = Integer.valueOf(args[2]), pos = Integer.valueOf(args[3]);
-				if(team == 0 || team > 8) {
+				boolean teamb = args[2].contains("@"), posb = args[3].contains("@");
+				int team = Integer.parseInt(args[2].replaceAll("@", "")), pos = Integer.parseInt(args[3].replaceAll("@", ""));
+				if(team == 0 || team > (teamb ? 8 : 2)) {
 					player.sendMessage(MainGame.Prefix+ ChatColor.RED + "1か2にしてください");
 					return false;
 				}
-				if(pos == 0 || pos > 4) {
+				if(pos == 0 || pos > (posb ? 20 : 4)) {
 					player.sendMessage(MainGame.Prefix+ ChatColor.RED + "1～4の範囲にしてください");
 					return false;
 				}

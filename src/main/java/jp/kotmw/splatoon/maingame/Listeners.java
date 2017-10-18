@@ -114,7 +114,7 @@ public class Listeners implements Listener {
 		if(DataStore.getPlayerData(player.getName()).getArena() == null)
 			return;
 		ArenaData data = DataStore.getArenaData(DataStore.getPlayerData(player.getName()).getArena());
-		if(location.getBlockY() <= data.getStagePosition2().getBlockY())
+		if(location.getBlockY() <= (data.getStagePosition2().getBlockY()-1))
 			player.damage(20);
 	}
 
@@ -177,10 +177,11 @@ public class Listeners implements Listener {
 
 	@EventHandler(priority = EventPriority.HIGH)
 	public void onGameJoin(PlayerGameJoinEvent e) {
-		if(e.getJoinPlayerDatas().size() == 8) {
-			e.setCancelled(true, ChatColor.RED+"ルーム参加人数上限のため、参加できません");
-			return;
-		}
+		if(!e.getRoom().isLimitBreak())
+			if(e.getJoinPlayerDatas().size() == 8) {
+				e.setCancelled(true, ChatColor.RED+"ルーム参加人数上限のため、参加できません");
+				return;
+			}
 		e.getPlayer().sendMessage(MainGame.Prefix+ChatColor.GREEN.toString()+ChatColor.BOLD+e.getPlayer().getName()
 					+ChatColor.YELLOW+" がゲームに参加しました "
 					+ChatColor.WHITE+"[ "+ChatColor.GOLD+(e.getJoinPlayerDatas().size()+1)+"/8"+ChatColor.WHITE+" ]");

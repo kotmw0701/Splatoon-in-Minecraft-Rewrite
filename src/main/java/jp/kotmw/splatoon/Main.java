@@ -29,8 +29,6 @@ public class Main extends JavaPlugin{
 
 	public static Main main;
 	public String filepath = getDataFolder() + File.separator;
-	public static double xz = 0.2,y = 0.2;
-	public static boolean schedule = true;
 
 	@Override
 	public void onEnable() {
@@ -61,7 +59,6 @@ public class Main extends JavaPlugin{
 
 	@Override
 	public void onDisable() {
-		schedule = false;
 		DataStore.datasAllClear();
 		for(ArenaData data : DataStore.getArenaList()) {
 			if(data.getTask()!=null) {

@@ -39,7 +39,10 @@ public class PlayerCommands implements CommandExecutor {
 				MainGame.leave(player);
 			else if("roomlist".equalsIgnoreCase(args[0])) {
 				player.sendMessage(ChatColor.GREEN+"待機部屋一覧");
-				for(WaitRoomData room : DataStore.getRoomList()) player.sendMessage("- "+room+ChatColor.GREEN+" | "+ChatColor.WHITE+DataStore.getRoomPlayersList(room.getName()).size()+" / 8");
+				for(WaitRoomData room : DataStore.getRoomList()) 
+					player.sendMessage("- "+room.getName()+ChatColor.GREEN+" | "
+				+ChatColor.WHITE+
+				DataStore.getRoomPlayersList(room.getName()).size()+" / "+(room.isLimitBreak() ? "∞ "+ChatColor.RED.toString()+ChatColor.BOLD.toString()+ChatColor.UNDERLINE.toString()+ChatColor.ITALIC+"LIMIT BREAKING ROOM" : "8"));
 			} else if("arenalist".equalsIgnoreCase(args[0])) {
 				player.sendMessage(ChatColor.GREEN+"ステージ一覧");
 				for(ArenaData room : DataStore.getArenaList()) player.sendMessage("- "+room.getName()+" "+room.getGameStatus().getStats());

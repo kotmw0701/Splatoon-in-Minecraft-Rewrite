@@ -1,8 +1,8 @@
 package jp.kotmw.splatoon;
 
-import jp.kotmw.splatoon.maingame.MainGame;
-
 import org.bukkit.entity.Player;
+
+import jp.kotmw.splatoon.maingame.MainGame;
 
 public class ScheduleTest extends Thread {
 
@@ -15,7 +15,7 @@ public class ScheduleTest extends Thread {
 
 	@Override
 	public void run() {
-		while(millisecond <= 60000 && Main.schedule) {
+		while(millisecond <= 60000) {
 			MainGame.sendAtionBar(player, convertTime(millisecond));
 			try {
 				Thread.sleep(1);

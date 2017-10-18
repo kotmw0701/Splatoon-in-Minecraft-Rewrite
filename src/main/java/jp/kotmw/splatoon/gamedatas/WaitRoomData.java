@@ -14,6 +14,7 @@ public class WaitRoomData {
 	String world;
 	double x,y,z,yaw,pitch;
 	BattleType type;
+	boolean limitbreak;
 	List<String> list = new ArrayList<>();
 	BukkitRunnable task;
 
@@ -26,7 +27,8 @@ public class WaitRoomData {
 		this.yaw = file.getDouble("Room.Yaw");
 		this.pitch = file.getDouble("Room.Pitch");
 		this.list = file.getStringList("Room.SelectList");
-		this.type = BattleType.valueOf(file.getString("Room.BattleType"));
+		this.type = BattleType.valueOf(file.getString("Room.BattleType", BattleType.Turf_War.toString()));
+		this.limitbreak = file.getBoolean("Room.LimitBreak", false);
 	}
 
 	public String getName() {return room;}
@@ -46,6 +48,8 @@ public class WaitRoomData {
 	public List<String> getSelectList() {return list;}
 
 	public BattleType getBattleType() {return type;}
+	
+	public boolean isLimitBreak() {return limitbreak;}
 
 	public BukkitRunnable getTask() {return task;}
 

@@ -47,9 +47,14 @@ public class TransferRunnable extends BukkitRunnable {
 		} else {
 			List<PlayerData> datalist = DataStore.getRoomPlayersList(beforeroom);
 			Collections.shuffle(datalist);
-			int team = 1, team1 = 1, team2 = 1;
+			int team = 1, posisions = 1;
 			for(PlayerData data : datalist) {
-				if(team == this.data.getTeamsCount()) team = 1;
+				if(team == this.data.getMaximumTeamNum()) {
+					team = 1;
+					posisions++;
+					if(posisions > this.data.getMaximumPlayerNum())
+						posisions = 1;
+				}
 				data.setMove(false);
 				data.setArena(this.data.getName());
 				data.setTeamid(team);
@@ -60,13 +65,7 @@ public class TransferRunnable extends BukkitRunnable {
 				SplatScoreBoard.DefaultScoreBoard(this.data, type);
 				SplatScoreBoard.setTeam(data);
 				SplatScoreBoard.showBoard(data);
-				if(team == 1) {
-					MainGame.Teleport(data, this.data.getTeam1(team1).convertLocation());
-					team1++;
-				} else if(team == 2) {
-					MainGame.Teleport(data, this.data.getTeam2(team2).convertLocation());
-					team2++;
-				}
+				MainGame.Teleport(data, this.data.getTeamPlayerPosision(team, posisions).convertLocation());
 				team++;
 			}
 			switch(type) {
