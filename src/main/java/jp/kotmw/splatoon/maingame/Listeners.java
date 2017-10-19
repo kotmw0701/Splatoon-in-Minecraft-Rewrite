@@ -184,11 +184,11 @@ public class Listeners implements Listener {
 			}
 		e.getPlayer().sendMessage(MainGame.Prefix+ChatColor.GREEN.toString()+ChatColor.BOLD+e.getPlayer().getName()
 					+ChatColor.YELLOW+" がゲームに参加しました "
-					+ChatColor.WHITE+"[ "+ChatColor.GOLD+(e.getJoinPlayerDatas().size()+1)+"/8"+ChatColor.WHITE+" ]");
+					+ChatColor.WHITE+"[ "+ChatColor.GOLD+(e.getJoinPlayerDatas().size()+1)+(e.getRoom().isLimitBreak() ? "" : "/8")+ChatColor.WHITE+" ]");
 		for(PlayerData data : e.getJoinPlayerDatas()) {
 			MainGame.sendMessage(data, ChatColor.GREEN.toString()+ChatColor.BOLD+e.getPlayer().getName()
 					+ChatColor.YELLOW+" がゲームに参加しました "
-					+ChatColor.WHITE+"[ "+ChatColor.GOLD+(e.getJoinPlayerDatas().size()+1)+"/8"+ChatColor.WHITE+" ]");
+					+ChatColor.WHITE+"[ "+ChatColor.GOLD+(e.getJoinPlayerDatas().size()+1)+(e.getRoom().isLimitBreak() ? "" : "/8")+ChatColor.WHITE+" ]");
 		}
 	}
 

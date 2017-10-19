@@ -1,7 +1,7 @@
 main: jp.kotmw.splatoon.Main
 name: Splatoon_in_Minecraft
 auther: kotmw0701
-version: 0.9.15
+version: 1.3.1
 load: POSTWORLD
 
 commands:

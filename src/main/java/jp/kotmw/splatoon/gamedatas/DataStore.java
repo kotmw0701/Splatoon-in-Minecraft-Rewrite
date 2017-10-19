@@ -191,8 +191,8 @@ public class DataStore {
 		Map<String, Double> rank = new HashMap<>();
 		for(Entry<String, PlayerStatusData> players : statusdata.entrySet()) rank.put(players.getKey(), players.getValue().getParam(pattern));
 		rank.entrySet().stream()
-		.sorted(Collections.reverseOrder(Entry.comparingByValue()))
-		.forEach(map -> list.add(ChatColor.AQUA+map.getKey()+ChatColor.GREEN+" : "+ChatColor.WHITE+map.getValue()));
+			.sorted(Collections.reverseOrder(Entry.comparingByValue()))
+			.forEach(map -> list.add(ChatColor.AQUA+map.getKey()+ChatColor.GREEN+" : "+ChatColor.WHITE+map.getValue()));
 		return list;
 	}
 

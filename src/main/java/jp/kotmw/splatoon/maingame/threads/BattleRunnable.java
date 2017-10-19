@@ -66,8 +66,7 @@ public class BattleRunnable extends BukkitRunnable {
 								2,
 								0,
 								ChatColor.WHITE+"["+count+"]   >>> Ready? <<<   ["+count+"]",
-								this.data.getSplatColor(data.getTeamid()).getChatColor()+"[味方カラー]     " +
-								this.data.getSplatColor(data.getOpponentTeamid()).getChatColor()+"[相手カラー]");
+								this.data.getSplatColor(data.getTeamid()).getChatColor()+"[味方カラー]");
 					}
 				} else if(tick == second*20) {//戦闘開始
 					for(PlayerData data : DataStore.getArenaPlayersList(this.data.getName())) {

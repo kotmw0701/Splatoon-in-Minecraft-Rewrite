@@ -21,7 +21,7 @@ public class ResultRunnable extends BukkitRunnable {
  
 	public ResultRunnable(Turf_War battle) {
 		this.battle = battle;
-		parcent =  ((double)battle.getTeam1Result() / (double)(battle.getTeam1Result()+battle.getTeam2Result()))*100;
+		parcent = (battle.getTeamResult(1) / (battle.getTotalTeamResult()))*100;
 	}
 
 	@Override

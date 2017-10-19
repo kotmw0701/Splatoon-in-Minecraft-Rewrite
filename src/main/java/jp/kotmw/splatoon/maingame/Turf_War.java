@@ -1,7 +1,12 @@
 package jp.kotmw.splatoon.maingame;
 
 import java.text.DecimalFormat;
-import java.util.Random;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -20,11 +25,13 @@ import jp.kotmw.splatoon.manager.SplatColorManager;
 public class Turf_War {
 
 	protected ArenaData data;
-	protected double result_team1;
-	protected double result_team2;
+	protected Map<Integer, Double> result = new HashMap<>();
+	
 
 	public Turf_War(ArenaData data) {
 		this.data = data;
+		Map<Integer, Double> result = new HashMap<>();
+		result.values();
 	}
 
 	public int getTotalArea() {
@@ -60,9 +67,7 @@ public class Turf_War {
 	}
 
 	public void resultBattle() {
-		int team1 = 0, team2 = 0;
-		int team1colorID = data.getSplatColor(1).getColorID(),
-				team2colorID = data.getSplatColor(2).getColorID();
+		int[] teamresult = new int[data.getMaximumTeamNum()];
 		Location loc1 = data.getStagePosition1().convertLocation(), loc2 = data.getStagePosition2().convertLocation();
 		//////////////////////////////////////////////////////////////////
 		for(int x = loc2.getBlockX(); x <= loc1.getBlockX(); x++) {
@@ -73,18 +78,26 @@ public class Turf_War {
 					if(block.getType() != Material.AIR
 							&& isAbobe(aboveBlock.getLocation())) {
 						int colorID = SplatColorManager.getColorID(Bukkit.getWorld(data.getWorld()).getBlockAt(x, y, z));
-						if(team1colorID == colorID) {
-							team1++;
-						} else if(team2colorID == colorID)
-							team2++;
+						if(colorID == 0)
+							continue;
+						int team = data.getColorTeam(colorID);
+						if(team == 0)
+							continue;
+						teamresult[team-1]++;
 					}
 				}
 			}
 		}
 		//////////////////////////////////////////////////////////////////
 		BukkitRunnable task = null;
-		result_team1 = team1;
-		result_team2 = team2;
+		for(int team = 1; team <= data.getMaximumTeamNum(); team++) {
+			double result_i = teamresult[team-1];
+			for(double i : result.values())
+				if(result_i == i)
+					result_i += 0.01;
+			result.put(team, result_i);
+		}
+		//TODO 上の記法だと乱数が入らないから同じスコアだったときに数字の大きいチームの方が必ず勝つ
 		try {
 			task = new ResultRunnable(this);
 			task.runTaskTimer(Main.main, 20*5, 5);
@@ -97,37 +110,50 @@ public class Turf_War {
 	}
 
 	public void sendResult() {
-		DecimalFormat df = new DecimalFormat("##0.0%");
 		double total = data.getTotalpaintblock();
-		double parce_team1 = (result_team1/total);
-		double parce_team2 = (result_team2/total);
-		if(parce_team1 == parce_team2) {
-			Random random = new Random();
-			int randomteam = random.nextInt(2);
-			if(randomteam == 1)
-				parce_team1+=0.01;
-			else if(randomteam == 2)
-				parce_team2+=0.01;
-		}
-		String result = "[ "+data.getSplatColor(1).getChatColor()+df.format(parce_team1)+ChatColor.WHITE+" ]      [ "
-		+data.getSplatColor(2).getChatColor()+df.format(parce_team2)+ChatColor.WHITE+" ]";
+		Map<Integer, Double> parcent = new HashMap<>();
+		result.entrySet().stream().forEach(entry -> parcent.put(entry.getKey(), (entry.getValue()/total)));
+		String result = getResuleText(parcent);
+		int winner = getMaximunScoreTeam(parcent);
 		String win = ChatColor.GOLD.toString()+ChatColor.BOLD+"You Win!";
 		String lose = ChatColor.BLUE.toString()+ChatColor.ITALIC+"You Lose...";
-		MainGame.sendTitleforTeam(data, 1, 0, 5, 0, parce_team1 > parce_team2 ? win : lose, result);
-		MainGame.sendTitleforTeam(data, 2, 0, 5, 0, parce_team1 > parce_team2 ? lose : win, result);
-		data.setTeamWin(parce_team1 > parce_team2 ? 1 : 2);
+		for(int team = 1; team <= data.getMaximumTeamNum(); team++)
+			MainGame.sendTitleforTeam(data, team, 0, 5, 0, winner == team ? win : lose, result);
+		data.setTeamWin(winner);
 	}
 	
 	public ArenaData getArena() {
 		return data;
 	}
 	
-	public double getTeam1Result() {
-		return result_team1;
+	public double getTeamResult(int team) {
+		if(team > data.getMaximumTeamNum() || team < 1)
+			return 0.0;
+		return result.get(team);
 	}
 	
-	public double getTeam2Result() {
-		return result_team2;
+	public double getTotalTeamResult() {
+		double result = 0.0;
+		for(int team = 1; team <= data.getMaximumTeamNum(); team++) {
+			result += getTeamResult(team);
+		}
+		return result;
+	}
+	
+	private String getResuleText(Map<Integer, Double> parcent) {
+		DecimalFormat df = new DecimalFormat("##0.0%");
+		String text = "";
+		for(Entry<Integer, Double> entry : parcent.entrySet())
+			text += ("[ "+data.getSplatColor(entry.getKey()).getChatColor()+df.format(entry.getValue())+ChatColor.WHITE+ " ]   ");
+		return text;
+	}
+	
+	private int getMaximunScoreTeam(Map<Integer, Double> parcent) {
+		List<Entry<Integer, Double>> list = new ArrayList<>();
+		parcent.entrySet().stream()
+			.sorted(Collections.reverseOrder(Entry.comparingByValue()))
+			.forEach(entry -> list.add(entry));
+		return list.get(0).getKey();
 	}
 	
 	private static boolean isAbobe(Location location) {

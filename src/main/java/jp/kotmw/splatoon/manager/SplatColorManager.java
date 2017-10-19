@@ -59,11 +59,18 @@ public class SplatColorManager {
 	 */
 	public static boolean isBelowBlockTeamColor(Player player, boolean myteam) {
 		PlayerData data = DataStore.getPlayerData(player.getName());
+		ArenaData data2 = DataStore.getArenaData(data.getArena());
 		Location loc = player.getLocation().clone();
-		int colorID = DataStore.getArenaData(data.getArena()).getSplatColor((myteam ? data.getTeamid() : data.getOpponentTeamid())).getColorID();
+		int colorID = data2.getSplatColor(data.getTeamid()).getColorID();
 		if(loc.getBlock().getType() != Material.CARPET)
 			loc.add(0, -1, 0);
-		return SplatColorManager.getColorID(loc.getBlock()) == colorID;
+		if(myteam)
+			return getColorID(loc.getBlock()) == colorID;
+		for(int team = 1; team <= data2.getMaximumTeamNum(); team++) {
+			if(data2.getSplatColor(team).getColorID() == getColorID(loc.getBlock()))
+				return true;
+		}
+		return false;
 	}
 
 	public static boolean isTargetBlockTeamColor(Player p) {

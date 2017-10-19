@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
@@ -150,6 +151,13 @@ public class ArenaData {
 		if(team > teamscount)
 			return SplatColor.WHITE;
 		return teamcolor.get(team);
+	}
+	
+	public int getColorTeam(int colorID) {
+		for(Entry<Integer, SplatColor> colors : teamcolor.entrySet())
+			if(colors.getValue().getColorID() == colorID)
+				return colors.getKey().intValue();
+		return 0;
 	}
 
 	public BattleRunnable getTask() {return runtask;}

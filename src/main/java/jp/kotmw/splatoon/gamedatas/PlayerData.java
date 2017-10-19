@@ -86,6 +86,7 @@ public class PlayerData {
 
 	public int getInkCoolTime() {return inkcooltime;}
 
+	@Deprecated
 	public int getOpponentTeamid() {
 		return teamid == 1 ? 2 : 1;
 	}
