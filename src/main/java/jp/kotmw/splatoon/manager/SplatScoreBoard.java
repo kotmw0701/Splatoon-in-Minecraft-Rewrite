@@ -27,27 +27,22 @@ public class SplatScoreBoard {
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 		obj.setDisplayName(MainGame.Prefix);
 
-		Team team1 = sb.registerNewTeam("SplatTeam1");
-		team1.setPrefix(data.getSplatColor(1).getChatColor().toString());
-		team1.setSuffix(ChatColor.RESET.toString());
-		team1.setAllowFriendlyFire(false);
-		team1.setCanSeeFriendlyInvisibles(false);
-		team1.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.FOR_OTHER_TEAMS);
-
-		Team team2 = sb.registerNewTeam("SplatTeam2");
-		team2.setPrefix(data.getSplatColor(2).getChatColor().toString());
-		team2.setSuffix(ChatColor.RESET.toString());
-		team2.setAllowFriendlyFire(false);
-		team2.setCanSeeFriendlyInvisibles(false);
-		team2.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.FOR_OTHER_TEAMS);
-
+		for(int teamnum = 1; teamnum <= data.getMaximumTeamNum(); teamnum++) {
+			Team team = sb.registerNewTeam("SplatTeam"+teamnum);
+			team.setPrefix(data.getSplatColor(teamnum).getChatColor().toString());
+			team.setSuffix(ChatColor.RESET.toString());
+			team.setAllowFriendlyFire(false);
+			team.setCanSeeFriendlyInvisibles(false);
+			team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.FOR_OTHER_TEAMS);
+		}
 		data.setScoreBoard(sb);
 	}
 	
 	public static void resetScoreboard(ArenaData data) {
 		Scoreboard scoreboard = data.getScoreboard();
-		scoreboard.getTeam("SplatTeam1").setPrefix(data.getSplatColor(1).getChatColor().toString());
-		scoreboard.getTeam("SplatTeam2").setPrefix(data.getSplatColor(2).getChatColor().toString());
+		for(int teamnum = 1; teamnum <= data.getMaximumTeamNum(); teamnum++) {
+			scoreboard.getTeam("SplatTeam"+teamnum).setPrefix(data.getSplatColor(teamnum).getChatColor().toString());
+		}
 		Objective objective = scoreboard.getObjective(data.getName());
 		objective.getScore(conversionTime(1)).setScore(0);
 		scoreboard.resetScores(conversionTime(1));

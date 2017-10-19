@@ -34,9 +34,8 @@ public class ResultRunnable extends BukkitRunnable {
 			i++;
 			ii--;
 		} else if(tick < 20 && tick >= 15){
-			
 			for(PlayerData player : DataStore.getArenaPlayersList(data.getName())) {
-				MainGame.sendTitle(player, 0, 5, 0, " ", MeterText2(data, (int)parcent-2, (int)parcent-1));
+				MainGame.sendTitle(player, 0, 5, 0, " ", MeterText2(data, (int)parcent-2, (int)parcent-1));//ここで良くエラーでる
 			}
 		} else if(tick < 15 && tick >= 11) {
 			battle.sendResult();

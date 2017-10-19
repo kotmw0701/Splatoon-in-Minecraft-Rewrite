@@ -129,7 +129,8 @@ public class Turf_War {
 	public double getTeamResult(int team) {
 		if(team > data.getMaximumTeamNum() || team < 1)
 			return 0.0;
-		return result.get(team);
+		return (result.get(team) == 0.0 ? 0.01 : result.get(team));
+		//チーム1の塗り面積が0だとエラーが出るため
 	}
 	
 	public double getTotalTeamResult() {

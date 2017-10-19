@@ -49,11 +49,12 @@ public class TransferRunnable extends BukkitRunnable {
 			Collections.shuffle(datalist);
 			int team = 1, posisions = 1;
 			for(PlayerData data : datalist) {
+				System.out.println("Team: "+team+"  Pos: "+posisions);
 				if(team == this.data.getMaximumTeamNum()) {
 					team = 1;
-					posisions++;
-					if(posisions > this.data.getMaximumPlayerNum())
+					if(posisions == this.data.getMaximumPlayerNum())
 						posisions = 1;
+					posisions++;
 				}
 				data.setMove(false);
 				data.setArena(this.data.getName());

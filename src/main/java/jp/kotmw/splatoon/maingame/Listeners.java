@@ -59,7 +59,9 @@ public class Listeners implements Listener {
 	private boolean isIn(Player player, Block block) {
 		for(ArenaData data : DataStore.getArenaList()) {
 			if(!data.isStatus())
-				return false;
+				continue;
+			if(!data.getWorld().equalsIgnoreCase(block.getWorld().getName()))
+				continue;
 			if(((data.getStagePosition1().getBlockX() >= block.getX()) && (block.getX() >= data.getStagePosition2().getBlockX()))
 					&& ((data.getStagePosition1().getBlockY() >= block.getY()) && (block.getY() >= data.getStagePosition2().getBlockY()))
 					&& ((data.getStagePosition1().getBlockZ() >= block.getZ()) && (block.getZ() >= data.getStagePosition2().getBlockZ()))) {
