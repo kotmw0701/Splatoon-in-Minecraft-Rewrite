@@ -1,10 +1,13 @@
 package jp.kotmw.splatoon.gamedatas;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.IntStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
@@ -17,7 +20,6 @@ import jp.kotmw.splatoon.gamedatas.DataStore.GameStatusEnum;
 import jp.kotmw.splatoon.maingame.GameSigns;
 import jp.kotmw.splatoon.maingame.Turf_War;
 import jp.kotmw.splatoon.maingame.threads.BattleRunnable;
-import jp.kotmw.splatoon.manager.SplatColorManager;
 import jp.kotmw.splatoon.manager.TeamCountManager;
 import jp.kotmw.splatoon.util.Location;
 import jp.kotmw.splatoon.util.SplatColor;
@@ -193,6 +195,7 @@ public class ArenaData {
 	
 	public void setTeamWin(int winteam) {this.winteam = winteam;}
 
+	@Deprecated
 	public void setTeamColor(SplatColor color, int team) {
 		teamcolor.put(team, color);
 	}
@@ -218,8 +221,18 @@ public class ArenaData {
 
 	public void setAreastands(List<ArmorStand> areastands) {this.areastands = areastands;}
 
+	public void updateTeamColor(){
+		List<SplatColor> colors = new ArrayList<>(Arrays.asList(SplatColor.values()));
+		colors.remove(SplatColor.WHITE);
+		IntStream.rangeClosed(1, teamscount).forEach(team -> {
+			Collections.shuffle(colors);
+			teamcolor.put(team, colors.get(0));
+			colors.remove(0);
+		});
+	}
+	
 	public void clearStatus() {
-		SplatColorManager.SetColor(this);
+		updateTeamColor();
 		this.team1_count = this.team2_count = new TeamCountManager();
 		this.runtask = null;
 		this.rollbackblocks.clear();

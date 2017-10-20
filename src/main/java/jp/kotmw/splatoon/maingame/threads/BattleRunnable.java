@@ -67,6 +67,7 @@ public class BattleRunnable extends BukkitRunnable {
 								0,
 								ChatColor.WHITE+"["+count+"]   >>> Ready? <<<   ["+count+"]",
 								this.data.getSplatColor(data.getTeamid()).getChatColor()+"[味方カラー]");
+						MainGame.sendActionBarforTeam(this.data, getColorText(data.getTeamid()), data.getTeamid());
 					}
 				} else if(tick == second*20) {//戦闘開始
 					for(PlayerData data : DataStore.getArenaPlayersList(this.data.getName())) {
@@ -130,6 +131,16 @@ public class BattleRunnable extends BukkitRunnable {
 			this.cancel();
 		}
 		tick--;
+	}
+	
+	private String getColorText(int myteam) {
+		String text = "   ";
+		for(int team = 1; team <= data.getMaximumTeamNum(); team++) {
+			if(team == myteam)
+				continue;
+			text += data.getSplatColor(team).getChatColor()+"█チーム"+team+"█"+"   "+ChatColor.RESET;
+		}
+		return text;
 	}
 
 	private void ResetPlayerData() {

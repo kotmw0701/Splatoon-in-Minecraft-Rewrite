@@ -22,8 +22,11 @@ public class DamageHealthRunnable extends BukkitRunnable {
 			return;
 		}
 		Player player = Bukkit.getPlayer(name);
-		if(SplatColorManager.isBelowBlockTeamColor(player, true))
+		if(SplatColorManager.isBelowBlockTeamColor(player, true)) {
 			if(player.getHealth() <= 18.0) player.setHealth(player.getHealth()+4.0);
-		else if(SplatColorManager.isBelowBlockTeamColor(player, false)) player.damage(10.0);
+		}
+		else if(SplatColorManager.isBelowBlockTeamColor(player, false)) {
+			player.damage(10.0);
+		}
 	}
 }

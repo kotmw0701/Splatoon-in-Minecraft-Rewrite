@@ -15,7 +15,7 @@ public enum SplatColor {
 	ORANGE(DyeColor.ORANGE, ChatColor.GOLD, Color.fromRGB(255, 170, 0), DetailsColorType.WoolColor_ORANGE.getColor(), 1), 
 	PURPLE(DyeColor.PURPLE, ChatColor.DARK_PURPLE, Color.BLUE, DetailsColorType.WoolColor_PURPLE.getColor(), 10), 
 	PINK(DyeColor.PINK, ChatColor.LIGHT_PURPLE, Color.FUCHSIA, DetailsColorType.WoolColor_PINK.getColor(), 6),
-	WHITE(DyeColor.WHITE, ChatColor.WHITE, null, DetailsColorType.WoolColor_BLUE.getColor(), 0);
+	WHITE(DyeColor.WHITE, ChatColor.WHITE, Color.WHITE, DetailsColorType.WoolColor_WHITE.getColor(), 0);
 	
 	private final DyeColor dyeColor;
 	private final ChatColor chatColor;

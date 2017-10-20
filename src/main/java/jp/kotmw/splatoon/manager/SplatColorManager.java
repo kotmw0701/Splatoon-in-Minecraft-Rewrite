@@ -1,10 +1,5 @@
 package jp.kotmw.splatoon.manager;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -15,18 +10,8 @@ import jp.kotmw.splatoon.gamedatas.ArenaData;
 import jp.kotmw.splatoon.gamedatas.DataStore;
 import jp.kotmw.splatoon.gamedatas.PlayerData;
 import jp.kotmw.splatoon.mainweapons.Roller;
-import jp.kotmw.splatoon.util.SplatColor;
 
 public class SplatColorManager {
-
-	public static void SetColor(ArenaData data) {
-		List<SplatColor> already = new ArrayList<>();
-		for(int team = 1; team <= data.getMaximumTeamNum(); team++) {
-			SplatColor color = randomColor(already.toArray(new SplatColor[already.size()]));
-			data.setTeamColor(color, team);
-			already.add(color);
-		}
-	}
 
 	/**
 	 * ブロックに今ついている色をデータ値で返す
@@ -61,13 +46,15 @@ public class SplatColorManager {
 		PlayerData data = DataStore.getPlayerData(player.getName());
 		ArenaData data2 = DataStore.getArenaData(data.getArena());
 		Location loc = player.getLocation().clone();
-		int colorID = data2.getSplatColor(data.getTeamid()).getColorID();
 		if(loc.getBlock().getType() != Material.CARPET)
 			loc.add(0, -1, 0);
+		int belowColorID = getColorID(loc.getBlock());
+		if(belowColorID == 0)
+			return false;
 		if(myteam)
-			return getColorID(loc.getBlock()) == colorID;
+			return belowColorID == data2.getSplatColor(data.getTeamid()).getColorID();
 		for(int team = 1; team <= data2.getMaximumTeamNum(); team++) {
-			if(data2.getSplatColor(team).getColorID() == getColorID(loc.getBlock()))
+			if(data2.getSplatColor(team).getColorID() == belowColorID)
 				return true;
 		}
 		return false;
@@ -91,21 +78,6 @@ public class SplatColorManager {
 		else if(directionID == 3)
 			return loc.add(1, 0.5, 0).getBlock();
 		return loc.getBlock();
-	}
-
-	private static SplatColor randomColor(SplatColor... already) {
-		List<SplatColor> colors = new ArrayList<>();
-		colors.add(SplatColor.BLUE);
-		colors.add(SplatColor.LIGHT_BLUE);
-		colors.add(SplatColor.GREEN);
-		colors.add(SplatColor.LIME);
-		colors.add(SplatColor.YELLOW);
-		colors.add(SplatColor.ORANGE);
-		colors.add(SplatColor.PURPLE);
-		colors.add(SplatColor.PINK);
-		colors.removeAll(Arrays.asList(already));
-		Collections.shuffle(colors);
-		return colors.get(0);
 	}
 	
 	/**

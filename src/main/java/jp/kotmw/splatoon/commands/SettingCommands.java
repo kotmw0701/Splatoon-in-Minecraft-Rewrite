@@ -28,7 +28,6 @@ import jp.kotmw.splatoon.gamedatas.WaitRoomData;
 import jp.kotmw.splatoon.maingame.GameSigns;
 import jp.kotmw.splatoon.maingame.MainGame;
 import jp.kotmw.splatoon.manager.Paint;
-import jp.kotmw.splatoon.manager.SplatColorManager;
 import jp.kotmw.splatoon.manager.SplatScoreBoard;
 
 public class SettingCommands implements CommandExecutor {
@@ -150,7 +149,7 @@ public class SettingCommands implements CommandExecutor {
 				data.setStatus(true);
 				data.setGameStatus(GameStatusEnum.ENABLE);
 				StageFiles.setEnable(name);
-				SplatColorManager.SetColor(data);
+				data.updateTeamColor();
 				SplatScoreBoard.createScoreboard(data);
 				player.sendMessage(MainGame.Prefix+ChatColor.GREEN+"設定完了を確認し、使用可能になりました！");
 				return true;

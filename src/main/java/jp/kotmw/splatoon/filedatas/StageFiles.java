@@ -13,7 +13,6 @@ import jp.kotmw.splatoon.gamedatas.ArenaData;
 import jp.kotmw.splatoon.gamedatas.DataStore;
 import jp.kotmw.splatoon.gamedatas.DataStore.GameStatusEnum;
 import jp.kotmw.splatoon.maingame.Turf_War;
-import jp.kotmw.splatoon.manager.SplatColorManager;
 import jp.kotmw.splatoon.manager.SplatScoreBoard;
 
 public class StageFiles extends PluginFiles {
@@ -192,7 +191,7 @@ public class StageFiles extends PluginFiles {
 			data.setGameStatus(GameStatusEnum.ENABLE);
 			if(!data.isStatus())
 				continue;
-			SplatColorManager.SetColor(data);
+			data.updateTeamColor();
 			SplatScoreBoard.createScoreboard(data);
 			DataStore.addArenaData(arena, data);
 		}
