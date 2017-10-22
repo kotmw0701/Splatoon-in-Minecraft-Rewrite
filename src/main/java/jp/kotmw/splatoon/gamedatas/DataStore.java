@@ -1,5 +1,6 @@
 package jp.kotmw.splatoon.gamedatas;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -189,10 +190,12 @@ public class DataStore {
 	public static List<String> getRanking(RankingPattern pattern) {
 		List<String> list = new ArrayList<>();
 		Map<String, Double> rank = new HashMap<>();
-		for(Entry<String, PlayerStatusData> players : statusdata.entrySet()) rank.put(players.getKey(), players.getValue().getParam(pattern));
+		statusdata.entrySet().forEach(players -> rank.put(players.getKey(), players.getValue().getParam(pattern)));
 		rank.entrySet().stream()
 			.sorted(Collections.reverseOrder(Entry.comparingByValue()))
-			.forEach(map -> list.add(ChatColor.AQUA+map.getKey()+ChatColor.GREEN+" : "+ChatColor.WHITE+map.getValue()));
+			.forEach(map -> list.add(ChatColor.AQUA+map.getKey()+ChatColor.GREEN+" : "+ChatColor.WHITE+(pattern.equals(RankingPattern.RATE) 
+					? new BigDecimal(map.getValue()).setScale(2, BigDecimal.ROUND_HALF_UP).doubleValue() 
+							: map.getValue().intValue())));
 		return list;
 	}
 

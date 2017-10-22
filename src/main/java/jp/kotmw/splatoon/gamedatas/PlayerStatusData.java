@@ -100,7 +100,9 @@ public class PlayerStatusData extends PlayerFiles {
 		case WIN:
 			return win;
 		case RATE:
-			return (win / (win+lose));
+			if((win+lose) == 0)
+				return 0.0;
+			return ((double)win / (double)(win+lose));
 		default:
 			break;
 		}
