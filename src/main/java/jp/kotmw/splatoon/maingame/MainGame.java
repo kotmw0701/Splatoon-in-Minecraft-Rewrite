@@ -30,7 +30,6 @@ import jp.kotmw.splatoon.gamedatas.WaitRoomData;
 import jp.kotmw.splatoon.maingame.threads.AnimationRunnable;
 import jp.kotmw.splatoon.maingame.threads.TransferRunnable;
 import jp.kotmw.splatoon.manager.Paint;
-import jp.kotmw.splatoon.manager.SplatScoreBoard;
 import jp.kotmw.splatoon.util.MessageUtil;
 
 public class MainGame extends MessageUtil {
@@ -194,7 +193,7 @@ public class MainGame extends MessageUtil {
 	public static void end(ArenaData data, boolean tf) {
 		Paint.RollBack(data);
 		data.clearStatus();
-		SplatScoreBoard.resetScoreboard(data);
+		data.getScoreboard().resetScoreboard();
 		for(PlayerData datalist : DataStore.getArenaPlayersList(data.getName())) {
 			Player player = Bukkit.getPlayer(datalist.getName());
 			if(!tf) {

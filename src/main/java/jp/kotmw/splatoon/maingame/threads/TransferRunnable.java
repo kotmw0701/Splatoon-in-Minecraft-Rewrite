@@ -62,7 +62,7 @@ public class TransferRunnable extends BukkitRunnable {
 				Player player = Bukkit.getPlayer(data.getName());
 				player.setGameMode(GameMode.ADVENTURE);
 				player.setExp(1.0f);
-				SplatScoreBoard.DefaultScoreBoard(this.data, type);
+				this.data.getScoreboard().DefaultScoreBoard(type);
 				SplatScoreBoard.setTeam(data);
 				SplatScoreBoard.showBoard(data);
 				MainGame.Teleport(data, this.data.getTeamPlayerPosision(team, posisions).convertLocation());

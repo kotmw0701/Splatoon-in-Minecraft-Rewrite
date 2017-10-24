@@ -14,32 +14,32 @@ import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 
 import jp.kotmw.splatoon.gamedatas.ArenaData;
-import jp.kotmw.splatoon.gamedatas.DataStore;
 import jp.kotmw.splatoon.gamedatas.DataStore.BattleType;
 import jp.kotmw.splatoon.gamedatas.PlayerData;
 import jp.kotmw.splatoon.maingame.MainGame;
 
 public class SplatScoreBoard {
 
-	public static void createScoreboard(ArenaData data) {
-		Scoreboard sb = Bukkit.getScoreboardManager().getNewScoreboard();
-		Objective obj = sb.registerNewObjective(data.getName(), "dummy");
+	private Scoreboard scoreboard;
+	private ArenaData data;
+	
+	public SplatScoreBoard(ArenaData data) {
+		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+		Objective obj = scoreboard.registerNewObjective(data.getName(), "dummy");
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
 		obj.setDisplayName(MainGame.Prefix);
-
 		for(int teamnum = 1; teamnum <= data.getMaximumTeamNum(); teamnum++) {
-			Team team = sb.registerNewTeam("SplatTeam"+teamnum);
+			Team team = scoreboard.registerNewTeam("SplatTeam"+teamnum);
 			team.setPrefix(data.getSplatColor(teamnum).getChatColor().toString());
 			team.setSuffix(ChatColor.RESET.toString());
 			team.setAllowFriendlyFire(false);
 			team.setCanSeeFriendlyInvisibles(false);
 			team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.FOR_OTHER_TEAMS);
 		}
-		data.setScoreBoard(sb);
+		this.data = data;
 	}
 	
-	public static void resetScoreboard(ArenaData data) {
-		Scoreboard scoreboard = data.getScoreboard();
+	public void resetScoreboard() {
 		for(int teamnum = 1; teamnum <= data.getMaximumTeamNum(); teamnum++) {
 			scoreboard.getTeam("SplatTeam"+teamnum).setPrefix(data.getSplatColor(teamnum).getChatColor().toString());
 		}
@@ -48,25 +48,8 @@ public class SplatScoreBoard {
 		scoreboard.resetScores(conversionTime(1));
 	}
 
-	public static void setTeam(PlayerData data) {
-		Scoreboard board = DataStore.getArenaData(data.getArena()).getScoreboard();
-		Team team = board.getTeam("SplatTeam"+data.getTeamid());
-		team.addEntry(data.getName());
-	}
-
-	public static void showBoard(PlayerData data) {
-		Bukkit.getPlayer(data.getName()).setScoreboard(DataStore.getArenaData(data.getArena()).getScoreboard());
-	}
-
-	public static void hideBoard(PlayerData data) {
-		Bukkit.getPlayer(data.getName()).setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-		Scoreboard board = DataStore.getArenaData(data.getArena()).getScoreboard();
-		board.getTeam("SplatTeam"+data.getTeamid()).removeEntry(data.getName());
-	}
-
-	public static void DefaultScoreBoard(ArenaData data, BattleType type) {
-		Scoreboard sb = data.getScoreboard();
-		Objective obj = sb.getObjective(data.getName());
+	public void DefaultScoreBoard(BattleType type) {
+		Objective obj = scoreboard.getObjective(data.getName());
 		List<String> board = new ArrayList<String>();
 		board.add(ChatColor.GREEN+"-Time left-");
 		board.add(conversionTime(MainGame.getTime(type)));
@@ -86,7 +69,7 @@ public class SplatScoreBoard {
 		}
 	}
 
-	private static String conversionTime(int tick) {
+	private String conversionTime(int tick) {
 		int second = tick%60;
 		int minut = (tick/60)%60;
 		if(String.valueOf(second).length() == 2)
@@ -94,74 +77,88 @@ public class SplatScoreBoard {
 		return ChatColor.GOLD.toString()+minut+" : 0"+second;
 	}
 
-	public static void changeTime(ArenaData data, int tick) {
-		Scoreboard board = data.getScoreboard();
-		Objective obj = board.getObjective(data.getName());
+	public void changeTime(int tick) {
+		Objective obj = scoreboard.getObjective(data.getName());
 		if(tick%20 != 0)
 			tick -= tick%20;
 		int scorevalue = obj.getScore(ChatColor.GREEN+"-Time left-").getScore()-1;
 		Score score = obj.getScore(conversionTime((tick/20)+1));
 		score.setScore(0);
-		board.resetScores(conversionTime((tick/20)+1));
+		scoreboard.resetScores(conversionTime((tick/20)+1));
 		score = obj.getScore(conversionTime(tick/20));
 		score.setScore(scorevalue);
 	}
 
-	public static void updateTeam1Count(ArenaData data) {
-		Scoreboard board = data.getScoreboard();
-		Objective obj = board.getObjective(data.getName());
+	public void updateTeam1Count() {
+		Objective obj = scoreboard.getObjective(data.getName());
 		int team1value = obj.getScore(ChatColor.YELLOW+"-Count-").getScore()-1;
 		TeamCountManager manager = data.getTeam1_count();
-		List<String> beforelist = getText(data, 1, manager, true);
-		String aftertext = getText(data, 1, manager, false).get(0);
+		List<String> beforelist = getText(1, manager, true);
+		String aftertext = getText(1, manager, false).get(0);
 		for(String beforetext : beforelist) {
 			obj.getScore(beforetext).setScore(0);
-			board.resetScores(beforetext);
+			scoreboard.resetScores(beforetext);
 		}
 		if(manager.getpenalty() > 0)
-			aftertext = getText(data, 1, manager, false).get(1);
+			aftertext = getText(1, manager, false).get(1);
 		obj.getScore(aftertext).setScore(team1value);
 	}
 
-	public static void updateTeam2Count(ArenaData data) {
-		Scoreboard board = data.getScoreboard();
-		Objective obj = board.getObjective(data.getName());
+	public void updateTeam2Count() {
+		Objective obj = scoreboard.getObjective(data.getName());
 		int team2value = obj.getScore(ChatColor.YELLOW+"-Count-").getScore()-2;
 		TeamCountManager manager = data.getTeam2_count();
-		List<String> beforelist = getText(data, 2, manager, true);
-		String aftertext = getText(data, 2, manager, false).get(0);
+		List<String> beforelist = getText(2, manager, true);
+		String aftertext = getText(2, manager, false).get(0);
 		for(String beforetext : beforelist) {
 			obj.getScore(beforetext).setScore(0);
-			board.resetScores(beforetext);
+			scoreboard.resetScores(beforetext);
 		}
 		if(manager.getpenalty() > 0)
-			aftertext = getText(data, 2, manager, false).get(1);
+			aftertext = getText(2, manager, false).get(1);
 		obj.getScore(aftertext).setScore(team2value);
 	}
 
-	public static void updatePenalty(ArenaData data, int team, int beforepenalty) {
-		Scoreboard board = data.getScoreboard();
-		Objective obj = board.getObjective(data.getName());
+	public void updatePenalty(int team, int beforepenalty) {
+		Objective obj = scoreboard.getObjective(data.getName());
 		int team1value = obj.getScore(ChatColor.YELLOW+"-Count-").getScore()-1;
 		TeamCountManager manager = team == 1 ? data.getTeam1_count() : data.getTeam2_count();
 		if(manager.getpenalty() < 1)
 			return;
 		String beforetext = data.getSplatColor(team).getChatColor()+"Team"+team+" : "+ChatColor.WHITE+(manager.getcount())+" +"+beforepenalty;
 		if(beforepenalty < 1)
-			beforetext = getText(data, team, manager, false).get(0);
-		String aftertext = getText(data, team, manager, false).get(1);
+			beforetext = getText(team, manager, false).get(0);
+		String aftertext = getText(team, manager, false).get(1);
 		Score team1 = obj.getScore(beforetext);
 		team1.setScore(0);
-		board.resetScores(beforetext);
+		scoreboard.resetScores(beforetext);
 		team1 = obj.getScore(aftertext);
 		team1.setScore(team1value);
 	}
+	
+	public Scoreboard getScoreboard() {
+		return scoreboard;
+	}
 
-	private static List<String> getText(ArenaData data, int team,TeamCountManager manager, boolean before) {
+	private List<String> getText(int team,TeamCountManager manager, boolean before) {
 		int Subtraction = before ? 1 : 0;
 		List<String> list = new ArrayList<String>();
 		list.add(data.getSplatColor(team).getChatColor()+"Team"+team+" : "+ChatColor.WHITE+(manager.getcount()+Subtraction));
 		list.add(data.getSplatColor(team).getChatColor()+"Team"+team+" : "+ChatColor.WHITE+(manager.getcount())+" +"+(manager.getpenalty()+Subtraction));
 		return list;
+	}
+	
+	public static void setTeam(PlayerData data) {
+		Team team = data.getArenaScoreboard().getTeam("SplatTeam"+data.getTeamid());
+		team.addEntry(data.getName());
+	}
+
+	public static void showBoard(PlayerData data) {
+		Bukkit.getPlayer(data.getName()).setScoreboard(data.getArenaScoreboard());
+	}
+
+	public static void hideBoard(PlayerData data) {
+		Bukkit.getPlayer(data.getName()).setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+		data.getArenaScoreboard().getTeam("SplatTeam"+data.getTeamid()).removeEntry(data.getName());
 	}
 }

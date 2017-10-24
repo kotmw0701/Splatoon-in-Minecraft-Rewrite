@@ -52,8 +52,12 @@ public class GameSigns implements Listener {
 				player.sendMessage(MainGame.Prefix+ChatColor.RED+"その待機部屋は消去されています");
 			}
 		} else if(sign.getLine(0).equalsIgnoreCase(statussign)) {
-
+			//TODO 観戦モードの追加
 		} else if(sign.getLine(0).equalsIgnoreCase(weaponsign)) {
+			if(!DataStore.hasStatusData(player.getName())) {
+				player.sendMessage(MainGame.Prefix+ChatColor.RED+"1回でも待機部屋に参加しないと購入は出来ません");
+				return;
+			}
 			boolean nohave = DataStore.getStatusData(player.getName()).addWeapon(sign.getLine(1));
 			if(nohave)
 				player.sendMessage(MainGame.Prefix+ChatColor.GOLD.toString()+ChatColor.BOLD+sign.getLine(1)+ChatColor.GREEN+"を購入しました");

@@ -13,13 +13,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.scoreboard.Scoreboard;
 
 import jp.kotmw.splatoon.event.ArenaStatusChangeEvent;
 import jp.kotmw.splatoon.gamedatas.DataStore.GameStatusEnum;
 import jp.kotmw.splatoon.maingame.GameSigns;
 import jp.kotmw.splatoon.maingame.Turf_War;
 import jp.kotmw.splatoon.maingame.threads.BattleRunnable;
+import jp.kotmw.splatoon.manager.SplatBossBar;
+import jp.kotmw.splatoon.manager.SplatScoreBoard;
 import jp.kotmw.splatoon.manager.TeamCountManager;
 import jp.kotmw.splatoon.util.Location;
 import jp.kotmw.splatoon.util.SplatColor;
@@ -38,7 +39,9 @@ public class ArenaData {
 	private Map<Integer, SplatColor> teamcolor = new HashMap<>();
 	private BattleRunnable runtask;
 	private GameStatusEnum gameStatus;
-	private Scoreboard scoreboard;
+	private SplatScoreBoard scoreboard;
+	@SuppressWarnings("unused")
+	private SplatBossBar bossBar;
 	private Turf_War battle;
 	private List<BlockState> rollbackblocks = new ArrayList<BlockState>();
 	private TeamCountManager team1_count, team2_count;
@@ -53,24 +56,24 @@ public class ArenaData {
 		String[] pos1 = file.getString("Stage.Pos1").split("/");
 		String[] pos2 = file.getString("Stage.Pos2").split("/");
 		this.stagepos1 = new Location(world,
-				Integer.valueOf(pos1[0]),
-				Integer.valueOf(pos1[1]),
-				Integer.valueOf(pos1[2]));
+				Integer.parseInt(pos1[0]),
+				Integer.parseInt(pos1[1]),
+				Integer.parseInt(pos1[2]));
 		this.stagepos2 = new Location(world,
-				Integer.valueOf(pos2[0]),
-				Integer.valueOf(pos2[1]),
-				Integer.valueOf(pos2[2]));
+				Integer.parseInt(pos2[0]),
+				Integer.parseInt(pos2[1]),
+				Integer.parseInt(pos2[2]));
 		if(file.contains("SplatZone.Pos1") && file.contains("SplatZone.Pos2")) {
 			pos1 = file.getString("SplatZone.Pos1").split("/");
 			pos2 = file.getString("SplatZone.Pos2").split("/");
 			this.areapos1 = new Location(world,
-					Integer.valueOf(pos1[0]),
-					Integer.valueOf(pos1[1]),
-					Integer.valueOf(pos1[2]));
+					Integer.parseInt(pos1[0]),
+					Integer.parseInt(pos1[1]),
+					Integer.parseInt(pos1[2]));
 			this.areapos2 = new Location(world,
-					Integer.valueOf(pos2[0]),
-					Integer.valueOf(pos2[1]),
-					Integer.valueOf(pos2[2]));
+					Integer.parseInt(pos2[0]),
+					Integer.parseInt(pos2[1]),
+					Integer.parseInt(pos2[2]));
 		} else if(!file.contains("SplatZone.Pos1") || !file.contains("SplatZone.Pos2")) {
 			this.areapos1 = new Location(null, 0, 0, 0);
 			this.areapos2 = new Location(null, 0, 0, 0);
@@ -82,11 +85,11 @@ public class ArenaData {
 			for(int ii = 1; ii <= this.playerscount; ii++) {
 				String[] teamloc = file.getString("SpawnPos.Team"+i+".P"+ii+".Loc").split("/");
 				String[] teamrotation = file.getString("SpawnPos.Team"+i+".P"+ii+".HeadRotation").split("/");
-				double x = Double.valueOf(teamloc[0]);
-				double y = Double.valueOf(teamloc[1]);
-				double z = Double.valueOf(teamloc[2]);
-				float yaw = Float.valueOf(teamrotation[0]);
-				float pitch = Float.valueOf(teamrotation[1]);
+				double x = Double.parseDouble(teamloc[0]);
+				double y = Double.parseDouble(teamloc[1]);
+				double z = Double.parseDouble(teamloc[2]);
+				float yaw = Float.parseFloat(teamrotation[0]);
+				float pitch = Float.parseFloat(teamrotation[1]);
 				poss.add(new Location(world, x, y, z, yaw, pitch));
 			}
 			posisions.put(i, poss);
@@ -166,7 +169,7 @@ public class ArenaData {
 
 	public GameStatusEnum getGameStatus() {return gameStatus;}
 
-	public Scoreboard getScoreboard() {return scoreboard;}
+	public SplatScoreBoard getScoreboard() {return scoreboard;}
 
 	public Turf_War getBattleClass() {return battle;}
 
@@ -211,7 +214,7 @@ public class ArenaData {
 		GameSigns.UpdateStatusSign(arena);
 	}
 
-	public void setScoreBoard(Scoreboard scoreboard) {this.scoreboard = scoreboard;}
+	public void setScoreBoard(SplatScoreBoard scoreboard) {this.scoreboard = scoreboard;}
 
 	public void setBattleClass(Turf_War battle) {this.battle = battle;}
 

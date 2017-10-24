@@ -89,7 +89,7 @@ public class BattleRunnable extends BukkitRunnable {
 						data.setTotalpaintblock(data.getBattleClass().getTotalArea());*/
 				}
 				if(tick <= second*20) {
-					SplatScoreBoard.changeTime(data, tick);
+					data.getScoreboard().changeTime(tick);
 					if((tick/20)%60 == 0)
 						MainGame.sendMessageforArena(data.getName(), ChatColor.YELLOW+"残り時間 "+ChatColor.AQUA.toString()+ChatColor.BOLD+(tick/20)/60+ChatColor.YELLOW+" 分");
 					if(tick/20 <= 10) {
@@ -122,7 +122,7 @@ public class BattleRunnable extends BukkitRunnable {
 			ResetPlayerData();
 			data.setGameStatus(GameStatusEnum.RESULT);
 			if(type == BattleType.Turf_War)
-				data.getBattleClass().resultBattle();
+				data.getBattleClass().resultBattle();//TODO ここ
 			else if(type == BattleType.Splat_Zones) {
 				for(ArmorStand stand : data.getAreastands())
 					stand.remove();

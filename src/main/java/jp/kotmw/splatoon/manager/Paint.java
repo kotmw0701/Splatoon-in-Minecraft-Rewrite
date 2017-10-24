@@ -28,11 +28,17 @@ public class Paint {
 			return;
 		if(SplatColorManager.getColorID(block) == arena.getSplatColor(data.getTeamid()).getColorID())
 			return;
-		boolean bonus = SplatColorManager.getColorID(block) == arena.getSplatColor(data.getOpponentTeamid()).getColorID();
+		int bonus = 0;
+		for(int team = 1; team <= arena.getMaximumTeamNum(); team++)
+			if((data.getTeamid() != team) && SplatColorManager.getColorID(block) == arena.getSplatColor(team).getColorID()) {
+				bonus = team;
+				break;
+			}
 		BlockPaintEvent event = new BlockPaintEvent(block, data, arena);
 		Bukkit.getPluginManager().callEvent(event);
-		addScore(data, bonus);
+		addScore(data, (bonus != 0));
 		addRollBack(arena, block);
+		arena.getBattleClass().addTeamScore(data.getTeamid(), bonus);//TODO ここ
 		ColorChange(block, DataStore.getArenaData(data.getArena()).getSplatColor(data.getTeamid()));
 	}
 	

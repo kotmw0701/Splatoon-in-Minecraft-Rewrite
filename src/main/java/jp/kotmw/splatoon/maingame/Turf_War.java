@@ -26,7 +26,7 @@ public class Turf_War {
 
 	protected ArenaData data;
 	protected Map<Integer, Double> result = new HashMap<>();
-	
+	private boolean resutcount = false;//最終的に塗り面積を集計するかしないか、するならtrue
 
 	public Turf_War(ArenaData data) {
 		this.data = data;
@@ -65,39 +65,40 @@ public class Turf_War {
 		}
 		return count;
 	}
-
+	
 	public void resultBattle() {
-		int[] teamresult = new int[data.getMaximumTeamNum()];
-		Location loc1 = data.getStagePosition1().convertLocation(), loc2 = data.getStagePosition2().convertLocation();
-		//////////////////////////////////////////////////////////////////
-		for(int x = loc2.getBlockX(); x <= loc1.getBlockX(); x++) {
-			for(int y = loc2.getBlockY(); y <= loc1.getBlockY(); y++) {
-				for(int z = loc2.getBlockZ(); z <= loc1.getBlockZ(); z++) {
-					Block block = Bukkit.getWorld(data.getWorld()).getBlockAt(x, y, z);
-					Block aboveBlock = Bukkit.getWorld(data.getWorld()).getBlockAt(x, y+1, z);
-					if(block.getType() != Material.AIR
-							&& isAbobe(aboveBlock.getLocation())) {
-						int colorID = SplatColorManager.getColorID(Bukkit.getWorld(data.getWorld()).getBlockAt(x, y, z));
-						if(colorID == 0)
-							continue;
-						int team = data.getColorTeam(colorID);
-						if(team == 0)
-							continue;
-						teamresult[team-1]++;
+		if(resutcount) {
+			int[] teamresult = new int[data.getMaximumTeamNum()];
+			Location loc1 = data.getStagePosition1().convertLocation(), loc2 = data.getStagePosition2().convertLocation();
+			//////////////////////////////////////////////////////////////////
+			for(int x = loc2.getBlockX(); x <= loc1.getBlockX(); x++) {
+				for(int y = loc2.getBlockY(); y <= loc1.getBlockY(); y++) {
+					for(int z = loc2.getBlockZ(); z <= loc1.getBlockZ(); z++) {
+						Block block = Bukkit.getWorld(data.getWorld()).getBlockAt(x, y, z);
+						Block aboveBlock = Bukkit.getWorld(data.getWorld()).getBlockAt(x, y+1, z);
+						if(block.getType() != Material.AIR
+								&& isAbobe(aboveBlock.getLocation())) {
+							int colorID = SplatColorManager.getColorID(Bukkit.getWorld(data.getWorld()).getBlockAt(x, y, z));
+							if(colorID == 0)
+								continue;
+							int team = data.getColorTeam(colorID);
+							if(team == 0)
+								continue;
+							teamresult[team-1]++;
+						}
 					}
 				}
 			}
+			for(int team = 1; team <= data.getMaximumTeamNum(); team++) {
+				double result_i = teamresult[team-1];
+				result.put(team, result_i);
+			}
+			//////////////////////////////////////////////////////////////////
+			//TODO 後に多分この範囲全部消して、戦闘中に集計するようにしていくと思うかな・・・？
+			//ただ若干の負荷が不安
 		}
-		//////////////////////////////////////////////////////////////////
+		shiftScore();
 		BukkitRunnable task = null;
-		for(int team = 1; team <= data.getMaximumTeamNum(); team++) {
-			double result_i = teamresult[team-1];
-			for(double i : result.values())
-				if(result_i == i)
-					result_i += 0.01;
-			result.put(team, result_i);
-		}
-		//TODO 上の記法だと乱数が入らないから同じスコアだったときに数字の大きいチームの方が必ず勝つ
 		try {
 			task = new ResultRunnable(this);
 			task.runTaskTimer(Main.main, 20*5, 5);
@@ -129,16 +130,31 @@ public class Turf_War {
 	public double getTeamResult(int team) {
 		if(team > data.getMaximumTeamNum() || team < 1)
 			return 0.0;
-		return (result.get(team) == 0.0 ? 0.01 : result.get(team));
-		//チーム1の塗り面積が0だとエラーが出るため
+		double fix = (team == 1 ? 0.01 : 0.0);
+		if(!result.containsKey(team))
+			result.put(team, 0.0);
+		return (result.get(team) == 0.0 ? fix : result.get(team));
 	}
 	
 	public double getTotalTeamResult() {
 		double result = 0.0;
-		for(int team = 1; team <= data.getMaximumTeamNum(); team++) {
+		for(int team = 1; team <= data.getMaximumTeamNum(); team++)
 			result += getTeamResult(team);
-		}
 		return result;
+	}
+	
+	public void addTeamScore(int team, int beforeteam) {
+		if(resutcount)
+			return;
+		double score = (result.containsKey(team) ? result.get(team) : 0.0);
+		if(beforeteam != 0) {
+			double score_ = result.get(beforeteam);
+			result.put(beforeteam, --score_);
+		}
+		result.put(team, ++score);
+		//負荷が怖い
+		//戦闘の最後に一気に全範囲にfor走らせてやるのに比べれば局所的な重さは軽減されると思うけど、
+		//戦闘中の平均的な重さが予想できない・・・
 	}
 	
 	private String getResuleText(Map<Integer, Double> parcent) {
@@ -155,6 +171,15 @@ public class Turf_War {
 			.sorted(Collections.reverseOrder(Entry.comparingByValue()))
 			.forEach(entry -> list.add(entry));
 		return list.get(0).getKey();
+	}
+	
+	private void shiftScore() {
+		Map<Integer, Double> result_shift = new HashMap<>(result);
+		result.entrySet().forEach(entry -> {
+			while(result_shift.containsValue(entry.getValue()))
+				result.put(entry.getKey(), entry.getValue()+0.01);
+		});
+		//TODO この記法だと乱数が入らないから同じスコアだったときに数字の大きいチームの方が必ず勝つ
 	}
 	
 	private static boolean isAbobe(Location location) {

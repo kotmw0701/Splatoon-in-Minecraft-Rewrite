@@ -192,7 +192,7 @@ public class StageFiles extends PluginFiles {
 			if(!data.isStatus())
 				continue;
 			data.updateTeamColor();
-			SplatScoreBoard.createScoreboard(data);
+			data.setScoreBoard(new SplatScoreBoard(data));
 			DataStore.addArenaData(arena, data);
 		}
 	}

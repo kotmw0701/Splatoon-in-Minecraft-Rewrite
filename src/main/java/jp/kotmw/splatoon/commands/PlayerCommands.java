@@ -18,7 +18,7 @@ public class PlayerCommands extends CommandLib {
 	public boolean onCommand(CommandSender sender, Command command, String arg2, String[] args) {
 		if(!(sender instanceof Player))
 			return false;
-		Player player = getPlayer(sender);
+		player = (Player)sender;
 		if(args.length == 0) {
 			sendMsg(MainGame.Prefix);
 			sendMsgs("-----Player Command List-----"
@@ -83,9 +83,7 @@ public class PlayerCommands extends CommandLib {
 					targetPlayer = getRandomPlayer();
 				else if(target.equalsIgnoreCase("@a")) {
 					sendPMsg(ChatColor.GREEN+"人数がはみ出た場合はそのプレイヤーは弾かれます");
-					for(Player players : Bukkit.getOnlinePlayers()) {
-						MainGame.join(players, DataStore.getRoomData(args[1]));
-					}
+					Bukkit.getOnlinePlayers().forEach(players -> MainGame.join(players, DataStore.getRoomData(args[1])));
 					return true;
 				}
 				if(targetPlayer == null) {

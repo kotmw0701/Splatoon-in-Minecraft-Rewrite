@@ -20,7 +20,6 @@ import jp.kotmw.splatoon.gamedatas.DataStore;
 import jp.kotmw.splatoon.gamedatas.PlayerData;
 import jp.kotmw.splatoon.manager.Paint;
 import jp.kotmw.splatoon.manager.SplatColorManager;
-import jp.kotmw.splatoon.manager.SplatScoreBoard;
 import jp.kotmw.splatoon.manager.TeamCountManager;
 
 public class SplatZones extends Turf_War {
@@ -98,7 +97,7 @@ public class SplatZones extends Turf_War {
 				return;
 			}
 			team1_manage.updatecount();
-			SplatScoreBoard.updateTeam1Count(data);
+			data.getScoreboard().updateTeam1Count();
 			return;
 		} else if(team2_manage.ishavearea()) {
 			if(totalareablock*0.5 < team1) {//相手チームが5割以上になった場合
@@ -113,7 +112,7 @@ public class SplatZones extends Turf_War {
 				return;
 			}
 			team2_manage.updatecount();
-			SplatScoreBoard.updateTeam2Count(data);
+			data.getScoreboard().updateTeam2Count();
 			return;
 		}
 		if((totalareablock*0.8 < team1) || (totalareablock*0.8 < team2)) {
@@ -123,12 +122,12 @@ public class SplatZones extends Turf_War {
 			case 1:
 				team1_manage.sethavearea(true);
 				int team1_before = team2_manage.setpenalty();
-				SplatScoreBoard.updatePenalty(data, 1, team1_before);
+				data.getScoreboard().updatePenalty(1, team1_before);
 				break;
 			case 2:
 				team2_manage.sethavearea(true);
 				int team2_before = team1_manage.setpenalty();
-				SplatScoreBoard.updatePenalty(data, 2, team2_before);
+				data.getScoreboard().updatePenalty(2, team2_before);
 				break;
 			}
 			ZoneChangeEvent event = new ZoneChangeEvent();

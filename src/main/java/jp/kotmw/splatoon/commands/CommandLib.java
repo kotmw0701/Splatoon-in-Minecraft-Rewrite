@@ -8,18 +8,13 @@ import java.util.Random;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import jp.kotmw.splatoon.maingame.MainGame;
 
 public abstract class CommandLib implements CommandExecutor {
 	
-	private Player player;
-	
-	protected Player getPlayer(CommandSender sender) {
-		return player = (Player)sender;
-	}
+	protected Player player;
 	
 	protected Player getPlayer(String name) {
 		for(Player player : Bukkit.getOnlinePlayers()) {

@@ -10,9 +10,8 @@ public class RankData {
 	private Map<Integer, Double> rankexp = new HashMap<>();
 	
 	public RankData(FileConfiguration file) {
-		for(int i = 2; i <= 50; i++) {
+		for(int i = 2; i <= 50; i++)
 			rankexp.put(i, file.getDouble("Rank.Rank"+i));
-		}
 	}
 	
 	public double getNextRankExp(int rank) {

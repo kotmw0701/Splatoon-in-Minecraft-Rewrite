@@ -166,24 +166,26 @@ public class DataStore {
 
 	public static List<PlayerData> getArenaPlayersList(String arena) {
 		List<PlayerData> list = new ArrayList<>();
-		for(String player : playerdata.keySet()) {
-			PlayerData data = playerdata.get(player);
+		playerdata.values().stream().filter(data -> data.getArena() != null && data.getArena().equalsIgnoreCase(arena)).forEach(list::add);
+		
+		/*for(PlayerData data : playerdata.values()) {
 			if(data.getArena() != null
 					&& data.getArena().equalsIgnoreCase(arena))
 				list.add(data);
-		}
+		}*/
 		return list;
 	}
 
 	public static List<PlayerData> getRoomPlayersList(String room) {
 		List<PlayerData> list = new ArrayList<>();
-		for(String player : playerdata.keySet()) {
+		playerdata.values().stream().filter(data -> data.getRoom() != null && data.getRoom().equalsIgnoreCase(room)).filter(data -> data.getArena() == null).forEach(list::add);
+		/*for(String player : playerdata.keySet()) {
 			PlayerData data = playerdata.get(player);
 			if(data.getRoom() != null
 					&& data.getRoom().equalsIgnoreCase(room))
 				if(data.getArena() == null)
 					list.add(data);
-		}
+		}*/
 		return list;
 	}
 	

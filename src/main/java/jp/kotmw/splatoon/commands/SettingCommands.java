@@ -37,7 +37,7 @@ public class SettingCommands extends CommandLib {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(!(sender instanceof Player))
 			return false;
-		Player player = getPlayer(sender);
+		player = (Player) sender;
 		if(args.length == 0) {
 			sendMsg(MainGame.Prefix);
 			sendMsgs("-----Setting Command List-----"
@@ -149,7 +149,7 @@ public class SettingCommands extends CommandLib {
 				data.setGameStatus(GameStatusEnum.ENABLE);
 				StageFiles.setEnable(name);
 				data.updateTeamColor();
-				SplatScoreBoard.createScoreboard(data);
+				data.setScoreBoard(new SplatScoreBoard(data));
 				sendPMsg(ChatColor.GREEN+"設定完了を確認し、使用可能になりました！");
 				return true;
 			} else if("setroom".equalsIgnoreCase(args[1])) {
