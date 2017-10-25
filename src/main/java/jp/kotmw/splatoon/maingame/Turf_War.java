@@ -66,6 +66,10 @@ public class Turf_War {
 		return count;
 	}
 	
+	/**
+	 * BattleRunnable.java #L125
+	 * で呼び出されます
+	 */
 	public void resultBattle() {
 		if(resutcount) {
 			int[] teamresult = new int[data.getMaximumTeamNum()];
@@ -143,6 +147,10 @@ public class Turf_War {
 		return result;
 	}
 	
+	/**
+	 * Paint.java #L41
+	 * から呼び出されます
+	 */
 	public void addTeamScore(int team, int beforeteam) {
 		if(resutcount)
 			return;
