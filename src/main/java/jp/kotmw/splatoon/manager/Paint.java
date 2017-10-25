@@ -28,7 +28,7 @@ public class Paint {
 			return;
 		if(SplatColorManager.getColorID(block) == arena.getSplatColor(data.getTeamid()).getColorID())
 			return;
-		int bonus = 0;
+		int bonus = 0;//塗ったブロックが敵チームのカラーだったら、この変数に敵チームの番号が入る
 		for(int team = 1; team <= arena.getMaximumTeamNum(); team++)
 			if((data.getTeamid() != team) && SplatColorManager.getColorID(block) == arena.getSplatColor(team).getColorID()) {
 				bonus = team;
@@ -36,7 +36,7 @@ public class Paint {
 			}
 		BlockPaintEvent event = new BlockPaintEvent(block, data, arena);
 		Bukkit.getPluginManager().callEvent(event);
-		addScore(data, (bonus != 0));
+		addScore(data, (bonus != 0));//0じゃない場合は敵チームのを上書きしたという事だからボーナスに追加
 		addRollBack(arena, block);
 		arena.getBattleClass().addTeamScore(data.getTeamid(), bonus);//TODO ここ
 		ColorChange(block, DataStore.getArenaData(data.getArena()).getSplatColor(data.getTeamid()));
