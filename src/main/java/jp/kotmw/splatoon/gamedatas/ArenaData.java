@@ -37,10 +37,11 @@ public class ArenaData {
 	private int playerscount;
 	private int winteam;
 	private Map<Integer, SplatColor> teamcolor = new HashMap<>();
+	private Map<Integer, Double> scores = new HashMap<>();
+	private int totalscore;
 	private BattleRunnable runtask;
 	private GameStatusEnum gameStatus;
 	private SplatScoreBoard scoreboard;
-	@SuppressWarnings("unused")
 	private SplatBossBar bossBar;
 	private Turf_War battle;
 	private List<BlockState> rollbackblocks = new ArrayList<BlockState>();
@@ -164,12 +165,16 @@ public class ArenaData {
 				return colors.getKey().intValue();
 		return 0;
 	}
+	
+	public Map<Integer, Double> getScores() {return scores;}
 
 	public BattleRunnable getTask() {return runtask;}
 
 	public GameStatusEnum getGameStatus() {return gameStatus;}
 
 	public SplatScoreBoard getScoreboard() {return scoreboard;}
+	
+	public SplatBossBar getBossBar() {return bossBar;}
 
 	public Turf_War getBattleClass() {return battle;}
 
@@ -182,6 +187,19 @@ public class ArenaData {
 	public int getTotalareablock() {return totalareablock;}
 
 	public List<ArmorStand> getAreastands() {return areastands;}
+	
+	public double getTeamScore(int team) {
+		if(team > teamscount || team < 1)
+			return 0.0;
+		double fix = (team == 1 ? 0.01 : 0.0);
+		if(!scores.containsKey(team))
+			scores.put(team, 0.0);
+		return (scores.get(team) == 0.0 ? fix : scores.get(team));
+	}
+	
+	public double getTotalTeamScore() {
+		return totalscore;
+	}
 
 	//***********************************************//
 
@@ -216,6 +234,8 @@ public class ArenaData {
 
 	public void setScoreBoard(SplatScoreBoard scoreboard) {this.scoreboard = scoreboard;}
 
+	public void setBossBar(SplatBossBar bossBar) {this.bossBar = bossBar;}
+	
 	public void setBattleClass(Turf_War battle) {this.battle = battle;}
 
 	public void addRollBackBlock(BlockState block) {this.rollbackblocks.add(block);}
@@ -234,6 +254,27 @@ public class ArenaData {
 		});
 	}
 	
+	/**
+	 * 対象のチームの所持スコアを+1して、既に塗られてるのが上書きされた場合は、上書きされたチームを-1する
+	 * 
+	 * @param team 加算するチーム
+	 * @param beforeteam 減算するチーム
+	 * 
+	 */
+	public void addTeamScore(int team, int beforeteam) {
+		double param = (scores.containsKey(team) ? scores.get(team) : 0.0), param2;
+		if(beforeteam != 0) {
+			param2 = scores.get(beforeteam);
+			scores.put(beforeteam, --param2);
+		}
+		scores.put(team, ++param);
+		totalscore += (beforeteam != 0 ? 0.0 : 1.0);
+		bossBar.updateBar();
+		//負荷が怖い
+		//戦闘の最後に一気に全範囲にfor走らせてやるのに比べれば局所的な重さは軽減されると思うけど、
+		//戦闘中の平均的な重さが予想できない・・・
+	}
+	
 	public void clearStatus() {
 		updateTeamColor();
 		this.team1_count = this.team2_count = new TeamCountManager();
@@ -241,6 +282,10 @@ public class ArenaData {
 		this.rollbackblocks.clear();
 		this.setGameStatus(GameStatusEnum.ENABLE);
 		this.areastands.clear();
+		this.scoreboard.resetScoreboard();
+		this.bossBar.removeAllPlayer();
+		this.bossBar.resetBossBar();
+		this.scores.clear();
 	}
 	
 	@Override

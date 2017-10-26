@@ -13,6 +13,7 @@ import jp.kotmw.splatoon.gamedatas.ArenaData;
 import jp.kotmw.splatoon.gamedatas.DataStore;
 import jp.kotmw.splatoon.gamedatas.DataStore.GameStatusEnum;
 import jp.kotmw.splatoon.maingame.Turf_War;
+import jp.kotmw.splatoon.manager.SplatBossBar;
 import jp.kotmw.splatoon.manager.SplatScoreBoard;
 
 public class StageFiles extends PluginFiles {
@@ -193,6 +194,7 @@ public class StageFiles extends PluginFiles {
 				continue;
 			data.updateTeamColor();
 			data.setScoreBoard(new SplatScoreBoard(data));
+			data.setBossBar(new SplatBossBar(data));
 			DataStore.addArenaData(arena, data);
 		}
 	}

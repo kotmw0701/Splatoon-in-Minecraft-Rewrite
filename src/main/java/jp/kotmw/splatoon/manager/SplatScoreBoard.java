@@ -148,17 +148,17 @@ public class SplatScoreBoard {
 		return list;
 	}
 	
-	public static void setTeam(PlayerData data) {
-		Team team = data.getArenaScoreboard().getTeam("SplatTeam"+data.getTeamid());
+	public void setTeam(PlayerData data) {
+		Team team = scoreboard.getTeam("SplatTeam"+data.getTeamid());
 		team.addEntry(data.getName());
 	}
 
-	public static void showBoard(PlayerData data) {
-		Bukkit.getPlayer(data.getName()).setScoreboard(data.getArenaScoreboard());
+	public void showBoard(PlayerData data) {
+		Bukkit.getPlayer(data.getName()).setScoreboard(scoreboard);
 	}
 
-	public static void hideBoard(PlayerData data) {
+	public void hideBoard(PlayerData data) {
 		Bukkit.getPlayer(data.getName()).setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
-		data.getArenaScoreboard().getTeam("SplatTeam"+data.getTeamid()).removeEntry(data.getName());
+		scoreboard.getTeam("SplatTeam"+data.getTeamid()).removeEntry(data.getName());
 	}
 }

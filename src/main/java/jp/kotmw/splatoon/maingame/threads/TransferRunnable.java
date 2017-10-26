@@ -18,7 +18,6 @@ import jp.kotmw.splatoon.maingame.GameSigns;
 import jp.kotmw.splatoon.maingame.MainGame;
 import jp.kotmw.splatoon.maingame.SplatZones;
 import jp.kotmw.splatoon.maingame.Turf_War;
-import jp.kotmw.splatoon.manager.SplatScoreBoard;
 
 public class TransferRunnable extends BukkitRunnable {
 
@@ -48,24 +47,25 @@ public class TransferRunnable extends BukkitRunnable {
 			List<PlayerData> datalist = DataStore.getRoomPlayersList(beforeroom);
 			Collections.shuffle(datalist);
 			int team = 1, posisions = 1;
-			for(PlayerData data : datalist) {
-				if(team == this.data.getMaximumTeamNum()) {
+			for(PlayerData playerdata : datalist) {
+				if(team > data.getMaximumTeamNum()) {
 					team = 1;
-					if(posisions == this.data.getMaximumPlayerNum())
+					if(posisions > data.getMaximumPlayerNum())
 						posisions = 1;
 					posisions++;
 				}
-				data.setMove(false);
-				data.setArena(this.data.getName());
-				data.setTeamid(team);
-				MainGame.setInv(data);
-				Player player = Bukkit.getPlayer(data.getName());
+				playerdata.setMove(false);
+				playerdata.setArena(this.data.getName());
+				playerdata.setTeamid(team);
+				MainGame.setInv(playerdata);
+				Player player = Bukkit.getPlayer(playerdata.getName());
 				player.setGameMode(GameMode.ADVENTURE);
 				player.setExp(1.0f);
-				this.data.getScoreboard().DefaultScoreBoard(type);
-				SplatScoreBoard.setTeam(data);
-				SplatScoreBoard.showBoard(data);
-				MainGame.Teleport(data, this.data.getTeamPlayerPosision(team, posisions).convertLocation());
+				data.getScoreboard().DefaultScoreBoard(type);
+				data.getScoreboard().setTeam(playerdata);
+				data.getScoreboard().showBoard(playerdata);
+				data.getBossBar().show(playerdata);
+				MainGame.Teleport(playerdata, this.data.getTeamPlayerPosision(team, posisions).convertLocation());
 				team++;
 			}
 			switch(type) {

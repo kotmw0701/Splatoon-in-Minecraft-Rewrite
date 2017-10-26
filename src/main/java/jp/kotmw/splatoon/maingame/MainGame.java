@@ -193,7 +193,6 @@ public class MainGame extends MessageUtil {
 	public static void end(ArenaData data, boolean tf) {
 		Paint.RollBack(data);
 		data.clearStatus();
-		data.getScoreboard().resetScoreboard();
 		for(PlayerData datalist : DataStore.getArenaPlayersList(data.getName())) {
 			Player player = Bukkit.getPlayer(datalist.getName());
 			if(!tf) {

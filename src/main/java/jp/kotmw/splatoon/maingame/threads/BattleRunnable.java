@@ -17,7 +17,6 @@ import jp.kotmw.splatoon.gamedatas.DataStore.GameStatusEnum;
 import jp.kotmw.splatoon.gamedatas.PlayerData;
 import jp.kotmw.splatoon.maingame.MainGame;
 import jp.kotmw.splatoon.maingame.SplatZones;
-import jp.kotmw.splatoon.manager.SplatScoreBoard;
 
 public class BattleRunnable extends BukkitRunnable {
 
@@ -161,7 +160,7 @@ public class BattleRunnable extends BukkitRunnable {
 			}
 			pdata.setTask(null);
 			pdata.setSquidTask(null);
-			SplatScoreBoard.hideBoard(pdata);
+			data.getScoreboard().hideBoard(pdata);
 			Player player = Bukkit.getPlayer(pdata.getName());
 			player.getInventory().clear();
 			player.removePotionEffect(PotionEffectType.SPEED);

@@ -6,7 +6,6 @@ import org.bukkit.Location;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.Scoreboard;
 
 public class PlayerData {
 	private String name; //プレイヤー名
@@ -94,12 +93,6 @@ public class PlayerData {
 	
 	public PlayerStatusData getPlayerStatus() {
 		return DataStore.getStatusData(name);
-	}
-	
-	public Scoreboard getArenaScoreboard() {
-		if(arena == null)
-			return null;
-		return DataStore.getArenaData(arena).getScoreboard().getScoreboard();
 	}
 
 	public void setName(String name) {this.name = name;}

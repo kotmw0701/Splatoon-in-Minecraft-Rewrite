@@ -101,6 +101,7 @@ public class Turf_War {
 			//TODO 後に多分この範囲全部消して、戦闘中に集計するようにしていくと思うかな・・・？
 			//ただ若干の負荷が不安
 		}
+		result = data.getScores();
 		shiftScore();
 		BukkitRunnable task = null;
 		try {
@@ -131,38 +132,12 @@ public class Turf_War {
 		return data;
 	}
 	
-	public double getTeamResult(int team) {
-		if(team > data.getMaximumTeamNum() || team < 1)
-			return 0.0;
-		double fix = (team == 1 ? 0.01 : 0.0);
-		if(!result.containsKey(team))
-			result.put(team, 0.0);
-		return (result.get(team) == 0.0 ? fix : result.get(team));
+	public double getTeamScore(int team) {
+		return data.getTeamScore(team);
 	}
 	
-	public double getTotalTeamResult() {
-		double result = 0.0;
-		for(int team = 1; team <= data.getMaximumTeamNum(); team++)
-			result += getTeamResult(team);
-		return result;
-	}
-	
-	/**
-	 * Paint.java #L41
-	 * から呼び出されます
-	 */
-	public void addTeamScore(int team, int beforeteam) {
-		if(resutcount)
-			return;
-		double score = (result.containsKey(team) ? result.get(team) : 0.0);
-		if(beforeteam != 0) {
-			double score_ = result.get(beforeteam);
-			result.put(beforeteam, --score_);
-		}
-		result.put(team, ++score);
-		//負荷が怖い
-		//戦闘の最後に一気に全範囲にfor走らせてやるのに比べれば局所的な重さは軽減されると思うけど、
-		//戦闘中の平均的な重さが予想できない・・・
+	public double getTotalTeamScore() {
+		return data.getTotalTeamScore();
 	}
 	
 	private String getResuleText(Map<Integer, Double> parcent) {
@@ -182,6 +157,8 @@ public class Turf_War {
 	}
 	
 	private void shiftScore() {
+		if(!resutcount)
+			result = data.getScores();
 		Map<Integer, Double> result_shift = new HashMap<>(result);
 		result.entrySet().forEach(entry -> {
 			while(result_shift.containsValue(entry.getValue()))
