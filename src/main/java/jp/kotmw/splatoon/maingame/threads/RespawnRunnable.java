@@ -41,6 +41,7 @@ public class RespawnRunnable extends BukkitRunnable {
 			player.setExp(1.0f);
 			data.setDead(false);
 			Title.sendAtionBar(player, " ");
+			DataStore.getArenaData(data.getArena()).getBossBar().updateLifeBar();
 			this.cancel();
 		}
 		second--;

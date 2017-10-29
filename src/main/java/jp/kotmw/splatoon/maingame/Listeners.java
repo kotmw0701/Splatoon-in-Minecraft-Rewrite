@@ -174,6 +174,7 @@ public class Listeners implements Listener {
 			player.removePotionEffect(PotionEffectType.SPEED);
 		}
 		data.setDead(true);
+		DataStore.getArenaData(data.getArena()).getBossBar().updateLifeBar();
 		new RespawnRunnable(5, player).runTaskTimer(Main.main, 0, 20);
 	}
 

@@ -38,7 +38,7 @@ public class Paint {
 		Bukkit.getPluginManager().callEvent(event);
 		addScore(data, (bonus != 0));//0じゃない場合は敵チームのを上書きしたという事だからボーナスに追加
 		addRollBack(arena, block);
-		arena.getBattleClass().addTeamScore(data.getTeamid(), bonus);//TODO ここ
+		arena.addTeamScore(data.getTeamid(), bonus);//TODO ここ
 		ColorChange(block, DataStore.getArenaData(data.getArena()).getSplatColor(data.getTeamid()));
 	}
 	
@@ -116,10 +116,11 @@ public class Paint {
 				}
 	}
 	
-	/* block.getBlock().setType()でやるか
+	/* block.getBlock().setType(Material)でやるか
 	 * block.update(true)にするかを暫く検討
 	 * 
-	 * update()だけだと内部データとその場所にあるブロックのデータが食い違い、ロールバックに失敗する。
+	 * block.setType(Material)と
+	 * update()じゃ内部データとその場所にあるブロックのデータが食い違い、ロールバックに失敗する。
 	 */
 	public static void RollBack(ArenaData data) {
 		for(BlockState block : data.getRollbackblocks()) {

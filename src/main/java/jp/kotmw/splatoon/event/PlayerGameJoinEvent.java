@@ -47,7 +47,7 @@ public class PlayerGameJoinEvent extends Event{
 		this.cancelled = cancel;
 		this.cancelreason = reason;
 	}
-
+	
 	@Override
 	public HandlerList getHandlers() {
 		return handlers;

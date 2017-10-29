@@ -34,7 +34,7 @@ public class ArenaData {
 	private Location areapos1, areapos2;
 	private Map<Integer, List<Location>> posisions = new HashMap<>();
 	private int teamscount;
-	private int playerscount;
+	private int totalPlayerCount, playersmaximuncount = 4, playersminimumcount = 20;
 	private int winteam;
 	private Map<Integer, SplatColor> teamcolor = new HashMap<>();
 	private Map<Integer, Double> scores = new HashMap<>();
@@ -80,10 +80,11 @@ public class ArenaData {
 			this.areapos2 = new Location(null, 0, 0, 0);
 		}
 		this.teamscount = getMaxTeam(file);
-		this.playerscount = getMaxPlayer(file);
+		int playerscount;
 		for(int i = 1; i <= this.teamscount; i++) {
+			playerscount = getMaxPlayer(file, i);
 			List<Location> poss = new ArrayList<>();
-			for(int ii = 1; ii <= this.playerscount; ii++) {
+			for(int ii = 1; ii <= playerscount; ii++) {
 				String[] teamloc = file.getString("SpawnPos.Team"+i+".P"+ii+".Loc").split("/");
 				String[] teamrotation = file.getString("SpawnPos.Team"+i+".P"+ii+".HeadRotation").split("/");
 				double x = Double.parseDouble(teamloc[0]);
@@ -116,7 +117,7 @@ public class ArenaData {
 	 * @return 引数の番号の座標が帰ってくる
 	 */
 	public Location getTeamPlayerPosision(int team, int num) {
-		if((team > teamscount || team < 0) || (num > playerscount || num < 0))
+		if((team > teamscount || team < 0) || (num > getMaximumPlayerNum(team) || num < 0))
 			return null;
 		if(posisions.containsKey(team))
 			return posisions.get(team).get(num-1);
@@ -125,27 +126,11 @@ public class ArenaData {
 	
 	public int getMaximumTeamNum() {return teamscount;}
 	
-	public int getMinimumPlayerNum() {
-		int minimun = 20;
-		for(int i = 1; i <= teamscount; i++) {
-			if(!posisions.containsKey(i))
-				continue;
-			if(minimun > posisions.get(i).size())
-				minimun = posisions.get(i).size();
-		}
-		return minimun;
-	}
+	public int getTotalPlayerCount() {return totalPlayerCount;}
 	
-	public int getMaximumPlayerNum() {
-		int maximum = 4;
-		for(int i = 1; i <= teamscount; i++) {
-			if(!posisions.containsKey(i))
-				continue;
-			if(maximum < posisions.get(i).size())
-				maximum = posisions.get(i).size();
-		}
-		return maximum;
-	}
+	public int getMinimumPlayerNum() {return playersminimumcount;}
+	
+	public int getMaximumPlayerNum() {return playersmaximuncount;}
 	
 	public int getMaximumPlayerNum(int team) {
 		return (posisions.containsKey(team) ? posisions.get(team).size() : 0);
@@ -299,11 +284,19 @@ public class ArenaData {
 				"]";
 	}
 	
-	private int getMaxPlayer(FileConfiguration file) {
+	private int getMaxPlayer(FileConfiguration file, int team) {
+		int num = 4;
 		for(int i = 0; i <= 20; i++)
-			if(!file.contains("SpawnPos.Team1.P"+(i+1)))
-				return i;
-		return 4;
+			if(!file.contains("SpawnPos.Team"+team+".P"+(i+1))) {
+				num = i;//次のポジションが無ければ今の数がMAX
+				break;
+			}
+		if(playersmaximuncount < num)
+			playersmaximuncount = num;
+		if(playersminimumcount > num)
+			playersminimumcount = num;
+		totalPlayerCount += num;
+		return num;
 	}
 	
 	private int getMaxTeam(FileConfiguration file) {
