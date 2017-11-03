@@ -3,12 +3,6 @@ package jp.kotmw.splatoon.maingame;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.DataStore.WeaponType;
-import jp.kotmw.splatoon.gamedatas.PlayerData;
-import jp.kotmw.splatoon.gamedatas.PlayerStatusData;
-import jp.kotmw.splatoon.gamedatas.WeaponData;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -21,6 +15,12 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.WeaponType;
+import jp.kotmw.splatoon.gamedatas.PlayerData;
+import jp.kotmw.splatoon.gamedatas.PlayerStatusData;
+import jp.kotmw.splatoon.gamedatas.WeaponData;
 
 public class InvMenu implements Listener {
 
@@ -41,10 +41,13 @@ public class InvMenu implements Listener {
 		if(item == null
 				|| item.getType() == Material.AIR
 				|| !item.getItemMeta().hasDisplayName()
-				|| !item.getItemMeta().getDisplayName().equals(GameItems.weaponselector)
 				|| !item.getItemMeta().hasLore())
 			return;
-		player.openInventory(openMenu());
+		String itemname = item.getItemMeta().getDisplayName();
+		if(itemname.equalsIgnoreCase(GameItems.weaponselector))
+			player.openInventory(openMenu());
+		else if(itemname.equalsIgnoreCase(GameItems.leave))
+			MainGame.leave(player);
 	}
 
 	@EventHandler

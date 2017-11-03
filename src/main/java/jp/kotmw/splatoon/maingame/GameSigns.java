@@ -14,6 +14,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import jp.kotmw.splatoon.Main;
 import jp.kotmw.splatoon.filedatas.OtherFiles;
 import jp.kotmw.splatoon.gamedatas.ArenaData;
 import jp.kotmw.splatoon.gamedatas.DataStore;
@@ -47,7 +48,8 @@ public class GameSigns implements Listener {
 		if(sign.getLine(0).equalsIgnoreCase(joinsign)) {
 			if(DataStore.hasRoomData(sign.getLine(1))) {
 				WaitRoomData data = DataStore.getRoomData(sign.getLine(1));
-				MainGame.join(player, data);
+				Bukkit.getScheduler().runTask(Main.main, () -> MainGame.join(player, data));
+				//誤爆防止
 			} else {
 				player.sendMessage(MainGame.Prefix+ChatColor.RED+"その待機部屋は消去されています");
 			}

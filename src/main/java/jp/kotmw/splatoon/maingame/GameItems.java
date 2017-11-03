@@ -3,22 +3,27 @@ package jp.kotmw.splatoon.maingame;
 import java.util.ArrayList;
 import java.util.List;
 
-import jp.kotmw.splatoon.gamedatas.DataStore;
-import jp.kotmw.splatoon.gamedatas.DataStore.WeaponType;
-import jp.kotmw.splatoon.gamedatas.SubWeaponData;
-import jp.kotmw.splatoon.gamedatas.WeaponData;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import jp.kotmw.splatoon.gamedatas.DataStore;
+import jp.kotmw.splatoon.gamedatas.DataStore.WeaponType;
+import jp.kotmw.splatoon.gamedatas.SubWeaponData;
+import jp.kotmw.splatoon.gamedatas.WeaponData;
 
 public class GameItems {
 
 	public static String weaponselector = ChatColor.GREEN
 			+ ChatColor.BOLD.toString()
 			+ "WeaponSelector"
-			+ ChatColor.RESET.toString() +ChatColor.GRAY
+			+ ChatColor.RESET.toString() + ChatColor.GRAY
+			+ " [Right Click]";
+	public static String leave = ChatColor.YELLOW
+			+ ChatColor.BOLD.toString()
+			+ "Leave"
+			+ ChatColor.RESET.toString() + ChatColor.GRAY
 			+ " [Right Click]";
 
 	public static ItemStack getSelectItem() {
@@ -27,6 +32,17 @@ public class GameItems {
 		meta.setDisplayName(weaponselector);
 		List<String> lore = new ArrayList<>();
 		lore.add(ChatColor.GOLD + "右クリックで武器選択の表示");
+		meta.setLore(lore);
+		item.setItemMeta(meta);
+		return item;
+	}
+	
+	public static ItemStack getLeaveItem() {
+		ItemStack item = new ItemStack(Material.IRON_DOOR);
+		ItemMeta meta = item.getItemMeta();
+		meta.setDisplayName(leave);
+		List<String> lore = new ArrayList<>();
+		lore.add(ChatColor.GREEN + "右クリックで退室します");
 		meta.setLore(lore);
 		item.setItemMeta(meta);
 		return item;

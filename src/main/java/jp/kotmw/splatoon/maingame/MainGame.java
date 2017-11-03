@@ -74,6 +74,7 @@ public class MainGame extends MessageUtil {
 				(float)data.getPitch()));
 		player.getInventory().clear();
 		player.getInventory().setItem(0, GameItems.getSelectItem());
+		player.getInventory().setItem(8, GameItems.getLeaveItem());
 		for(PotionEffect effect : player.getActivePotionEffects())
 			player.removePotionEffect(effect.getType());
 		DataStore.addPlayerData(player.getName(), playerdata);
@@ -89,13 +90,6 @@ public class MainGame extends MessageUtil {
 		PlayerGameLeaveEvent event = new PlayerGameLeaveEvent(DataStore.getPlayerData(player.getName()));
 		Bukkit.getPluginManager().callEvent(event);
 		PlayerData data = DataStore.removePlayerData(player.getName());
-		if(data.getArena() == null) {
-			if(DataStore.getRoomPlayersList(data.getRoom()).size() < 1)
-				if(DataStore.getRoomData(data.getRoom()).getTask() != null) {
-					DataStore.getRoomData(data.getRoom()).getTask().cancel();
-					DataStore.getRoomData(data.getRoom()).setTask(null);
-				}
-		}
 		if(data.getTask() != null) {
 			data.getTask().cancel();
 			data.setTask(null);
@@ -123,8 +117,6 @@ public class MainGame extends MessageUtil {
 			}
 			return;
 		}
-		roomdata.getTask().cancel();
-		roomdata.setTask(null);
 		for(PlayerData data : DataStore.getRoomPlayersList(roomdata.getName()))
 			sendActionBar(data, " ");
 		arenadata.setGameStatus(GameStatusEnum.INGAME);
