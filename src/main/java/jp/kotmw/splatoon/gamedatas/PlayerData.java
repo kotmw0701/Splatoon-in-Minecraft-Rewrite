@@ -12,7 +12,6 @@ public class PlayerData {
 	private String arena; //使用ステージ名
 	private String room; //使用ルーム名
 	private int teamid; //チームID
-	private int posisionid; //チーム内ID
 	private int killcount; //キル数
 	private int deathcount; //デス数
 	private LivingEntity squid; //プレイヤー専属のイカ
@@ -20,7 +19,6 @@ public class PlayerData {
 	private boolean climb = false; //壁上り状態かどうか
 	private boolean move = true; //動ける状態かどうか
 	private boolean allcancel = false;
-	private boolean allview = false;//後々消す
 	private Location loc; //プレイヤー参加前の座標
 	private List<ItemStack> items; //プレイヤー参加前のインベントリデータ
 	private int paintscore; //塗ったスコア
@@ -45,8 +43,6 @@ public class PlayerData {
 	public String getRoom() {return room;}
 
 	public int getTeamid() {return teamid;}
-	
-	public int getPosisionId() {return posisionid;}
 
 	public int getKillcount() {return killcount;}
 
@@ -61,8 +57,6 @@ public class PlayerData {
 	public boolean isMove() {return move;}
 
 	public boolean isAllCancel() {return allcancel;}
-	
-	public boolean isAllView() {return allview;}//後々消す
 
 	public Location getRollBackLocation() {return loc;}
 
@@ -107,9 +101,7 @@ public class PlayerData {
 
 	public void setRoom(String room) {this.room = room;}
 
-	public void setTeamId(int teamid) {this.teamid = teamid;}
-	
-	public void setPosisionId(int posisionid) {this.posisionid = posisionid;}
+	public void setTeamid(int teamid) {this.teamid = teamid;}
 
 	public void setKillcount(int killcount) {this.killcount = killcount;}
 
@@ -124,8 +116,6 @@ public class PlayerData {
 	public void setMove(boolean move) {this.move = move;}
 
 	public void setAllCansel(boolean allcancel) {this.allcancel = allcancel;}
-	
-	public void setAllView(boolean allview) {this.allview = allview;}//後々消す
 
 	public void setRollBackLocation(Location loc) {this.loc = loc;}
 

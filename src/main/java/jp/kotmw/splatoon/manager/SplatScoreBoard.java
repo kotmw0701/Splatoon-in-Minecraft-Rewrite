@@ -24,7 +24,6 @@ public class SplatScoreBoard {
 	private ArenaData data;
 	
 	public SplatScoreBoard(ArenaData data) {
-		this.data = data;
 		scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
 		Objective obj = scoreboard.registerNewObjective(data.getName(), "dummy");
 		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
@@ -37,6 +36,7 @@ public class SplatScoreBoard {
 			team.setCanSeeFriendlyInvisibles(false);
 			team.setOption(Option.NAME_TAG_VISIBILITY, OptionStatus.FOR_OTHER_TEAMS);
 		}
+		this.data = data;
 	}
 	
 	public void resetScoreboard() {

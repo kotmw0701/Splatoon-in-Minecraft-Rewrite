@@ -70,13 +70,6 @@ public class SettingCommands extends CommandLib {
 				}
 				sendPMsg(ChatColor.RED+"参加してからコマンド実行をしてくださいな");
 				return false;
-			} else if("allview".equalsIgnoreCase(args[0])) {
-				if(DataStore.hasPlayerData(player.getName())) {
-					PlayerData playerdata = DataStore.getPlayerData(player.getName());
-					playerdata.setAllView(!playerdata.isAllView());
-					return true;
-				}
-				return false;
 			}
 		} else if(args.length == 2) {
 			if("rollback".equalsIgnoreCase(args[0])) {
