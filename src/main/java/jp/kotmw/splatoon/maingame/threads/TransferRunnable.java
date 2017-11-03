@@ -46,17 +46,29 @@ public class TransferRunnable extends BukkitRunnable {
 		} else {
 			List<PlayerData> datalist = DataStore.getRoomPlayersList(beforeroom);
 			Collections.shuffle(datalist);
-			int team = 1, posisions = 1;
+			int team = 1, posisions = 1, players = 1;
 			for(PlayerData playerdata : datalist) {
+				if(players >= data.getTotalPlayerCount()) {
+					MainGame.sendMessage(playerdata, ChatColor.RED+"転送先ステージの許容人数をオーバーしたため、転送ができませんでした");
+					MainGame.sendMessage(playerdata, ChatColor.YELLOW+"このまま残ることも可能ですが、待機前の場所に戻る場合は"+ChatColor.WHITE+" /splat leave "+ChatColor.YELLOW+"コマンドを使用してください");
+					continue;
+					/*
+					 * メモ
+					 * 
+					 * TODO 対象ステージの最大許容人数オーバー時どうするか
+					 * 
+					 * 取りあえずオーバーした人はロビーに戻るかこのまま残るか選択出来るようにする
+					 * 
+					 */
+				}
 				if(team > data.getMaximumTeamNum()) {
 					team = 1;
-					if(posisions > data.getMaximumPlayerNum())
-						posisions = 1;
 					posisions++;
 				}
 				playerdata.setMove(false);
 				playerdata.setArena(this.data.getName());
-				playerdata.setTeamid(team);
+				playerdata.setTeamId(team);
+				playerdata.setPosisionId(posisions);
 				MainGame.setInv(playerdata);
 				Player player = Bukkit.getPlayer(playerdata.getName());
 				player.setGameMode(GameMode.ADVENTURE);
@@ -67,6 +79,7 @@ public class TransferRunnable extends BukkitRunnable {
 				data.getBossBar().show(playerdata);
 				MainGame.Teleport(playerdata, this.data.getTeamPlayerPosision(team, posisions).convertLocation());
 				team++;
+				players++;
 			}
 			switch(type) {
 			case Turf_War:

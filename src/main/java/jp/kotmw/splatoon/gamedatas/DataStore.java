@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 
@@ -165,27 +166,12 @@ public class DataStore {
 	}
 
 	public static List<PlayerData> getArenaPlayersList(String arena) {
-		List<PlayerData> list = new ArrayList<>();
-		playerdata.values().stream().filter(data -> data.getArena() != null && data.getArena().equalsIgnoreCase(arena)).forEach(list::add);
-		
-		/*for(PlayerData data : playerdata.values()) {
-			if(data.getArena() != null
-					&& data.getArena().equalsIgnoreCase(arena))
-				list.add(data);
-		}*/
-		return list;
+		return playerdata.values().stream().filter(data -> data.getArena() != null && data.getArena().equalsIgnoreCase(arena)).collect(Collectors.toList());
 	}
 
 	public static List<PlayerData> getRoomPlayersList(String room) {
 		List<PlayerData> list = new ArrayList<>();
 		playerdata.values().stream().filter(data -> data.getRoom() != null && data.getRoom().equalsIgnoreCase(room)).filter(data -> data.getArena() == null).forEach(list::add);
-		/*for(String player : playerdata.keySet()) {
-			PlayerData data = playerdata.get(player);
-			if(data.getRoom() != null
-					&& data.getRoom().equalsIgnoreCase(room))
-				if(data.getArena() == null)
-					list.add(data);
-		}*/
 		return list;
 	}
 	
