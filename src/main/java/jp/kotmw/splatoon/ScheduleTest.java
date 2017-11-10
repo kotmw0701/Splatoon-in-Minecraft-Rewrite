@@ -16,7 +16,7 @@ public class ScheduleTest extends Thread {
 	@Override
 	public void run() {
 		while(millisecond <= 60000) {
-			MainGame.sendAtionBar(player, convertTime(millisecond));
+			MainGame.sendActionBar(player, convertTime(millisecond));
 			try {
 				Thread.sleep(1);
 			} catch (InterruptedException e) {

@@ -189,11 +189,8 @@ public class MainGame extends MessageUtil {
 			Player player = Bukkit.getPlayer(datalist.getName());
 			if(!tf) {
 				PlayerStatusData statusData = datalist.getPlayerStatus();
-				if(data.getWinTeam() == datalist.getTeamid()) {
-					statusData.updateWinnerScore();
-				} else {
-					statusData.updateLoserScore();
-				}
+				if(data.getWinTeam() == datalist.getTeamid()) statusData.updateWinnerScore();
+				else statusData.updateLoserScore();
 				if(statusData.updateScoreExp()) {
 					player.playSound(player.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 0.7f, 1);
 					player.sendMessage(MainGame.Prefix+ChatColor.GREEN+"ランクが上がりました！");

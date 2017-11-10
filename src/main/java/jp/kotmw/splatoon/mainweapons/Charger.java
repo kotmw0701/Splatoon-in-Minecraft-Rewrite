@@ -51,10 +51,10 @@ public class Charger implements Listener {
 		if(player.getCharge() <= 0)
 			p.setExp((float) (p.getExp()-weapon.getCost()));
 		if(player.getTask() == null) {
-			BukkitRunnable task = new ChargerRunnable(p.getName(), weapon.getFullcharge());
-			task.runTaskTimer(Main.main, 0, 1);
+			BukkitRunnable task = new ChargerRunnable(p.getName());
+			task.runTaskTimer(Main.main, 0, 5);
 			player.setTask(task);
 		}
-		player.setTick(5);
+		player.setTick(1);
 	}
 }

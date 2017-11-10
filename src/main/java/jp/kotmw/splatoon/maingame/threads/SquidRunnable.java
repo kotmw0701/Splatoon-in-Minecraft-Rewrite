@@ -35,7 +35,7 @@ public class SquidRunnable extends BukkitRunnable {
 			return;
 		Player player = Bukkit.getPlayer(name);
 		float ink = player.getExp();
-		if(ink <= 0.984) {
+		if(ink <= 0.983) {
 			player.setExp(ink+0.016f);
 		}
 	}

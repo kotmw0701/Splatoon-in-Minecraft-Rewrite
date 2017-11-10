@@ -72,7 +72,7 @@ public class TransferRunnable extends BukkitRunnable {
 				MainGame.setInv(playerdata);
 				Player player = Bukkit.getPlayer(playerdata.getName());
 				player.setGameMode(GameMode.ADVENTURE);
-				player.setExp(1.0f);
+				player.setExp(0.99f);//1.12.2対応のため
 				data.getScoreboard().DefaultScoreBoard(type);
 				data.getScoreboard().setTeam(playerdata);
 				data.getScoreboard().showBoard(playerdata);

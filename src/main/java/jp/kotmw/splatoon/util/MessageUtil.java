@@ -18,7 +18,7 @@ public class MessageUtil extends Title {
 	}
 
 	public static void sendActionBar(PlayerData data, String msg) {
-		sendAtionBar(Bukkit.getPlayer(data.getName()), msg);
+		sendActionBar(Bukkit.getPlayer(data.getName()), msg);
 	}
 
 	public static void sendMessageforArena(String arena, String msg) {

@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 
 public class NMSBase {
 
-	public static void sendPacket(Player player, Object packet) {
+	protected static void sendPacket(Player player, Object packet) {
 		try {
 			Object handle = player.getClass().getMethod("getHandle").invoke(player);
 			Object pConnection = handle.getClass().getField("playerConnection").get(handle);
@@ -19,7 +19,7 @@ public class NMSBase {
 		}
 	}
 
-	public static Class<?> getNMSClass(String name) {
+	protected static Class<?> getNMSClass(String name) {
 		String ver = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
 		try {
 			return Class.forName("net.minecraft.server."+ver+"."+name);
@@ -27,5 +27,25 @@ public class NMSBase {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	protected enum Ver{
+		v1_9, //byte
+		v1_10, //byte
+		v1_11, //byte
+		v1_12 //ChatMessageType
+	}
+	
+	protected static boolean isCMT() {
+		String ver = Bukkit.getServer().getClass().getPackage().getName().split("\\.")[3];
+		if(ver.contains(Ver.v1_9.toString()))
+			return false;
+		else if (ver.contains(Ver.v1_10.toString()))
+			return false;
+		else if (ver.contains(Ver.v1_11.toString()))
+			return false;
+		else if (ver.contains(Ver.v1_12.toString()))
+			return true;
+		return true;
 	}
 }

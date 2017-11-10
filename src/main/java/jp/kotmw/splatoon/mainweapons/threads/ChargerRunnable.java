@@ -20,16 +20,12 @@ import jp.kotmw.splatoon.manager.Paint;
 public class ChargerRunnable extends BukkitRunnable {
 
 	private String name;
-	private int full;
-	private String meter = "";
+	private int full = 4;
+	private String[] blockmeter = {" ▝", " ▌", "▟","█"};
 	private PotionEffect slow = new PotionEffect(PotionEffectType.SLOW, 3600*20, 1, false, false);
 
-	public ChargerRunnable(String name, int full) {
+	public ChargerRunnable(String name) {
 		this.name = name;
-		this.full = full;
-		for(int i = 1; i <= full; i++) {
-			meter = meter+"|";
-		}
 	}
 
 	@Override
@@ -81,7 +77,6 @@ public class ChargerRunnable extends BukkitRunnable {
 
 	private void sendCharge(PlayerData data, int charge) {
 		ChatColor inkcolor = DataStore.getArenaData(data.getArena()).getSplatColor(data.getTeamid()).getChatColor();
-		String coloredmeter = inkcolor+meter.substring(0, charge)+ChatColor.GRAY+meter.substring(charge)+"  ";
-		MainGame.sendTitle(data, 0, 10, 0, " ", coloredmeter);
+		MainGame.sendTitle(data, 0, 10, 0, " ", inkcolor+blockmeter[charge-1]);
 	}
 }

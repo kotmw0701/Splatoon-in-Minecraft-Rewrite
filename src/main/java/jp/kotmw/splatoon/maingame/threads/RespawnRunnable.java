@@ -28,7 +28,7 @@ public class RespawnRunnable extends BukkitRunnable {
 				this.cancel();
 				return;
 			}
-			Title.sendAtionBar(player,
+			Title.sendActionBar(player,
 					ChatColor.DARK_GREEN.toString()+ChatColor.BOLD+"復活まで "+ChatColor.WHITE+" [ "+ChatColor.DARK_AQUA+
 					ChatColor.BOLD+second+ChatColor.WHITE+" ]");
 		} else {
@@ -38,9 +38,9 @@ public class RespawnRunnable extends BukkitRunnable {
 			player.teleport(loc);
 			player.setGameMode(GameMode.ADVENTURE);
 			player.setVelocity(new Vector());
-			player.setExp(1.0f);
+			player.setExp(0.99f);
 			data.setDead(false);
-			Title.sendAtionBar(player, " ");
+			Title.sendActionBar(player, " ");
 			DataStore.getArenaData(data.getArena()).getBossBar().updateLifeBar();
 			this.cancel();
 		}

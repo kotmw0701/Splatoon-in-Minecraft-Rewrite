@@ -58,12 +58,12 @@ public class Title extends NMSBase{
 			e.printStackTrace();
 		}
 	}
-
-	public static void sendAtionBar(Player p, String msg) {
+	
+	public static void sendActionBar(Player p, String msg) {
 		msg = ChatColor.translateAlternateColorCodes('&', msg);
 		try {
 			Object IBComponent = getNMSClass("IChatBaseComponent").getDeclaredClasses()[0].getMethod("a", String.class).invoke(getNMSClass("IChatBaseComponent"), "{\"text\":\""+msg+"\"}");
-			Object packet = getNMSClass("PacketPlayOutChat").getConstructor(getNMSClass("IChatBaseComponent"), byte.class).newInstance(IBComponent, (byte)2);
+			Object packet = getNMSClass("PacketPlayOutChat").getConstructor(getNMSClass("IChatBaseComponent"), (isCMT() ? getNMSClass("ChatMessageType") : byte.class)).newInstance(IBComponent, (isCMT() ? getNMSClass("ChatMessageType").getDeclaredMethod("a", byte.class).invoke(getNMSClass("ChatMessageType"), (byte)2) : (byte)2));
 			sendPacket(p, packet);
 		} catch (Exception e) {
 			e.printStackTrace();
