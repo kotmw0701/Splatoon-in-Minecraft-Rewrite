@@ -43,7 +43,7 @@ public class Polar_coodinates implements Cloneable{
 	}
 	
 	/**
-	 * converLocationとなんも変わらないよ((
+	 * converLocationとなんも変わらないよ
 	 * ただ回転量が増えるだけ
 	 * 
 	 * @param newtheta 移動分の角度

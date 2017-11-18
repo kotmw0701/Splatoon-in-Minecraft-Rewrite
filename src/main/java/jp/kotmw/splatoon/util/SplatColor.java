@@ -6,6 +6,7 @@ import org.bukkit.DyeColor;
 
 import jp.kotmw.splatoon.util.DetailsColor.DetailsColorType;
 
+
 public enum SplatColor {
 	BLUE(DyeColor.BLUE, ChatColor.BLUE, Color.fromRGB(0, 0, 255), DetailsColorType.WoolColor_BLUE.getColor(), 11), 
 	LIGHT_BLUE(DyeColor.LIGHT_BLUE, ChatColor.AQUA, Color.AQUA, DetailsColorType.WoolColor_AQUA.getColor(), 3), 

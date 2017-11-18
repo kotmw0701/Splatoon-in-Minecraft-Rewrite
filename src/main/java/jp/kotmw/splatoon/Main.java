@@ -1,7 +1,5 @@
 package jp.kotmw.splatoon;
 
-import java.io.File;
-
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -28,7 +26,6 @@ import jp.kotmw.splatoon.subweapon.Bomb;
 public class Main extends JavaPlugin{
 
 	public static Main main;
-	public String filepath = getDataFolder() + File.separator;
 
 	@Override
 	public void onEnable() {

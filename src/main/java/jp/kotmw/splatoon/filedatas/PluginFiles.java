@@ -13,8 +13,8 @@ import jp.kotmw.splatoon.Main;
 
 public class PluginFiles {
 
-	protected static String filepath = Main.main.filepath;
-
+	static String filepath = Main.main.getDataFolder()+File.separator;
+	
 	/**
 	 * ファイルの保存
 	 *
